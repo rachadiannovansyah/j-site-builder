@@ -7,15 +7,3 @@
     </h1>
   </div>
 </template>
-
-<script setup lang="ts">
-  const myName = 'Weda'
-
-  console.log(myName)
-</script>
-
-<style scoped>
-  .footer {
-    text-shadow: none;
-  }
-</style>
