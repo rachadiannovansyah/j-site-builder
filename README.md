@@ -1,27 +1,30 @@
-# J-Site
+## J-Site Builder
+
 This is the main codebase for J-Site Builder application.
 
-&nbsp;
 ## Docs
 
+- [J-Site Builder](#j-site-builder)
+- [Docs](#docs)
 - [Codebase](#codebase)
   - [Technologies](#technologies)
   - [Folder Structure](#folder-structure)
 - [First time setup](#first-time-setup)
 - [Running locally](#running-locally)
-- [Code style guide](#code-style-guide)
 
-&nbsp;
 ## Codebase
+
 ### Technologies
+
 Here is a list of all the core technologies this project use:
 
-- [npm](https://www.npmjs.com/): Package manager
-- [Tailwind CSS](https://tailwindcss.com/): CSS framework for styling
+- Node Version: v18.18.0 LTS
 - [Nuxt 3](https://nuxt.com/): Vue.js framework for server-side rendering
+- [pnpm](https://pnpm.io/): Package manager
+- [Tailwind CSS](https://tailwindcss.com/): CSS framework for styling
 
-&nbsp;
 ### Folder Structure
+
 ```bash
 j-site/
 ├── assets        # Uncompiled assets such as Stylus or Sass files, images, or fonts
@@ -33,8 +36,8 @@ j-site/
 └── utils         # Reusable utility codes or functions
 ```
 
-&nbsp;
 ## First time setup
+
 The first step to running J-Site locally is downloading the code by cloning the repository:
 
 ```bash
@@ -59,18 +62,13 @@ cp .env.example .env
 install the dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
-&nbsp;
 ## Running locally
 
 Compiles and hot-reloads for development
 
 ```bash
-npm run dev
+pnpm run dev
 ```
-
-&nbsp;
-### Code Style Guide
-- **Javascript Style Guide by Airbnb** (https://github.com/airbnb/javascript#airbnb-javascript-style-guide-)
