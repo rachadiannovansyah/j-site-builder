@@ -9,6 +9,9 @@ export default {
         lora: ['Lora', 'serif'],
         inter: ['Inter', 'sans-serif'],
       },
+      fontSize: {
+        xxs: '0.625rem',
+      },
       colors: {
         green: {
           50: '#E6F6EC',

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 devDependencies:
+  '@headlessui/vue':
+    specifier: ^1.7.16
+    version: 1.7.16(vue@3.3.4)
   '@nuxt/devtools':
     specifier: latest
     version: 1.0.0-beta.0(nuxt@3.7.4)(vite@4.4.11)
@@ -889,6 +892,15 @@ packages:
   /@fastify/busboy@2.0.0:
     resolution: {integrity: sha512-JUFJad5lv7jxj926GPgymrWQxxjPYuJNiNjNMzqT+HiuP6Vl3dk5xzG+8sTX96np0ZAluvaMzPsjhHZ5rNuNQQ==}
     engines: {node: '>=14'}
+    dev: true
+
+  /@headlessui/vue@1.7.16(vue@3.3.4):
+    resolution: {integrity: sha512-nKT+nf/q6x198SsyK54mSszaQl/z+QxtASmgMEJtpxSX2Q0OPJX0upS/9daDyiECpeAsvjkoOrm2O/6PyBQ+Qg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      vue: 3.3.4
     dev: true
 
   /@humanwhocodes/config-array@0.11.11:

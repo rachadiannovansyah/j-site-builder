@@ -1,22 +1,22 @@
 <template>
   <aside
     data-cy="sidebar__container"
-    class="sidebar flex min-h-screen flex-col bg-green-600 p-6"
+    class="sidebar grid-rows-[auto, auto, 1fr, auto] grid h-screen bg-green-600 p-6"
   >
     <section ref="sidebar-title" data-cy="sidebar__header" class="flex gap-2">
       <img
         src="/logos/logo.svg"
         alt="Portal Jabar Logo"
-        width="34px"
-        height="34px"
+        width="34"
+        height="34"
         class="self-start"
       />
       <div>
         <img
           src="/logos/logo-text.svg"
           alt="Portal Jabar Logo"
-          width="75px"
-          height="38px"
+          width="75"
+          height="38"
           class="mb-1"
         />
         <h1
@@ -28,8 +28,9 @@
         </h1>
       </div>
     </section>
-    <nav>
-      <ul data-cy="sidebar__navigation" class="mt-10 w-full">
+    <SidebarSiteSelect class="mt-10" />
+    <nav class="mt-4 w-full">
+      <ul data-cy="sidebar__navigation" class="-mr-6 max-h-full overflow-auto">
         <li>
           <NuxtLink
             v-for="navigation in NAVIGATION_MENU"
@@ -82,12 +83,8 @@
   const config = useRuntimeConfig()
 </script>
 
-<style>
+<style scoped>
   .sidebar__navigation-item.router-link-exact-active {
     @apply bg-green-700;
-  }
-
-  .nuxt-icon svg {
-    @apply mb-0;
   }
 </style>
