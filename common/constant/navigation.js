@@ -1,7 +1,7 @@
 export const NAVIGATION_MENU = [
   {
     link: '/statistik',
-    label: 'Statitik',
+    label: 'Statistik',
     icon: 'navigation/statistic-menu-icon',
   },
   {
