@@ -31,7 +31,7 @@
     <SidebarSiteSelect class="mt-10" />
     <nav class="mt-4 w-full">
       <ul data-cy="sidebar__navigation" class="-mr-6 max-h-full overflow-auto">
-        <li>
+        <li class="pr-6">
           <NuxtLink
             v-for="navigation in NAVIGATION_MENU"
             :key="navigation.label"
