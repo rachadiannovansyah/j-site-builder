@@ -16,4 +16,10 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  runtimeConfig: {
+    // Public keys that are exposed to the client
+    public: {
+      portalJabarCMSBaseURL: process.env.NUXT_PUBLIC_PORTAL_JABAR_CMS_BASE_URL,
+    },
+  },
 })

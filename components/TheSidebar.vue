@@ -47,7 +47,7 @@
       <ul ref="sidebar-bottom-nav" data-cy="sidebar__bottom-nav">
         <li>
           <NuxtLink
-            to="/"
+            :to="config.public.portalJabarCMSBaseURL"
             class="font-lato mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
           >
             <NuxtIcon
@@ -60,7 +60,7 @@
         </li>
         <li>
           <NuxtLink
-            to="/"
+            :to="`${config.public.portalJabarCMSBaseURL}/pengaturan`"
             class="font-lato mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
           >
             <NuxtIcon
@@ -78,6 +78,8 @@
 
 <script setup lang="ts">
   import { NAVIGATION_MENU } from '~/common/constant/navigation'
+
+  const config = useRuntimeConfig()
 </script>
 
 <style>
