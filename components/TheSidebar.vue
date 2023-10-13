@@ -1,7 +1,7 @@
 <template>
   <aside
     data-cy="sidebar__container"
-    class="sidebar grid-rows-[auto, auto, 1fr, auto] grid h-screen bg-green-600 p-6"
+    class="sidebar grid h-screen grid-rows-[auto,auto,1fr,auto] gap-8 bg-green-600 p-6"
   >
     <section ref="sidebar-title" data-cy="sidebar__header" class="flex gap-2">
       <img
@@ -28,15 +28,15 @@
         </h1>
       </div>
     </section>
-    <SidebarSiteSelect class="mt-10" />
-    <nav class="mt-4 w-full">
-      <ul data-cy="sidebar__navigation" class="-mr-6 max-h-full overflow-auto">
-        <li class="pr-6">
+    <SidebarSiteSelect />
+    <nav class="-ml-6 w-[calc(100%+48px)] overflow-y-auto">
+      <ul data-cy="sidebar__navigation" class="px-6">
+        <li>
           <NuxtLink
             v-for="navigation in NAVIGATION_MENU"
             :key="navigation.label"
             :to="navigation.link"
-            class="sidebar__navigation-item font-lato mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
+            class="sidebar__navigation-item font-lato mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
           >
             <NuxtIcon :name="navigation.icon" filled class="text-xl" />
             <span class="ml-3">{{ navigation.label }}</span>
