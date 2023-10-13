@@ -8,7 +8,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:nuxt/recommended',
     'plugin:vue/vue3-recommended',
-    'plugin:prettier/recommended',
     'prettier',
   ],
   parserOptions: {
@@ -16,14 +15,22 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'vue', 'prettier'],
   rules: {
     'vue/script-setup-no-uses-vars': 'off',
     'vue/multi-word-component-names': [
       'error',
       {
-        ignores: ['index'],
+        ignores: ['index', 'default'],
       },
     ],
+    'vue/max-attributes-per-line': ["error", {
+      'singleline': {
+        'max': 3
+      },
+      'multiline': {
+        'max': 1,
+      }
+    }],
   },
 }
