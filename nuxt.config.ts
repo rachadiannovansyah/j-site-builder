@@ -1,10 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  typescript: {
-    tsConfig: {
-      extends: '../../../tsconfig.base.json',
-    },
-  },
   ssr: false,
   devtools: { enabled: true },
   modules: [
