@@ -1,10 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  typescript: {
+    tsConfig: {
+      extends: '../../../tsconfig.base.json',
+    },
+  },
   ssr: false,
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
     'nuxt-icons',
+    '@pinia/nuxt',
     [
       '@nuxtjs/google-fonts',
       {
@@ -17,6 +23,13 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  pinia: {
+    autoImports: [
+      // automatically imports `defineStore`
+      'defineStore',
+      ['defineStore', 'definePiniaStore'],
+    ],
+  },
   runtimeConfig: {
     // Public keys that are exposed to the client
     public: {
