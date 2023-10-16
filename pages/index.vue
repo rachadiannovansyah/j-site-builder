@@ -3,3 +3,9 @@
     <h1 class="text-3xl">Jds Builder</h1>
   </div>
 </template>
+
+<script setup lang="ts">
+  definePageMeta({
+    title: 'Beranda',
+  })
+</script>
