@@ -18,13 +18,6 @@ export default defineNuxtConfig({
       },
     ],
   ],
-  pinia: {
-    autoImports: [
-      // automatically imports `defineStore`
-      'defineStore',
-      ['defineStore', 'definePiniaStore'],
-    ],
-  },
   runtimeConfig: {
     // Public keys that are exposed to the client
     public: {
