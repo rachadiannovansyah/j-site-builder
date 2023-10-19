@@ -1,0 +1,17 @@
+<template>
+  <NuxtLayout v-if="error?.statusCode === 404">
+    <Maintenance />
+  </NuxtLayout>
+  <div v-else class="p-8">
+    <h1 class="text-3xl font-bold">{{ error }}</h1>
+    <button @click="handleError">Clear errors</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+  const props = defineProps({
+    error: Object,
+    default: null,
+  })
+  const handleError = () => clearError({ redirect: '/' })
+</script>
