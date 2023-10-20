@@ -12,11 +12,13 @@
 </template>
 
 <script setup lang="ts">
+  import type { PropType } from 'vue'
+
   type PositionTypes = 'center' | 'left' | 'right'
 
   const props = defineProps({
     position: {
-      type: String as () => PositionTypes,
+      type: String as PropType<PositionTypes>,
       default: 'center',
     },
   })
