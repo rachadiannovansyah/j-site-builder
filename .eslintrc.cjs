@@ -21,16 +21,19 @@ module.exports = {
     'vue/multi-word-component-names': [
       'error',
       {
-        ignores: ['index', 'default'],
+        ignores: ['index', 'default', 'error'],
       },
     ],
-    'vue/max-attributes-per-line': ["error", {
-      'singleline': {
-        'max': 3
+    'vue/max-attributes-per-line': [
+      'error',
+      {
+        singleline: {
+          max: 3,
+        },
+        multiline: {
+          max: 1,
+        },
       },
-      'multiline': {
-        'max': 1,
-      }
-    }],
+    ],
   },
 }
