@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const siteId = to.query?.id?.toString() ?? ''
 
   if (!token && !siteId) {
-    abortNavigation()
+    return abortNavigation()
   }
 
   loadingStore.setLoading(true)
@@ -19,6 +19,6 @@ export default defineNuxtRouteMiddleware((to) => {
 
     loadingStore.setLoading(false)
 
-    navigateTo('/')
+    return navigateTo('/')
   }, 1500)
 })
