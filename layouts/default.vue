@@ -10,11 +10,11 @@
       </main>
     </div>
   </div>
-  <LoadingOverlay v-if="loader.loading" />
+  <LoadingOverlay v-if="loadingStore.loading" />
 </template>
 
 <script setup lang="ts">
-  const loader = useLoadingStore()
+  const loadingStore = useLoadingStore()
 </script>
 
 <style>
