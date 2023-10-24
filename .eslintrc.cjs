@@ -18,12 +18,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'vue', 'prettier'],
   rules: {
     'vue/script-setup-no-uses-vars': 'off',
-    'vue/multi-word-component-names': [
-      'error',
-      {
-        ignores: ['index', 'default', 'error'],
-      },
-    ],
+    'vue/multi-word-component-names': 'off',
     'vue/max-attributes-per-line': [
       'error',
       {
