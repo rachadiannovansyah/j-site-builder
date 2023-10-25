@@ -9,7 +9,7 @@
     </div>
     <div class="mb-8"></div>
 
-    <h1 class="mb-4 text-2xl font-bold">Users data from DUMMY JSON API</h1>
+    <h1 class="mb-4 text-2xl font-bold">Products data from DUMMY JSON API</h1>
     <p v-if="state.loading">Loading...</p>
     <div v-for="product in state.products?.products" :key="product.id">
       <p>{{ product.title }} - {{ product.brand }}</p>

@@ -23,3 +23,5 @@ export interface IUser {
 }
 
 export type IUserResponse = IUser[]
+
+// ...Add another type here

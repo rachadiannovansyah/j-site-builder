@@ -18,3 +18,5 @@ export type IProductResponse = {
   skip: number
   limit: number
 }
+
+// ...Add another type here

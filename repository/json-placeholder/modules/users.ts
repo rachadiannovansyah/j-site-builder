@@ -11,6 +11,8 @@ class UsersModule extends FetchFactory {
       return this.call<IUserResponse>('GET', `${this.RESOURCE}`, undefined)
     }, options)
   }
+
+  // ...add another API call here
 }
 
 export default UsersModule
