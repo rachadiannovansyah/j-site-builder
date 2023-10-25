@@ -3,12 +3,12 @@ import { AsyncDataOptions } from '#app'
 import FetchFactory from '../../factory'
 import { IUserResponse } from '../type'
 
-class UsersModule extends FetchFactory<IUserResponse> {
+class UsersModule extends FetchFactory {
   private RESOURCE = '/users'
 
   async getUsers(options?: AsyncDataOptions<IUserResponse>) {
     return useAsyncData(() => {
-      return this.call('GET', `${this.RESOURCE}`, undefined)
+      return this.call<IUserResponse>('GET', `${this.RESOURCE}`, undefined)
     }, options)
   }
 }
