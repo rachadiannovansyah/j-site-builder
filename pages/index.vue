@@ -9,27 +9,34 @@
     </div>
     <div class="mb-8"></div>
 
-    <h1></h1>
+    <h1 class="mb-4 text-2xl font-bold">Users data from DUMMY JSON API</h1>
+    <p v-if="state.loading">Loading...</p>
+    <div v-for="product in state.products?.products" :key="product.id">
+      <p>{{ product.title }} - {{ product.brand }}</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { IUserResponse } from '~/repository/json-placeholder/type'
+  import { IProductResponse } from '~/repository/dummy-json/modules/type'
 
   definePageMeta({
     title: 'Beranda',
   })
 
-  const { $jsonPlaceholderApi } = useNuxtApp()
+  const { $jsonPlaceholderApi, $dummyJsonApi } = useNuxtApp()
 
   const state = reactive({
-    users: null as null | IUserResponse,
+    users: null as IUserResponse | null,
+    products: null as IProductResponse | null,
     loading: false,
     error: false,
   })
 
   onMounted(() => {
     getUsers()
+    getProducts()
   })
 
   async function getUsers() {
@@ -40,6 +47,21 @@
       })
 
       state.users = response.data.value
+    } catch (error) {
+      console.error(error)
+    } finally {
+      state.loading = false
+    }
+  }
+
+  async function getProducts() {
+    try {
+      state.loading = true
+      const response = await $dummyJsonApi.products.getProducts({
+        server: false,
+      })
+
+      state.products = response.data.value
     } catch (error) {
       console.error(error)
     } finally {
