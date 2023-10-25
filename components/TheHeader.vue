@@ -5,17 +5,25 @@
   >
     <h1
       data-cy="header__title"
-      class="font-roboto text-blue-gray-800 mr-4 text-xl font-bold"
+      class="mr-4 font-roboto text-xl font-bold text-blue-gray-800"
     >
       {{ pageTitle }}
     </h1>
-    <HeaderMenu />
+    <HeaderMenu @logout="handleLogout" />
   </header>
 </template>
 
 <script setup lang="ts">
   const route = useRoute()
   const pageTitle = route.meta?.title ?? ''
+
+  const authStore = useAuthStore()
+  const config = useRuntimeConfig()
+
+  const handleLogout = async () => {
+    await authStore.logout()
+    window.location.replace(`${config.public.portalJabarCMSBaseURL}/logout`)
+  }
 </script>
 
 <style scoped></style>
