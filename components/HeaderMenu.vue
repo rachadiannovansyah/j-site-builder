@@ -13,7 +13,6 @@
       <MenuButton
         data-cy="header__user-dropdown-button"
         class="inline-flex w-full items-center"
-        @click="$emit('logout')"
       >
         <!-- @todo: change this user name to be dynamic -->
         <span
@@ -64,6 +63,7 @@
             <button
               data-cy="header__user-logout-button"
               class="group w-full rounded-md p-2 text-gray-800 hover:bg-green-50"
+              @click="$emit('logout')"
             >
               <p
                 class="flex items-center gap-2 font-lato text-sm font-medium group-hover:text-green-700"
