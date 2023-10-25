@@ -1,7 +1,7 @@
 import { AsyncDataOptions } from '#app'
 
 import FetchFactory from '../../factory'
-import { IProductResponse } from './type'
+import { IProductResponse } from '../type'
 
 class ProductModules extends FetchFactory {
   private RESOURCE = '/products'
