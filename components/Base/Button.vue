@@ -11,7 +11,9 @@
         props.variant === 'tertiary',
       'border-transparent bg-transparent text-green-700 hover:bg-green-50':
         props.variant === 'tertiary-paddingless',
+      [disabledClass]: props.disabled,
     }"
+    :disabled="props.disabled"
     @click="$emit('click')"
   >
     <slot></slot>
@@ -37,4 +39,18 @@
   })
 
   defineEmits(['click'])
+
+  const disabledClass = computed<string>(() => {
+    switch (props.variant) {
+      case 'primary':
+        return '!bg-gray-500 hover:!bg-gray-500 cursor-not-allowed'
+      case 'secondary':
+        return '!border-gray-500 !text-gray-500 hover:!bg-gray-50 cursor-not-allowed'
+      case 'tertiary':
+      case 'tertiary-paddingless':
+        return '!text-gray-500 hover:!bg-gray-50 cursor-not-allowed'
+      default:
+        return ''
+    }
+  })
 </script>
