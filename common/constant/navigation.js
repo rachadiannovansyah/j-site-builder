@@ -10,7 +10,7 @@ export const NAVIGATION_MENU = [
     icon: 'navigation/posting-menu-icon',
   },
   {
-    link: '/halaman',
+    link: '/pages/all',
     label: 'Halaman',
     icon: 'navigation/page-menu-icon',
   },
@@ -28,5 +28,24 @@ export const NAVIGATION_MENU = [
     link: '/pengaturan-umum',
     label: 'Pengaturan Umum',
     icon: 'navigation/general-settings-menu-icon',
+  },
+]
+
+export const PAGE_TAB_MENU = [
+  {
+    label: 'Semua',
+    link: '/pages/all',
+  },
+  {
+    label: 'Terbit',
+    link: '/pages/publish',
+  },
+  {
+    label: 'Draft',
+    link: '/pages/draft',
+  },
+  {
+    label: 'Arsip',
+    link: '/pages/archive',
   },
 ]
