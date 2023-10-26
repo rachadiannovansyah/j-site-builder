@@ -16,7 +16,7 @@
       >
         <!-- @todo: change this user name to be dynamic -->
         <span
-          class="font-lato text-blue-gray-800 mr-2 line-clamp-1 max-w-[100px] text-left text-sm font-semibold"
+          class="mr-2 line-clamp-1 max-w-[100px] text-left font-lato text-sm font-semibold text-blue-gray-800"
         >
           Superadmin
         </span>
@@ -48,7 +48,7 @@
             <NuxtLink
               data-cy="header__setting-menu-button"
               :to="`${config.public.portalJabarCMSBaseURL}/pengaturan`"
-              class="font-lato group flex w-full items-center gap-2 rounded-md p-2 text-sm font-medium text-gray-800 hover:bg-green-50 hover:text-green-700"
+              class="group flex w-full items-center gap-2 rounded-md p-2 font-lato text-sm font-medium text-gray-800 hover:bg-green-50 hover:text-green-700"
               @click="navigate"
             >
               <NuxtIcon
@@ -63,9 +63,10 @@
             <button
               data-cy="header__user-logout-button"
               class="group w-full rounded-md p-2 text-gray-800 hover:bg-green-50"
+              @click="$emit('logout')"
             >
               <p
-                class="font-lato flex items-center gap-2 text-sm font-medium group-hover:text-green-700"
+                class="flex items-center gap-2 font-lato text-sm font-medium group-hover:text-green-700"
               >
                 <NuxtIcon
                   name="common/logout"
@@ -87,4 +88,6 @@
 
   const userAvatar = 'https://placehold.co/34'
   const config = useRuntimeConfig()
+
+  defineEmits('logout')
 </script>
