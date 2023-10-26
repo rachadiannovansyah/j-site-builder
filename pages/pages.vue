@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full px-6 py-[14px]">
+  <div class="h-full w-full">
     <TabMenu :tabs="PAGE_TAB_MENU" />
     <NuxtPage />
   </div>

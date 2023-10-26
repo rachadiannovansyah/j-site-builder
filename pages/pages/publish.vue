@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <section class="flex h-full w-full flex-col items-center justify-center">
     <UnderConstruction />
-  </div>
+  </section>
 </template>
 
 <script setup>
