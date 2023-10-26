@@ -35,7 +35,10 @@
   import { useAuthStore } from '~/stores/auth'
 
   const route = useRoute()
-  const pageTitle = route.meta?.title ?? ''
+
+  const pageTitle = computed(() => {
+    return route.meta?.title
+  })
 
   const authStore = useAuthStore()
   const config = useRuntimeConfig()
