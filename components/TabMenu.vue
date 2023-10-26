@@ -36,8 +36,8 @@
 
   defineProps({
     tabs: {
-      type: Array<ITab>,
-      default: [],
+      type: Array as PropType<ITab[]>,
+      default: () => [],
     },
   })
 </script>
