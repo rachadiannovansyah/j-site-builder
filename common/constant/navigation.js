@@ -45,7 +45,7 @@ export const PAGE_TAB_MENU = [
     link: '/pages/draft',
   },
   {
-    label: 'Arsip',
+    label: 'Diarsipkan',
     link: '/pages/archive',
   },
 ]
