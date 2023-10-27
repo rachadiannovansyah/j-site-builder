@@ -12,6 +12,9 @@ export default {
       fontSize: {
         xxs: '0.625rem',
       },
+      backgroundImage: {
+        'pattern-content': "url('/images/pattern-content.svg')",
+      },
       colors: {
         green: {
           50: '#E6F6EC',
