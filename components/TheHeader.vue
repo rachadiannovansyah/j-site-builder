@@ -53,6 +53,8 @@
 
   const handleLogout = async () => {
     await authStore.logout()
-    window.location.replace(`${config.public.portalJabarCMSBaseURL}/logout`)
+    window.location.replace(
+      `${config.public.portalJabarCMSBaseURL}/revoke-token`,
+    )
   }
 </script>
