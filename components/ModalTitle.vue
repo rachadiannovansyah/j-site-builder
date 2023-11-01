@@ -1,7 +1,7 @@
 <template>
   <DialogTitle
     as="h3"
-    class="pl-6 pr-16 pt-4 font-roboto text-xl font-medium leading-8 text-green-800"
+    class="mt-[10px] flex justify-center px-6 py-2 font-roboto text-xl font-medium leading-8 text-green-800"
   >
     <slot />
   </DialogTitle>
