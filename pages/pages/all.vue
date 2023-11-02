@@ -51,7 +51,7 @@
     max-width="max-w-[620px]"
     @close="onClose"
   >
-    <ModalTitle class="flex justify-between"> Pilih tipe Halaman </ModalTitle>
+    <ModalTitle class="flex justify-between"> Pilih Tipe Halaman </ModalTitle>
     <ModalBody class="flex flex-col gap-[15px] px-[25px] py-[15px]">
       <RadioGroup v-model="state.selectedMethods">
         <div class="flex flex-col gap-[10px]">
@@ -212,6 +212,104 @@
       </BaseButton>
     </ModalFooter>
   </BaseModal>
+
+  <!-- Modal Template Halaman -->
+  <BaseModal
+    :open="state.isTemplateModalOpen"
+    :with-close-button="true"
+    max-width="max-w-[982px]"
+    @close="onClose"
+  >
+    <ModalTitle class="flex justify-between">
+      Pilih Template Halaman
+    </ModalTitle>
+    <ModalBody class="flex flex-col gap-[5px]">
+      <RadioGroup
+        v-model="state.selectedPageTemplate"
+        class="flex h-full w-full flex-col items-center justify-center gap-[10px] md:grid md:grid-cols-2 lg:grid-cols-3"
+      >
+        <RadioGroupOption
+          v-for="(template, index) in templates"
+          :key="index"
+          v-slot="{ checked }"
+          as="template"
+          :value="template"
+        >
+          <div class="relative flex h-[246px] w-[300px] flex-col gap-4">
+            <div
+              :class="[checked ? 'cursor-pointer ring-2 ring-green-700' : '']"
+              class="flex h-[189px] w-[300px] items-end justify-center rounded-[9px] border border-[#F0EFF1] bg-[#F3F5F6] hover:bg-green-50"
+            >
+              <div
+                class="h-[145px] w-[185px] overflow-hidden rounded-t-md bg-[#F1F1F1]"
+              >
+                <img
+                  :src="template.img"
+                  :alt="template.title"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <button
+              class="absolute right-2 top-2 rounded-md border border-gray-500"
+            >
+              <NuxtIcon
+                name="common/eye"
+                aria-hidden="true"
+                class="text-[20px] text-gray-500"
+              />
+            </button>
+            <div class="flex justify-between">
+              <div class="flex flex-col">
+                <RadioGroupLabel
+                  as="p"
+                  class="font-lato text-sm font-bold text-gray-800"
+                >
+                  {{ template.title }}
+                </RadioGroupLabel>
+                <RadioGroupDescription
+                  as="span"
+                  class="font-lato text-[11px] text-gray-700"
+                >
+                  {{ template.desc }}
+                </RadioGroupDescription>
+              </div>
+              <div class="flex h-fit items-center">
+                <button
+                  :class="{
+                    'flex h-7 items-center justify-center rounded-lg border px-4 py-[10px] text-sm': true,
+                    'border-green-700 bg-green-700 text-white': checked,
+                    'border-gray-400 bg-white text-gray-800': !checked,
+                  }"
+                >
+                  <NuxtIcon
+                    v-show="checked"
+                    name="common/check-circle"
+                    class="pr-2 text-base"
+                    filled
+                    aria-hidden="true"
+                  />
+                  {{ checked ? 'Terpilih' : 'Pilih' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </RadioGroupOption>
+      </RadioGroup>
+    </ModalBody>
+    <ModalFooter position="right">
+      <BaseButton variant="secondary" @click="onBackFromTemplate">
+        Kembali
+      </BaseButton>
+      <BaseButton
+        variant="primary"
+        class="flex items-center gap-2"
+        @click="onSelectTemplate"
+      >
+        <p>Mulai Buat Halaman</p>
+      </BaseButton>
+    </ModalFooter>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -230,12 +328,12 @@
     {
       title: 'Halaman Templat',
       desc: 'Kemudahan pengaturan halaman yang cepat. Anda hanya perlu mengisi konten dari halaman.',
-      img: '/images/page-option-template.png',
+      img: '/images/page-option-template.svg',
     },
     {
       title: 'Halaman Kosong',
       desc: 'Kustomisasi penuh halaman sesuai kebutuhan. Anda dapat mengatur tata letak, widget, dan konten dari halaman.',
-      img: '/images/page-option-empty.png',
+      img: '/images/page-option-empty.svg',
     },
   ]
 
@@ -248,6 +346,40 @@
     'PPID',
   ]
 
+  // TODO: change into api data list templates
+  const templates = [
+    {
+      title: 'Elegant Neutrals',
+      desc: '10 konten tersedia ditemplat ini',
+      img: '/images/dummy-template.svg',
+    },
+    {
+      title: 'Simple and Clean',
+      desc: '10 konten tersedia ditemplat ini',
+      img: '/images/dummy-template.svg',
+    },
+    {
+      title: 'Minimal Monochrome',
+      desc: '10 konten tersedia ditemplat ini',
+      img: '/images/dummy-template.svg',
+    },
+    {
+      title: 'Pure Simplicity',
+      desc: '10 konten tersedia ditemplat ini',
+      img: '/images/dummy-template.svg',
+    },
+    {
+      title: 'Subtle Elegance',
+      desc: '10 konten tersedia ditemplat ini',
+      img: '/images/dummy-template.svg',
+    },
+    {
+      title: 'Minimalist Contrast',
+      desc: '10 konten tersedia ditemplat ini',
+      img: '/images/dummy-template.svg',
+    },
+  ]
+
   // TODO: change state isEmptyData into data fetch
   const state = reactive({
     isEmptyData: true,
@@ -256,11 +388,18 @@
     isTypeModalOpen: false,
     selectedPageType: pages[0],
     isTemplateModalOpen: false,
+    selectedPageTemplate: templates[0],
   })
 
   const onClose = () => {
     state.isMethodeModalOpen = false
     state.isTypeModalOpen = false
+    state.isTemplateModalOpen = false
+  }
+
+  const onBackFromTemplate = () => {
+    state.isTypeModalOpen = true
+    state.isTemplateModalOpen = false
   }
 
   const onMethodeClick = () => {
@@ -271,5 +410,10 @@
   const onTypeClick = () => {
     state.isTypeModalOpen = false
     state.isTemplateModalOpen = true
+  }
+
+  const onSelectTemplate = () => {
+    state.isTemplateModalOpen = false
+    // TODO: add action on select template
   }
 </script>
