@@ -263,7 +263,7 @@
               <div class="flex flex-col">
                 <RadioGroupLabel
                   as="p"
-                  class="font-lato text-sm font-bold text-gray-800"
+                  class="font-lato text-sm font-bold capitalize text-gray-800"
                 >
                   {{ template.name }}
                 </RadioGroupLabel>
@@ -271,7 +271,9 @@
                   as="span"
                   class="font-lato text-[11px] text-gray-700"
                 >
-                  {{ template.name }}
+                  {{
+                    `${template.sections.length} konten tersedia di templat ini`
+                  }}
                 </RadioGroupDescription>
               </div>
               <div class="flex h-fit items-center">
@@ -400,6 +402,7 @@
       const resp = response.data.value
       state.data = resp?.data || null
       state.meta = resp?.meta || null
+      console.log(response.data.value)
     } catch (error) {
       console.error(error)
     }
