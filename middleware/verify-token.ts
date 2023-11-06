@@ -12,13 +12,11 @@ export default defineNuxtRouteMiddleware((to) => {
   }
 
   loadingStore.setLoading(true)
+  setCookie('token', token)
+  siteStore.setSideId(siteId)
 
   setTimeout(() => {
-    setCookie('token', token)
-    siteStore.setSideId(siteId)
-
     loadingStore.setLoading(false)
-
     return navigateTo('/')
   }, 1500)
 })
