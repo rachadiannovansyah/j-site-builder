@@ -245,7 +245,7 @@
               >
                 <img
                   :src="template.thumbnail"
-                  :alt="template.title"
+                  :alt="template.name"
                   class="h-full w-full object-cover"
                 />
               </div>
