@@ -65,18 +65,26 @@
           Simpan Draft
         </button>
         <button
-          class="flex items-center justify-center gap-2 font-lato text-sm font-bold text-green-700"
+          class="flex items-center justify-center gap-2 rounded-lg border-2 border-green-700 bg-[#F4FFFA] px-4 py-1.5 font-lato text-sm font-bold text-green-700"
           @click="$emit('preview')"
         >
           <p>Pratinjau</p>
           <NuxtIcon
-            name="common/chevron-down"
-            class="mb-[-2px] text-xl"
+            name="common/eye"
+            class="mb-[-2px] text-2xl"
             aria-hidden="true"
           />
         </button>
-        <BaseButton class="py-[10px]" @click="$emit('publish')">
-          Publish
+        <BaseButton
+          class="flex items-center justify-center gap-2 py-[10px]"
+          @click="$emit('publish')"
+        >
+          <NuxtIcon
+            name="common/plane"
+            class="mb-[-2px] text-2xl"
+            aria-hidden="true"
+          />
+          <p>Terbitkan</p>
         </BaseButton>
         <button class="-rotate-90" @click="toggleOpenHeader">
           <NuxtIcon
