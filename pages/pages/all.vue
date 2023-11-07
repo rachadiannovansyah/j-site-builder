@@ -402,7 +402,6 @@
       const resp = response.data.value
       state.data = resp?.data || null
       state.meta = resp?.meta || null
-      console.log(response.data.value)
     } catch (error) {
       console.error(error)
     }
