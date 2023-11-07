@@ -17,5 +17,4 @@
 
   const pageStore = usePageStore()
   const data = JSON.parse(JSON.stringify(pageStore.page))
-  console.log(data.sections)
 </script>
