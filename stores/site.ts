@@ -7,4 +7,9 @@ export const useSiteStore = defineStore('site', {
       this.siteId = id
     },
   },
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      sameSite: 'strict',
+    }),
+  },
 })

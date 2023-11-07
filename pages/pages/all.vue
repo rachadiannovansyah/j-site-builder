@@ -229,7 +229,7 @@
         class="flex h-full w-full flex-col items-center justify-center gap-[10px] md:grid md:grid-cols-2 lg:grid-cols-3"
       >
         <RadioGroupOption
-          v-for="(template, index) in templates"
+          v-for="(template, index) in state.data"
           :key="index"
           v-slot="{ checked }"
           as="template"
@@ -244,8 +244,8 @@
                 class="h-[145px] w-[185px] overflow-hidden rounded-t-md bg-[#F1F1F1]"
               >
                 <img
-                  :src="template.img"
-                  :alt="template.title"
+                  :src="template.thumbnail"
+                  :alt="template.name"
                   class="h-full w-full object-cover"
                 />
               </div>
@@ -263,15 +263,17 @@
               <div class="flex flex-col">
                 <RadioGroupLabel
                   as="p"
-                  class="font-lato text-sm font-bold text-gray-800"
+                  class="font-lato text-sm font-bold capitalize text-gray-800"
                 >
-                  {{ template.title }}
+                  {{ template.name }}
                 </RadioGroupLabel>
                 <RadioGroupDescription
                   as="span"
                   class="font-lato text-[11px] text-gray-700"
                 >
-                  {{ template.desc }}
+                  {{
+                    `${template.sections.length} konten tersedia di templat ini`
+                  }}
                 </RadioGroupDescription>
               </div>
               <div class="flex h-fit items-center">
@@ -319,10 +321,13 @@
     RadioGroupDescription,
     RadioGroupOption,
   } from '@headlessui/vue'
+  import { IMetaData, ITemplateData } from '~/repository/j-site/types/template'
 
   definePageMeta({
     title: 'Halaman',
   })
+
+  const { $jSiteApi } = useNuxtApp()
 
   const methods = [
     {
@@ -346,40 +351,6 @@
     'PPID',
   ]
 
-  // TODO: change into api data list templates
-  const templates = [
-    {
-      title: 'Elegant Neutrals',
-      desc: '10 konten tersedia ditemplat ini',
-      img: '/images/dummy-template.svg',
-    },
-    {
-      title: 'Simple and Clean',
-      desc: '10 konten tersedia ditemplat ini',
-      img: '/images/dummy-template.svg',
-    },
-    {
-      title: 'Minimal Monochrome',
-      desc: '10 konten tersedia ditemplat ini',
-      img: '/images/dummy-template.svg',
-    },
-    {
-      title: 'Pure Simplicity',
-      desc: '10 konten tersedia ditemplat ini',
-      img: '/images/dummy-template.svg',
-    },
-    {
-      title: 'Subtle Elegance',
-      desc: '10 konten tersedia ditemplat ini',
-      img: '/images/dummy-template.svg',
-    },
-    {
-      title: 'Minimalist Contrast',
-      desc: '10 konten tersedia ditemplat ini',
-      img: '/images/dummy-template.svg',
-    },
-  ]
-
   // TODO: change state isEmptyData into data fetch
   const state = reactive({
     isEmptyData: true,
@@ -388,7 +359,9 @@
     isTypeModalOpen: false,
     selectedPageType: pages[0],
     isTemplateModalOpen: false,
-    selectedPageTemplate: templates[0],
+    selectedPageTemplate: null as null | ITemplateData,
+    data: null as null | ITemplateData[],
+    meta: null as null | IMetaData,
   })
 
   const onClose = () => {
@@ -415,5 +388,23 @@
   const onSelectTemplate = () => {
     state.isTemplateModalOpen = false
     // TODO: add action on select template
+  }
+
+  onMounted(() => {
+    getTemplates()
+  })
+
+  async function getTemplates() {
+    try {
+      const response = await $jSiteApi.templates.getTemplates({
+        server: false,
+      })
+      const resp = response.data.value
+      state.data = resp?.data || null
+      state.meta = resp?.meta || null
+      console.log(response.data.value)
+    } catch (error) {
+      console.error(error)
+    }
   }
 </script>
