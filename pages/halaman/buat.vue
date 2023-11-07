@@ -14,5 +14,4 @@
   definePageMeta({
     layout: 'public',
   })
-  console.log('aaa')
 </script>
