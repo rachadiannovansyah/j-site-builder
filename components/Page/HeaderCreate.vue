@@ -2,7 +2,7 @@
   <header
     :class="{
       'relative flex h-16 w-full items-center justify-between bg-white px-6 py-[10px] shadow transition-all duration-150 ease-in-out': true,
-      'w-28 rounded-lg': !state.isOpenHeader,
+      '!w-28 rounded-lg': !state.isOpenHeader,
     }"
   >
     <div class="flex items-center justify-center">
@@ -109,6 +109,6 @@
   }
 
   const backToPage = () => {
-    navigateTo({ path: '/pages/all' })
+    navigateTo({ path: '/halaman/semua' })
   }
 </script>
