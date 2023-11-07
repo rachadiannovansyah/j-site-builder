@@ -71,7 +71,7 @@
           <p>Pratinjau</p>
           <NuxtIcon
             name="common/eye"
-            class="mb-[-4px] text-2xl"
+            class="mb-[-2px] text-2xl"
             aria-hidden="true"
           />
         </button>
@@ -81,7 +81,7 @@
         >
           <NuxtIcon
             name="common/plane"
-            class="mb-[-4px] text-2xl"
+            class="mb-[-2px] text-2xl"
             aria-hidden="true"
           />
           <p>Terbitkan</p>
