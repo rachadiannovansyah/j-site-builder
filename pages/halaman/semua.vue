@@ -328,6 +328,7 @@
   })
 
   const { $jSiteApi } = useNuxtApp()
+  const pageStore = usePageStore()
 
   const methods = [
     {
@@ -385,9 +386,19 @@
     state.isTemplateModalOpen = true
   }
 
-  const onSelectTemplate = () => {
+  const onSelectTemplate = async () => {
     state.isTemplateModalOpen = false
-    // TODO: add action on select template
+    const newData = {
+      id: state.selectedPageTemplate?.id || 0,
+      name: state.selectedPageTemplate?.name || '',
+      type: state.selectedPageType || '',
+      updated_at: state.selectedPageTemplate?.updated_at || '',
+      sections: JSON.parse(
+        JSON.stringify(state.selectedPageTemplate?.sections),
+      ),
+    }
+    pageStore.setPage(newData)
+    await navigateTo({ path: '/halaman/buat' })
   }
 
   onMounted(() => {

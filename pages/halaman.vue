@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full">
-    <TabMenu :tabs="PAGE_TAB_MENU" />
+    <TabMenu v-if="route.path !== '/halaman/buat'" :tabs="PAGE_TAB_MENU" />
     <NuxtPage />
   </div>
 </template>
@@ -8,7 +8,11 @@
 <script setup lang="ts">
   import { PAGE_TAB_MENU } from '~/common/constant/navigation'
 
+  const route = useRoute()
+
   onMounted(async () => {
-    await navigateTo({ path: '/pages/all' })
+    if (route.path === '/halaman') {
+      await navigateTo({ path: '/halaman/semua' })
+    }
   })
 </script>
