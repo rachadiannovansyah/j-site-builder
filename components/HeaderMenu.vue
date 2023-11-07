@@ -14,11 +14,10 @@
         data-cy="header__user-dropdown-button"
         class="inline-flex w-full items-center"
       >
-        <!-- @todo: change this user name to be dynamic -->
         <span
           class="mr-2 line-clamp-1 max-w-[100px] text-left font-lato text-sm font-semibold text-blue-gray-800"
         >
-          Superadmin
+          {{ authStore.userName }}
         </span>
         <NuxtIcon
           name="common/chevron-right"
@@ -88,6 +87,7 @@
 
   const userAvatar = 'https://placehold.co/34'
   const config = useRuntimeConfig()
+  const authStore = useAuthStore()
 
   defineEmits('logout')
 </script>
