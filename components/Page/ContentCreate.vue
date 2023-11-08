@@ -22,6 +22,61 @@
               <NuxtIcon name="common/icon-input-text" aria-hidden="true" />
               <p>Input Judul</p>
             </button>
+            <Menu v-if="index !== 0" as="div" class="relative w-fit">
+              <MenuButton
+                class="relative flex items-center justify-center gap-1.5 rounded-md border px-2.5 py-1.5"
+              >
+                <NuxtIcon
+                  name="common/block"
+                  aria-hidden="true"
+                  class="text-green-700"
+                />
+                <p class="text-gray-900">Ganti Kolom</p>
+                <NuxtIcon name="common/chevron-down" aria-hidden="true" />
+              </MenuButton>
+
+              <transition
+                enter-active-class="transition duration-100 ease-out"
+                enter-from-class="transform scale-95 opacity-0"
+                enter-to-class="transform scale-100 opacity-100"
+                leave-active-class="transition duration-75 ease-in"
+                leave-from-class="transform scale-100 opacity-100"
+                leave-to-class="transform scale-95 opacity-0"
+              >
+                <MenuItems class="absolute">
+                  <div
+                    class="rounded-lg border border-gray-300 bg-white px-3 py-3.5 shadow-lg"
+                  >
+                    <h1
+                      class="pb-2 font-inter text-base font-semibold text-gray-800"
+                    >
+                      Layout
+                    </h1>
+                    <ul class="flex gap-4">
+                      <MenuItem
+                        v-for="(option, idx) in menuOptionLayout"
+                        :key="idx"
+                        as="li"
+                        class="flex cursor-pointer flex-col gap-3"
+                      >
+                        <div class="h-12 w-[60px]">
+                          <img
+                            :src="option.img"
+                            :alt="option.desc"
+                            class="object-cover"
+                          />
+                        </div>
+                        <p
+                          class="text-center font-inter text-xs font-medium text-gray-800"
+                        >
+                          {{ option.name }}
+                        </p>
+                      </MenuItem>
+                    </ul>
+                  </div>
+                </MenuItems>
+              </transition>
+            </Menu>
           </div>
           <div class="flex items-center justify-center gap-2.5">
             <button
@@ -92,6 +147,7 @@
 </template>
 
 <script setup lang="ts">
+  import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
   import { IPageSection } from '~/types/stores/page'
 
   defineProps({
@@ -101,4 +157,27 @@
       required: true,
     },
   })
+
+  const menuOptionLayout = [
+    {
+      name: 'Full Width',
+      desc: 'Ilustrasi opsi halaman full width.',
+      img: '/images/layout/full-width.svg',
+    },
+    {
+      name: '1/2',
+      desc: 'Ilustrasi opsi halaman 1/2.',
+      img: '/images/layout/half.svg',
+    },
+    {
+      name: '1/3',
+      desc: 'Ilustrasi opsi halaman 1/3.',
+      img: '/images/layout/one-third.svg',
+    },
+    {
+      name: '2/3',
+      desc: 'Ilustrasi opsi halaman 2/3.',
+      img: '/images/layout/two-third.svg',
+    },
+  ]
 </script>
