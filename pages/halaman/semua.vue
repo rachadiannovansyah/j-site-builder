@@ -425,11 +425,10 @@
   }
 
   const countWidget = (item: ITemplateSection[]) => {
-    const totalWidget = item.reduce(
+    return item.reduce(
       (count: number, current: { widgets: string | ITemplateWidget[] }) =>
         count + current.widgets.length,
       0,
     )
-    return totalWidget
   }
 </script>
