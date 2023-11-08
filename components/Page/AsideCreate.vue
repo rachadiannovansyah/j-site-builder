@@ -29,14 +29,14 @@
           v-show="state.isOpenSide"
           class="font-roboto text-base font-medium text-green-700"
         >
-          Attributes
+          Atribut
         </h1>
       </div>
     </div>
     <div v-show="state.isOpenSide" class="flex w-full flex-col gap-[14px]">
       <div class="flex w-full flex-col gap-1">
         <label for="title" class="font-lato text-[15px] text-blue-gray-800">
-          Judul Page
+          Judul Halaman
         </label>
         <input
           name="title"
