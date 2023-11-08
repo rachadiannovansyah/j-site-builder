@@ -71,6 +71,23 @@
         </div>
       </div>
     </div>
+    <div
+      v-if="data.length < 8"
+      class="mb-6 mt-4 flex h-[17px] w-full items-center"
+    >
+      <span class="h-[1px] flex-1 border-t border-dashed border-blue-600" />
+      <button
+        class="mx-2 flex items-center justify-center gap-2 rounded-md border border-blue-600 px-2 py-1 text-blue-600"
+      >
+        <NuxtIcon
+          name="common/plus-circle"
+          class="-mb-0.5 text-sm"
+          aria-hidden="true"
+        />
+        <p class="font-lato text-xs font-medium">Tambah Section</p>
+      </button>
+      <span class="h-[1px] flex-1 border-t border-dashed border-blue-600" />
+    </div>
   </main>
 </template>
 
