@@ -1,7 +1,7 @@
 <template>
   <aside
     :class="{
-      'flex h-fit w-[280px] flex-col items-start justify-between gap-[14px] rounded-lg bg-white px-[14px] py-4 shadow transition-all duration-150 ease-in-out': true,
+      'mt-3 flex h-fit w-[280px] flex-col items-start justify-between gap-[14px] rounded-lg bg-white px-[14px] py-4 shadow transition-all duration-150 ease-in-out': true,
       '!h-16 !w-16 !p-[10px]': !state.isOpenSide,
     }"
   >
