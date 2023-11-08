@@ -273,9 +273,8 @@
                   as="span"
                   class="font-lato text-[11px] text-gray-700"
                 >
-                  {{
-                    `${template.sections.length} konten tersedia di templat ini`
-                  }}
+                  {{ countWidget(template.sections) }} konten tersedia di
+                  templat ini
                 </RadioGroupDescription>
               </div>
               <div class="flex h-fit items-center">
@@ -323,7 +322,12 @@
     RadioGroupDescription,
     RadioGroupOption,
   } from '@headlessui/vue'
-  import { IMetaData, ITemplateData } from '~/repository/j-site/types/template'
+  import {
+    IMetaData,
+    ITemplateData,
+    ITemplateSection,
+    ITemplateWidget,
+  } from '~/repository/j-site/types/template'
 
   definePageMeta({
     title: 'Halaman',
@@ -418,5 +422,14 @@
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const countWidget = (item: ITemplateSection[]) => {
+    const totalWidget = item.reduce(
+      (count: number, current: { widgets: string | ITemplateWidget[] }) =>
+        count + current.widgets.length,
+      0,
+    )
+    return totalWidget
   }
 </script>

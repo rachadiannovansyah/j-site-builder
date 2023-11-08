@@ -6,13 +6,21 @@ export interface IMetaData {
   to: number
   total: number
 }
+export interface ITemplateWidget {
+  grid_span: number
+  name: string
+}
+export interface ITemplateSection {
+  grid_column: number
+  widgets: ITemplateWidget[]
+}
 
 export interface ITemplateData {
   id: number
   name: string
   thumbnail: string
   preview: string
-  sections: []
+  sections: ITemplateSection[]
   created_at: string
   updated_at: string
 }
