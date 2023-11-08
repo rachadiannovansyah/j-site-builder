@@ -87,12 +87,17 @@
   const config = useRuntimeConfig()
   const siteStore = useSiteStore()
 
-  const { data: settingsData } = await $jSiteApi.settings.getSettings(
+  const { data: sites, error } = await $jSiteApi.settings.getSettings(
     undefined, // no query params for this request
     { server: false },
   )
 
-  siteStore.sites = settingsData.value?.data || null
+  if (error.value) {
+    // @todo: add toast or error page if fetching failed
+    console.error(error.value)
+  }
+
+  siteStore.sites = sites.value?.data || null
 </script>
 
 <style scoped>
