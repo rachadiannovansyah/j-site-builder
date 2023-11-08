@@ -32,14 +32,16 @@
     <!-- Site Selection -->
     <SidebarSiteSelect />
 
-    <nav class="-ml-6 w-[calc(100%+48px)] overflow-y-auto">
-      <ul data-cy="sidebar__navigation" class="px-6">
+    <nav
+      class="sidebar__navigation-container relative right-6 -mx-6 w-[calc(100%+48px)] overflow-y-auto"
+    >
+      <ul data-cy="sidebar__navigation" class="pl-12 pr-2">
         <li>
           <NuxtLink
             v-for="navigation in NAVIGATION_MENU"
             :key="navigation.label"
             :to="navigation.link"
-            class="sidebar__navigation-item mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white hover:bg-green-700"
+            class="sidebar__navigation-item mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white last-of-type:mb-0 hover:bg-green-700"
           >
             <NuxtIcon :name="navigation.icon" filled class="text-xl" />
             <span class="ml-3">{{ navigation.label }}</span>
@@ -103,5 +105,20 @@
 <style scoped>
   .sidebar__navigation-item.router-link-exact-active {
     @apply bg-green-700;
+  }
+
+  .sidebar__navigation-container::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .sidebar__navigation-container::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .sidebar__navigation-container::-webkit-scrollbar-thumb {
+    background-color: #9bdbb3;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
   }
 </style>
