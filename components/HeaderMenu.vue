@@ -48,7 +48,6 @@
               data-cy="header__setting-menu-button"
               :to="`${config.public.portalJabarCMSBaseURL}/pengaturan`"
               class="group flex w-full items-center gap-2 rounded-md p-2 font-lato text-sm font-medium text-gray-800 hover:bg-green-50 hover:text-green-700"
-              @click="navigate"
             >
               <NuxtIcon
                 name="navigation/account-settings-icon"

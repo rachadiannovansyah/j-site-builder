@@ -1,8 +1,8 @@
 <template>
-  <Listbox v-model="selected" as="div">
+  <Listbox v-model="siteId" as="div">
     <div class="relative">
       <ListboxButton
-        class="font-lato relative flex w-full cursor-default items-center rounded-md bg-[#35B472] px-4 py-3 text-left text-sm text-white shadow-sm"
+        class="relative flex w-full cursor-default items-center rounded-md bg-[#35B472] px-4 py-3 text-left font-lato text-sm text-white"
       >
         <NuxtIcon
           name="common/globe"
@@ -13,7 +13,7 @@
         <div class="flex flex-col">
           <span class="text-xxs leading-none">Situs saya</span>
           <span class="block w-full truncate text-sm font-bold">
-            {{ selected.name }}
+            {{ siteName }}
           </span>
         </div>
         <NuxtIcon
@@ -30,16 +30,18 @@
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="font-lato absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-[#35B472] py-1 text-sm font-normal text-white shadow-lg"
+          class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-[#35B472] py-1 font-lato text-sm font-normal text-white shadow-lg"
         >
           <ListboxOption
-            v-for="site in availableSites"
+            v-for="site in sites"
             :key="site.id"
             v-slot="{ selected }"
             as="template"
-            :value="site"
+            :value="site.id"
           >
-            <li class="relative cursor-pointer select-none py-2 pl-3 pr-9">
+            <li
+              class="relative cursor-pointer select-none py-2 pl-3 pr-9 hover:bg-green-600"
+            >
               <div class="flex items-center">
                 <span class="ml-3 block truncate">
                   {{ site.name }}
@@ -73,7 +75,6 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
   import {
     Listbox,
     ListboxButton,
@@ -81,17 +82,18 @@
     ListboxOptions,
   } from '@headlessui/vue'
 
-  // @todo: change avaiable site dynamically
-  const availableSites = [
-    {
-      id: 1,
-      name: 'Portal Jabar 1',
-    },
-    {
-      id: 2,
-      name: 'Portal Jabar 2',
-    },
-  ]
+  const siteStore = useSiteStore()
 
-  const selected = ref(availableSites[0])
+  const sites = computed(() => siteStore.sites)
+
+  const siteId = computed({
+    get() {
+      return siteStore.siteId
+    },
+    set(id) {
+      siteStore.setSiteId(id)
+    },
+  })
+
+  const siteName = computed(() => siteStore.siteName)
 </script>
