@@ -397,6 +397,7 @@
     const newData = {
       id: state.selectedPageTemplate?.id || 0,
       name: state.selectedPageTemplate?.name || '',
+      methode: state.selectedMethods,
       type: state.selectedPageType || '',
       updated_at: state.selectedPageTemplate?.updated_at || '',
       sections: JSON.parse(
