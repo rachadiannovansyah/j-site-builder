@@ -12,12 +12,7 @@
       </main>
     </div>
   </div>
-  <LoadingOverlay v-if="loadingStore.loading" />
 </template>
-
-<script setup lang="ts">
-  const loadingStore = useLoadingStore()
-</script>
 
 <style>
   .nuxt-icon svg {

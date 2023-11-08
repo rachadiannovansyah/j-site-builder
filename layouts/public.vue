@@ -4,4 +4,10 @@
       <slot />
     </main>
   </div>
+
+  <LoadingOverlay v-if="loadingStore.loading" />
 </template>
+
+<script setup lang="ts">
+  const loadingStore = useLoadingStore()
+</script>
