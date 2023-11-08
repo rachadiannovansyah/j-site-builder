@@ -250,7 +250,9 @@
                 />
               </div>
             </div>
-            <button
+            <a
+              :href="template.preview"
+              target="_blank"
               class="absolute right-2 top-2 rounded-md border border-gray-500"
             >
               <NuxtIcon
@@ -258,7 +260,7 @@
                 aria-hidden="true"
                 class="text-[20px] text-gray-500"
               />
-            </button>
+            </a>
             <div class="flex justify-between">
               <div class="flex flex-col">
                 <RadioGroupLabel
