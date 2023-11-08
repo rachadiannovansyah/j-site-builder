@@ -250,8 +250,8 @@
                 />
               </div>
             </div>
-            <a
-              :href="template.preview"
+            <NuxtLink
+              :to="template.preview"
               target="_blank"
               class="absolute right-2 top-2 rounded-md border border-gray-500"
             >
@@ -260,7 +260,7 @@
                 aria-hidden="true"
                 class="text-[20px] text-gray-500"
               />
-            </a>
+            </NuxtLink>
             <div class="flex justify-between">
               <div class="flex flex-col">
                 <RadioGroupLabel
