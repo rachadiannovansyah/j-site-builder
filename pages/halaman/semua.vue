@@ -137,7 +137,7 @@
     max-width="max-w-[870px]"
     @close="onClose"
   >
-    <ModalBody class="mb-5 mt-12 flex flex-col gap-[15px] px-[25px] py-[15px]">
+    <ModalBody class="mt-12 flex flex-col gap-[15px] px-[25px] py-[15px]">
       <h1
         class="text-center font-inter text-[26px] font-bold leading-[60px] text-blue-gray-900"
       >
@@ -250,7 +250,9 @@
                 />
               </div>
             </div>
-            <button
+            <NuxtLink
+              :to="template.preview"
+              target="_blank"
               class="absolute right-2 top-2 rounded-md border border-gray-500"
             >
               <NuxtIcon
@@ -258,7 +260,7 @@
                 aria-hidden="true"
                 class="text-[20px] text-gray-500"
               />
-            </button>
+            </NuxtLink>
             <div class="flex justify-between">
               <div class="flex flex-col">
                 <RadioGroupLabel
@@ -271,9 +273,8 @@
                   as="span"
                   class="font-lato text-[11px] text-gray-700"
                 >
-                  {{
-                    `${template.sections.length} konten tersedia di templat ini`
-                  }}
+                  {{ countWidget(template.sections) }} konten tersedia di
+                  templat ini
                 </RadioGroupDescription>
               </div>
               <div class="flex h-fit items-center">
@@ -321,7 +322,12 @@
     RadioGroupDescription,
     RadioGroupOption,
   } from '@headlessui/vue'
-  import { IMetaData, ITemplateData } from '~/repository/j-site/types/template'
+  import {
+    IMetaData,
+    ITemplateData,
+    ITemplateSection,
+    ITemplateWidget,
+  } from '~/repository/j-site/types/template'
 
   definePageMeta({
     title: 'Halaman',
@@ -416,5 +422,13 @@
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const countWidget = (item: ITemplateSection[]) => {
+    return item.reduce(
+      (count: number, current: { widgets: string | ITemplateWidget[] }) =>
+        count + current.widgets.length,
+      0,
+    )
   }
 </script>
