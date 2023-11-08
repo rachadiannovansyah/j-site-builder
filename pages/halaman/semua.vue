@@ -137,7 +137,7 @@
     max-width="max-w-[870px]"
     @close="onClose"
   >
-    <ModalBody class="mb-5 mt-12 flex flex-col gap-[15px] px-[25px] py-[15px]">
+    <ModalBody class="mt-12 flex flex-col gap-[15px] px-[25px] py-[15px]">
       <h1
         class="text-center font-inter text-[26px] font-bold leading-[60px] text-blue-gray-900"
       >
