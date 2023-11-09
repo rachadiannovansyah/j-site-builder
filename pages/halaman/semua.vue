@@ -11,7 +11,7 @@
         v-if="!state.isEmptyData"
         variant="primary"
         class="flex gap-2"
-        @click="state.isMethodeModalOpen = true"
+        @click="state.isPageMethodModalOpen = true"
       >
         <NuxtIcon
           name="common/plus"
@@ -31,7 +31,7 @@
           v-if="state.isEmptyData"
           variant="primary"
           class="flex gap-2"
-          @click="state.isMethodeModalOpen = true"
+          @click="state.isPageMethodModalOpen = true"
         >
           <NuxtIcon
             name="common/plus"
@@ -46,21 +46,21 @@
 
   <!-- Modal Metode Halaman -->
   <BaseModal
-    :open="state.isMethodeModalOpen"
+    :open="state.isPageMethodModalOpen"
     :with-close-button="true"
     max-width="max-w-[620px]"
     @close="onClose"
   >
     <ModalTitle class="flex justify-between"> Pilih Tipe Halaman </ModalTitle>
     <ModalBody class="flex flex-col gap-[15px] px-[25px] py-[15px]">
-      <RadioGroup v-model="state.selectedMethods">
+      <RadioGroup v-model="state.selectedPageMethod">
         <div class="flex flex-col gap-[10px]">
           <RadioGroupOption
-            v-for="methode in methods"
-            :key="methode.title"
+            v-for="method in pageMethods"
+            :key="method.title"
             v-slot="{ checked }"
             as="template"
-            :value="methode"
+            :value="method"
             :disabled="true"
           >
             <div
@@ -77,7 +77,7 @@
                     class="h-[75px] w-[135px] overflow-hidden rounded-md bg-[#F1F1F1]"
                   >
                     <img
-                      :src="methode.img"
+                      :src="method.img"
                       alt="Ilustrasi Opsi Halaman Hemplat"
                       class="h-full w-full object-cover"
                     />
@@ -87,13 +87,13 @@
                       as="p"
                       class="font-inter text-base font-semibold"
                     >
-                      {{ methode.title }}
+                      {{ method.title }}
                     </RadioGroupLabel>
                     <RadioGroupDescription
                       as="span"
                       class="font-lato text-sm text-gray-600"
                     >
-                      {{ methode.desc }}
+                      {{ method.desc }}
                     </RadioGroupDescription>
                   </div>
                 </div>
@@ -118,7 +118,7 @@
       <BaseButton
         variant="primary"
         class="flex items-center gap-2"
-        @click="onMethodeClick"
+        @click="onPageMethodClick"
       >
         <p>Selanjutnya</p>
         <NuxtIcon
@@ -132,7 +132,7 @@
 
   <!-- Modal Tipe Halaman -->
   <BaseModal
-    :open="state.isTypeModalOpen"
+    :open="state.isPageTypeModalOpen"
     :with-close-button="true"
     max-width="max-w-[870px]"
     @close="onClose"
@@ -147,11 +147,11 @@
         <RadioGroup v-model="state.selectedPageType">
           <div class="flex flex-col gap-4">
             <RadioGroupOption
-              v-for="(page, index) in pages"
+              v-for="(type, index) in pageTypes"
               :key="index"
               v-slot="{ checked }"
               as="template"
-              :value="page"
+              :value="type"
               :disabled="true"
             >
               <div
@@ -168,7 +168,7 @@
                           'text-green-700': checked,
                         }"
                       >
-                        {{ page }}
+                        {{ type }}
                       </RadioGroupLabel>
                     </div>
                   </div>
@@ -178,10 +178,6 @@
                   >
                     <div class="h-[13px] w-[13px] rounded-full bg-green-700" />
                   </div>
-                  <div
-                    v-if="!checked"
-                    class="absolute right-2 h-[22px] w-[22px] rounded-full border border-gray-500"
-                  />
                 </div>
               </div>
             </RadioGroupOption>
@@ -201,7 +197,7 @@
       <BaseButton
         variant="primary"
         class="flex items-center gap-2"
-        @click="onTypeClick"
+        @click="onPageTypeClick"
       >
         <p>Selanjutnya</p>
         <NuxtIcon
@@ -215,7 +211,7 @@
 
   <!-- Modal Template Halaman -->
   <BaseModal
-    :open="state.isTemplateModalOpen"
+    :open="state.isPageTemplateModalOpen"
     :with-close-button="true"
     max-width="max-w-[982px]"
     @close="onClose"
@@ -336,7 +332,7 @@
   const { $jSiteApi } = useNuxtApp()
   const pageStore = usePageStore()
 
-  const methods = [
+  const pageMethods = [
     {
       title: 'Halaman Templat',
       desc: 'Kemudahan pengaturan halaman yang cepat. Anda hanya perlu mengisi konten dari halaman.',
@@ -349,7 +345,7 @@
     },
   ]
 
-  const pages = [
+  const pageTypes = [
     'Home',
     'Profile OPD',
     'Layanan',
@@ -361,43 +357,43 @@
   // TODO: change state isEmptyData into data fetch
   const state = reactive({
     isEmptyData: true,
-    isMethodeModalOpen: false,
-    selectedMethods: methods[0],
-    isTypeModalOpen: false,
-    selectedPageType: pages[0],
-    isTemplateModalOpen: false,
+    isPageMethodModalOpen: false,
+    selectedPageMethod: pageMethods[0],
+    isPageTypeModalOpen: false,
+    selectedPageType: pageTypes[0],
+    isPageTemplateModalOpen: false,
     selectedPageTemplate: null as null | ITemplateData,
     data: null as null | ITemplateData[],
     meta: null as null | IMetaData,
   })
 
   const onClose = () => {
-    state.isMethodeModalOpen = false
-    state.isTypeModalOpen = false
-    state.isTemplateModalOpen = false
+    state.isPageMethodModalOpen = false
+    state.isPageTypeModalOpen = false
+    state.isPageTemplateModalOpen = false
   }
 
   const onBackFromTemplate = () => {
-    state.isTypeModalOpen = true
-    state.isTemplateModalOpen = false
+    state.isPageTypeModalOpen = true
+    state.isPageTemplateModalOpen = false
   }
 
-  const onMethodeClick = () => {
-    state.isMethodeModalOpen = false
-    state.isTypeModalOpen = true
+  const onPageMethodClick = () => {
+    state.isPageMethodModalOpen = false
+    state.isPageTypeModalOpen = true
   }
 
-  const onTypeClick = () => {
-    state.isTypeModalOpen = false
-    state.isTemplateModalOpen = true
+  const onPageTypeClick = () => {
+    state.isPageTypeModalOpen = false
+    state.isPageTemplateModalOpen = true
   }
 
   const onSelectTemplate = async () => {
-    state.isTemplateModalOpen = false
+    state.isPageTemplateModalOpen = false
     const newData = {
       id: state.selectedPageTemplate?.id || 0,
       name: state.selectedPageTemplate?.name || '',
-      methode: state.selectedMethods,
+      method: state.selectedPageMethod?.title || '',
       type: state.selectedPageType || '',
       updated_at: state.selectedPageTemplate?.updated_at || '',
       sections: JSON.parse(
