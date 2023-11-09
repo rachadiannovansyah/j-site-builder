@@ -11,7 +11,7 @@
         v-if="!state.isEmptyData"
         variant="primary"
         class="flex gap-2"
-        @click="state.isPageMethodModalOpen = true"
+        @click="state.isPageTypeModalOpen = true"
       >
         <NuxtIcon
           name="common/plus"
@@ -31,7 +31,7 @@
           v-if="state.isEmptyData"
           variant="primary"
           class="flex gap-2"
-          @click="state.isPageMethodModalOpen = true"
+          @click="state.isPageTypeModalOpen = true"
         >
           <NuxtIcon
             name="common/plus"
