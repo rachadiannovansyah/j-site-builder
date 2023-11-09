@@ -57,8 +57,10 @@
             </li>
           </ListboxOption>
           <div class="mt-2 flex justify-center border-t border-[#5BC08B] py-3">
-            <!-- @todo: change this link href -->
-            <NuxtLink to="/" class="inline-flex">
+            <NuxtLink
+              :to="`${config.public.portalJabarCMSBaseURL}/j-site`"
+              class="inline-flex"
+            >
               <NuxtIcon
                 name="navigation/account-settings-icon"
                 class="mr-2 text-lg"
@@ -83,6 +85,7 @@
   } from '@headlessui/vue'
 
   const siteStore = useSiteStore()
+  const config = useRuntimeConfig()
 
   const sites = computed(() => siteStore.sites)
 
