@@ -11,6 +11,7 @@ export interface IPageSection {
 export interface IPageStructure {
   id?: number
   name?: string
+  method?: string
   type?: string
   updated_at?: string
   sections?: IPageSection[]

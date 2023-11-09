@@ -56,7 +56,7 @@
             aria-hidden="true"
             class="mb-[-2px] text-xl"
           />
-          <p>Kembali ke Pages</p>
+          <p>Kembali ke Halaman</p>
         </button>
         <button
           class="font-lato text-sm font-bold text-green-700"
