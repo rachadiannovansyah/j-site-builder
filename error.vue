@@ -26,7 +26,12 @@
           </p>
         </div>
         <div class="flex justify-center">
-          <BaseButton variant="primary" @click="loginCMS">
+          <BaseButton
+            type="link"
+            variant="primary"
+            external
+            :to="config.public.portalJabarCMSBaseURL"
+          >
             Login ke CMS
           </BaseButton>
         </div>
@@ -51,8 +56,4 @@
   const config = useRuntimeConfig()
 
   const handleError = () => clearError({ redirect: '/' })
-
-  const loginCMS = () => {
-    window.location.href = config.public.portalJabarCMSBaseURL
-  }
 </script>
