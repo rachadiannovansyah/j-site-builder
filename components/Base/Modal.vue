@@ -25,7 +25,7 @@
             leave-to="opacity-0 translate-y-20"
           >
             <DialogPanel
-              :class="`translate-y relative grid max-h-[90vh] w-full ${maxWidth} transform grid-cols-1 overflow-hidden rounded-xl bg-white transition-all`"
+              :class="`translate-y relative grid max-h-[90vh] w-full ${maxWidth} transform grid-cols-1 overflow-auto rounded-xl bg-white transition-all`"
             >
               <button
                 v-if="props.withCloseButton"
