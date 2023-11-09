@@ -21,22 +21,27 @@
         />
         <h1
           data-cy="sidebar__header-title"
-          class="font-lato whitespace-nowrap text-sm font-bold leading-5 text-white"
+          class="whitespace-nowrap font-lato text-sm font-bold leading-5 text-white"
         >
           CONTENT MANAGEMENT<br />
           SYSTEM
         </h1>
       </div>
     </section>
+
+    <!-- Site Selection -->
     <SidebarSiteSelect />
-    <nav class="-ml-6 w-[calc(100%+48px)] overflow-y-auto">
-      <ul data-cy="sidebar__navigation" class="px-6">
+
+    <nav
+      class="sidebar__navigation-container relative right-6 -mx-6 w-[calc(100%+48px)] overflow-y-auto"
+    >
+      <ul data-cy="sidebar__navigation" class="pl-12 pr-2">
         <li>
           <NuxtLink
             v-for="navigation in NAVIGATION_MENU"
             :key="navigation.label"
             :to="navigation.link"
-            class="sidebar__navigation-item font-lato mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
+            class="sidebar__navigation-item mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white last-of-type:mb-0 hover:bg-green-700"
           >
             <NuxtIcon :name="navigation.icon" filled class="text-xl" />
             <span class="ml-3">{{ navigation.label }}</span>
@@ -49,7 +54,7 @@
         <li>
           <NuxtLink
             :to="config.public.portalJabarCMSBaseURL"
-            class="font-lato mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
+            class="mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white hover:bg-green-700"
           >
             <NuxtIcon
               name="navigation/portal-cms-icon"
@@ -62,7 +67,7 @@
         <li>
           <NuxtLink
             :to="`${config.public.portalJabarCMSBaseURL}/pengaturan`"
-            class="font-lato mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] text-sm font-bold text-white hover:bg-green-700"
+            class="mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white hover:bg-green-700"
           >
             <NuxtIcon
               name="navigation/account-settings-icon"
@@ -80,11 +85,40 @@
 <script setup lang="ts">
   import { NAVIGATION_MENU } from '~/common/constant/navigation'
 
+  const { $jSiteApi } = useNuxtApp()
   const config = useRuntimeConfig()
+  const siteStore = useSiteStore()
+
+  const { data: sites, error } = await $jSiteApi.settings.getSettings(
+    undefined, // no query params for this request
+    { server: false },
+  )
+
+  if (error.value) {
+    // @todo: add toast or error page if fetching failed
+    console.error(error.value)
+  }
+
+  siteStore.sites = sites.value?.data || null
 </script>
 
 <style scoped>
   .sidebar__navigation-item.router-link-exact-active {
     @apply bg-green-700;
+  }
+
+  .sidebar__navigation-container::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .sidebar__navigation-container::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .sidebar__navigation-container::-webkit-scrollbar-thumb {
+    background-color: #9bdbb3;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
   }
 </style>
