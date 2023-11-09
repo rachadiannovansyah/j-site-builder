@@ -19,6 +19,13 @@ export default defineNuxtPlugin(async () => {
         Authorization: `Bearer ${token.value}`,
       }
     },
+    async onResponseError({ response }) {
+      if (response.status === 401) {
+        throw showError({
+          statusCode: 401,
+        })
+      }
+    },
   }
   const apiFecther = $fetch.create(fetchOptions)
 

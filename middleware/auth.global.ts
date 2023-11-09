@@ -13,7 +13,6 @@ export default defineNuxtRouteMiddleware((to) => {
   if (!cookie) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Error Unauthorized',
     })
   } else {
     if (authStore.user) return
