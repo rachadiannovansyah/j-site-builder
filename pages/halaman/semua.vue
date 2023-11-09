@@ -305,6 +305,7 @@
       <BaseButton
         variant="primary"
         class="flex items-center gap-2"
+        :disabled="!state.selectedPageTemplate"
         @click="onSelectTemplate"
       >
         <p>Mulai Buat Halaman</p>
