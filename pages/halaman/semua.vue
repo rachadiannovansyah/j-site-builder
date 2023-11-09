@@ -219,7 +219,7 @@
     @close="onClose"
   >
     <ModalTitle class="flex justify-between">
-      Pilih Template Halaman
+      Pilih Templat Halaman
     </ModalTitle>
     <ModalBody class="flex max-h-[618px] flex-col gap-[5px] overflow-auto">
       <RadioGroup
