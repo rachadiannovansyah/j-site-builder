@@ -137,7 +137,9 @@
     max-width="max-w-[870px]"
     @close="onClose"
   >
-    <ModalBody class="mt-12 flex flex-col gap-[15px] px-[25px] py-[15px]">
+    <ModalBody
+      class="mt-12 flex max-h-[538px] flex-col gap-[15px] overflow-auto px-[25px] py-[15px]"
+    >
       <h1
         class="text-center font-inter text-[26px] font-bold leading-[60px] text-blue-gray-900"
       >
@@ -219,7 +221,7 @@
     <ModalTitle class="flex justify-between">
       Pilih Template Halaman
     </ModalTitle>
-    <ModalBody class="flex flex-col gap-[5px]">
+    <ModalBody class="flex max-h-[618px] flex-col gap-[5px] overflow-auto">
       <RadioGroup
         v-model="state.selectedPageTemplate"
         class="flex h-full w-full flex-col items-center justify-center gap-[10px] md:grid md:grid-cols-2 lg:grid-cols-3"
