@@ -9,10 +9,10 @@
       :color="hasError ? 'red' : 'primary'"
       :loading="props.loading"
     >
-      <template #leading v-if="$slots.leading">
+      <template v-if="$slots.leading" #leading>
         <slot name="leading" />
       </template>
-      <template #trailing v-if="$slots.trailing">
+      <template v-if="$slots.trailing" #trailing>
         <slot name="trailing" />
       </template>
     </UInput>
