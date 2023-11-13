@@ -1,7 +1,7 @@
 <template>
   <aside
     data-cy="sidebar__container"
-    class="sidebar grid h-screen grid-rows-[auto,auto,1fr,auto] gap-8 bg-green-600 p-6"
+    class="sidebar grid h-screen max-w-[260px] grid-rows-[auto,auto,1fr,auto] gap-8 bg-green-600 p-6"
   >
     <section ref="sidebar-title" data-cy="sidebar__header" class="flex gap-2">
       <img
