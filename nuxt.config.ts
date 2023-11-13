@@ -3,9 +3,8 @@ export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
   modules: [
-    '@nuxtjs/tailwindcss',
-    'nuxt-icons',
     '@nuxt/ui',
+    'nuxt-icons',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     [
@@ -26,5 +25,9 @@ export default defineNuxtConfig({
       portalJabarCMSBaseURL: process.env.NUXT_PUBLIC_PORTAL_JABAR_CMS_BASE_URL,
       jSiteApiURL: process.env.NUXT_PUBLIC_J_SITE_API_URL,
     },
+  },
+  // Disable Nuxt UI Dark Mode
+  colorMode: {
+    preference: 'light',
   },
 })
