@@ -1,6 +1,10 @@
 <template>
   <div class="flex h-screen w-full flex-col overflow-hidden bg-[#F3F4F8]">
-    <PageHeaderCreate @draft="toggleDraftModal" @publish="togglePublishModal" />
+    <PageHeaderCreate
+      :site-name="state.subdomain"
+      @draft="toggleDraftModal"
+      @publish="togglePublishModal"
+    />
     <div
       class="mb-4 flex h-full w-full justify-between gap-4 overflow-y-auto px-1 py-4"
     >
@@ -72,10 +76,13 @@
     layout: 'public',
   })
 
+  const { $jSiteApi } = useNuxtApp()
+  const siteStore = useSiteStore()
   const pageStore = usePageStore()
   const data = JSON.parse(JSON.stringify(pageStore.page))
 
   const state = reactive({
+    subdomain: '',
     modal: {
       status: '',
       icon: '',
@@ -85,6 +92,24 @@
     loading: false,
     progressValue: 0,
   })
+
+  onMounted(() => {
+    getSiteDetail()
+  })
+
+  const getSiteDetail = async () => {
+    const siteId = siteStore.siteId || ''
+    console.log(siteId)
+    try {
+      const { data } = await $jSiteApi.settings.getSettingsById(
+        siteId,
+        undefined, // no query params for this request
+        { server: false },
+      )
+      const { data: siteData } = JSON.parse(JSON.stringify(data.value))
+      state.subdomain = siteData.subdomain
+    } catch (error) {}
+  }
 
   const toggleDraftModal = () => {
     state.modal.status = MODAL_STATE.STATUS_DRAFT

@@ -43,7 +43,7 @@
         <span
           class="rounded-lg bg-[#F7F7F9] px-2 py-1.5 text-xs text-[#788896]"
         >
-          {{ siteName }}
+          {{ fullSiteName }}
         </span>
       </div>
       <div class="flex items-center justify-center gap-4">
@@ -99,11 +99,17 @@
 </template>
 
 <script setup lang="ts">
-  defineProps({
+  const props = defineProps({
     siteName: {
       type: String,
       default: 'www.jabarprov.go.id',
     },
+  })
+
+  const config = useRuntimeConfig()
+
+  const fullSiteName = computed(() => {
+    return `www.${props.siteName}${config.public.jSiteDomain}`
   })
 
   const state = reactive({

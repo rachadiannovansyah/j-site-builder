@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     public: {
       portalJabarCMSBaseURL: process.env.NUXT_PUBLIC_PORTAL_JABAR_CMS_BASE_URL,
       jSiteApiURL: process.env.NUXT_PUBLIC_J_SITE_API_URL,
+      jSiteDomain: process.env.NUXT_PUBLIC_J_SITE_DOMAIN,
     },
   },
 })
