@@ -2,17 +2,17 @@
   <Listbox v-model="siteId" as="div">
     <div class="relative">
       <ListboxButton
-        class="relative flex w-full cursor-default items-center rounded-md bg-[#35B472] px-4 py-3 text-left font-lato text-sm text-white"
+        class="relative grid w-[212px] cursor-default grid-cols-[20px,1fr,20px] items-center gap-x-3 rounded-md bg-[#35B472] px-4 py-3 text-left font-lato text-sm text-white"
       >
         <NuxtIcon
           name="common/globe"
-          class="mr-3 text-xl"
+          class="text-xl"
           filled
           aria-hidden="true"
         />
-        <div class="flex flex-col">
+        <div class="flex min-w-0 flex-col">
           <span class="text-xxs leading-none">Situs saya</span>
-          <span class="block w-full truncate text-sm font-bold">
+          <span class="line-clamp-2 text-sm font-bold">
             {{ siteName }}
           </span>
         </div>
@@ -30,7 +30,7 @@
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-[#35B472] py-1 font-lato text-sm font-normal text-white shadow-lg"
+          class="site-select__option-container absolute z-10 mt-1 max-h-56 w-[212px] overflow-y-auto overflow-x-hidden rounded-md bg-[#35B472] py-1 font-lato text-sm font-normal text-white shadow-lg"
         >
           <ListboxOption
             v-for="site in sites"
@@ -43,7 +43,7 @@
               class="relative cursor-pointer select-none py-2 pl-3 pr-9 hover:bg-green-600"
             >
               <div class="flex items-center">
-                <span class="ml-3 block truncate">
+                <span class="ml-3 line-clamp-3 break-words pr-1">
                   {{ site.name }}
                 </span>
                 <NuxtIcon
@@ -100,3 +100,20 @@
 
   const siteName = computed(() => siteStore.siteName)
 </script>
+
+<style scoped>
+  .site-select__option-container::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .site-select__option-container::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .site-select__option-container::-webkit-scrollbar-thumb {
+    background-color: #9bdbb3;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+</style>
