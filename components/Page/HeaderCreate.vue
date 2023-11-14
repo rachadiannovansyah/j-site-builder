@@ -49,7 +49,7 @@
       <div class="flex items-center justify-center gap-4">
         <button
           class="flex items-center justify-center gap-2 font-lato text-sm font-bold text-green-700"
-          @click="backToPage"
+          @click="$emit('back')"
         >
           <NuxtIcon
             name="common/arrow-left"
@@ -106,23 +106,17 @@
     },
   })
 
-  const config = useRuntimeConfig()
-
   const fullSiteName = computed(() => {
-    return `www.${props.siteName}${config.public.jSiteDomain}`
+    return `www.${props.siteName}`
   })
 
   const state = reactive({
     isOpenHeader: true,
   })
 
-  defineEmits(['draft', 'preview', 'publish'])
+  defineEmits(['back', 'draft', 'preview', 'publish'])
 
   const toggleOpenHeader = () => {
     state.isOpenHeader = !state.isOpenHeader
-  }
-
-  const backToPage = () => {
-    navigateTo({ path: '/halaman/semua' })
   }
 </script>
