@@ -238,7 +238,7 @@
       // TODO: error handling
       console.error(error)
     }
-  }
+  }.
 
   const actionPublishPage = async () => {
     state.params.status = MODAL_STATE.STATUS_PUBLISH

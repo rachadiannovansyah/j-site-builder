@@ -107,7 +107,7 @@
   })
 
   const fullSiteName = computed(() => {
-    return `www.${props.siteName}`
+    return props.siteName
   })
 
   const state = reactive({
