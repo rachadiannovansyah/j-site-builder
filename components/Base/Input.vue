@@ -9,13 +9,21 @@
       >
         {{ label }}
       </p>
+
       <UInput
         v-model="mValue"
         :placeholder="placeholder"
         :color="hasError ? 'red' : 'primary'"
         :loading="props.loading"
         :type="type"
-      />
+      >
+        <template v-if="$slots.leading" #leading>
+          <slot name="leading" />
+        </template>
+        <template v-if="$slots.trailing" #trailing>
+          <slot name="trailing" />
+        </template>
+      </UInput>
     </div>
 
     <div v-show="hasError" class="flex flex-col gap-y-2">

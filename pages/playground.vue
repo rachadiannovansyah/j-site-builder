@@ -29,16 +29,20 @@
         :errors="['Tidak boleh mengandung Angka!']"
       />
       <BaseInput
-        label="Masukkan Email"
-        placeholder="Masukkan Email Anda"
-        type="email"
-      />
-      <BaseInput
         label="Masukkan Password"
         placeholder="Input password Anda"
         type="password"
         :errors="['Password yang Anda masukkan Salah!']"
       />
+      <BaseInput label="Masukkan URL" placeholder="Input URL Anda">
+        <template #leading>
+          <NuxtIcon
+            name="common/globe"
+            class="text-xl text-gray-600"
+            aria-hidden="true"
+          />
+        </template>
+      </BaseInput>
     </div>
   </main>
 </template>
