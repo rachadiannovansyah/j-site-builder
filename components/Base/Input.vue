@@ -7,15 +7,16 @@
           'text-red-700': hasError,
         }"
       >
-        {{ label }}
+        {{ props.label }}
       </p>
 
       <UInput
-        v-model="mValue"
-        :placeholder="placeholder"
-        :color="hasError ? 'red' : 'primary'"
+        v-model="input"
+        :placeholder="props.placeholder"
         :loading="props.loading"
-        :type="type"
+        :type="props.type"
+        :color="hasError ? 'red' : 'white'"
+        @input="$emit('update:modelValue', $event.target.value)"
       >
         <template v-if="$slots.leading" #leading>
           <slot name="leading" />
@@ -28,7 +29,7 @@
 
     <div v-show="hasError" class="flex flex-col gap-y-2">
       <span
-        v-for="(error, index) in errors"
+        v-for="(error, index) in props.errors"
         :key="`input-error-${index}`"
         class="font-lato text-xs leading-none text-red-700"
       >
@@ -42,10 +43,6 @@
   type IInputType = 'text' | 'password' | 'email'
 
   const props = defineProps({
-    value: {
-      type: String,
-      default: null,
-    },
     // eslint-disable-next-line vue/require-prop-types
     type: {
       label: String as PropType<IInputType>,
@@ -69,16 +66,9 @@
     },
   })
 
-  const emit = defineEmits(['input'])
+  defineEmits(['update:modelValue'])
 
-  const mValue = computed({
-    get() {
-      return props.value
-    },
-    set(value) {
-      emit('input', value)
-    },
-  })
+  const input = ref('')
 
   const hasError = computed(() => {
     return Array.isArray(props.errors) && props.errors.length > 0

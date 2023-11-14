@@ -22,7 +22,11 @@
 
     <h1 class="text-lg">Input Text</h1>
     <div class="mb-8 flex flex-wrap gap-x-8 gap-y-8 py-2">
-      <BaseInput label="Masukkan Judul" placeholder="Masukkan Judul..." />
+      <BaseInput
+        v-model="input"
+        label="Masukkan Judul"
+        placeholder="Masukkan Judul..."
+      />
       <BaseInput
         label="Masukkan Nama"
         placeholder="Input nama Anda"
@@ -44,6 +48,15 @@
         </template>
       </BaseInput>
     </div>
+
+    <h1 class="text-lg">Search Bar</h1>
+    <div class="mb-8 flex flex-wrap gap-x-8 gap-y-8 py-2">
+      <BaseSearchBar
+        v-model="search"
+        label="Cari Judul Artikel"
+        placeholder="Masukkan Judul..."
+      />
+    </div>
   </main>
 </template>
 
@@ -51,4 +64,7 @@
   definePageMeta({
     layout: 'public',
   })
+
+  const search = ref('')
+  const input = ref('')
 </script>
