@@ -10,11 +10,11 @@
       class="mb-4 flex h-full w-full justify-between gap-4 overflow-y-auto px-1 py-4"
     >
       <PageContentCreate :data="data.sections" />
-      <PageAsideCreate />
+      <PageAsideCreate :title="data.type" @update="onUpdateTitle($event)" />
     </div>
   </div>
 
-  <!-- Draft Confirmation Modal -->
+  <!-- Confirmation Modal -->
   <BaseModal
     :open="
       state.modal.status === MODAL_STATE.STATUS_DRAFT ||
@@ -91,6 +91,47 @@
       </BaseButton>
     </ModalFooter>
   </BaseModal>
+
+  <!-- Action Progress -->
+  <ProgressModal
+    v-if="state.modal.status === MODAL_STATE.LOADING"
+    :open="state.modal.status === MODAL_STATE.LOADING"
+    :value="state.loading.progressValue"
+    :title="state.loading.title"
+    :message="state.loading.message"
+  />
+
+  <!-- Success Modal -->
+  <BaseModal
+    :open="state.modal.status === MODAL_STATE.SUCCESS"
+    max-width="max-w-[533px]"
+    @close="onCancel"
+  >
+    <ModalTitle class="flex justify-between">
+      {{ state.modal.title }}
+    </ModalTitle>
+    <ModalBody class="p-6">
+      <div class="flex items-center justify-center gap-2">
+        <div class="flex h-full w-[18px] items-center justify-center">
+          <NuxtIcon
+            name="common/check-circle"
+            class="text-base text-green-700"
+            aria-hidden="true"
+          />
+        </div>
+        <div class="h-full w-full grow flex-col">
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ state.modal.message }}
+          </p>
+        </div>
+      </div>
+    </ModalBody>
+    <ModalFooter position="center">
+      <BaseButton variant="primary" @click="onCancel">
+        Saya Mengerti
+      </BaseButton>
+    </ModalFooter>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -100,12 +141,13 @@
     layout: 'public',
   })
 
-  const { $jSiteApi } = useNuxtApp()
-  const siteStore = useSiteStore()
-  const pageStore = usePageStore()
-  const data = JSON.parse(JSON.stringify(pageStore.page))
-
   const state = reactive({
+    siteId: '',
+    params: {
+      title: '',
+      status: '',
+      sections: [],
+    },
     domain: '',
     modal: {
       status: '',
@@ -113,20 +155,29 @@
       title: '',
       message: '',
     },
-    loading: false,
-    progressValue: 0,
+    loading: {
+      progressValue: 0,
+      title: '',
+      message: '',
+    },
   })
+
+  const { $jSiteApi } = useNuxtApp()
+  const siteStore = useSiteStore()
+  state.siteId = siteStore.siteId || ''
+
+  const pageStore = usePageStore()
+  const data = JSON.parse(JSON.stringify(pageStore.page))
+  state.params.sections = data.sections
 
   onMounted(() => {
     getSiteDetail()
   })
 
   const getSiteDetail = async () => {
-    const siteId = siteStore.siteId || ''
-
     try {
       const { data } = await $jSiteApi.settings.getSettingsById(
-        siteId,
+        state.siteId,
         undefined, // no query params for this request
         { server: false },
       )
@@ -158,15 +209,65 @@
   }
 
   const onCancel = () => {
-    state.loading = false
     state.modal.status = MODAL_STATE.NONE
   }
 
-  const actionDraftPage = () => {
-    console.log('draft page')
+  const actionDraftPage = async () => {
+    state.params.status = MODAL_STATE.STATUS_DRAFT
+    try {
+      state.modal.status = MODAL_STATE.LOADING
+      const response = await $jSiteApi.page.storePage(
+        state.siteId,
+        JSON.parse(JSON.stringify(state.params)),
+        { server: false },
+      )
+      if (Number(response.status) === 200) {
+        state.loading.progressValue = 25
+        setTimeout(() => {
+          state.loading.progressValue = 75
+          setTimeout(() => {
+            state.modal.status = MODAL_STATE.SUCCESS
+            state.modal.title = 'Berhasil'
+            state.modal.message =
+              'Halaman yang Anda buat berhasil disimpan ke draft.'
+          }, 150)
+        }, 150)
+      }
+      await navigateTo({ path: '/halaman/semua' })
+    } catch (error) {
+      // TODO: error handling
+      console.error(error)
+    }
   }
 
-  const actionPublishPage = () => {
-    console.log('publish page')
+  const actionPublishPage = async () => {
+    state.params.status = MODAL_STATE.STATUS_PUBLISH
+    try {
+      state.modal.status = MODAL_STATE.LOADING
+      const response = await $jSiteApi.page.storePage(
+        state.siteId,
+        JSON.parse(JSON.stringify(state.params)),
+        { server: false },
+      )
+      if (Number(response.status) === 200) {
+        state.loading.progressValue = 25
+        setTimeout(() => {
+          state.loading.progressValue = 75
+          setTimeout(() => {
+            state.modal.status = MODAL_STATE.SUCCESS
+            state.modal.title = 'Berhasil'
+            state.modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
+          }, 150)
+        }, 150)
+      }
+      await navigateTo({ path: '/halaman/semua' })
+    } catch (error) {
+      // TODO: error handling
+      console.error(error)
+    }
+  }
+
+  const onUpdateTitle = (value: string) => {
+    state.params.title = value
   }
 </script>
