@@ -1,6 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [],
+import type { Config } from 'tailwindcss'
+
+export default <Partial<Config>>{
   theme: {
     extend: {
       fontFamily: {
@@ -52,7 +52,7 @@ export default {
           800: '#022B55',
           900: '#001B3D',
         },
-        'red': {
+        red: {
           50: '#FFEBEE',
           100: '#FFCDD2',
           200: '#EF9A9A',
@@ -63,7 +63,7 @@ export default {
           700: '#D32F2F',
           800: '#C62828',
           900: '#B71B1C',
-        }
+        },
       },
     },
   },

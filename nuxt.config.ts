@@ -2,6 +2,9 @@
 export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
+  ui: {
+    global: true
+  },
   modules: [
     '@nuxt/ui',
     'nuxt-icons',
