@@ -1,21 +1,22 @@
 <template>
-  <div class="flex flex-col gap-y-2">
-    <UInput
-      v-model="mValue"
-      v-bind="$attrs"
-      size="md"
-      padding="sm"
-      :ui="UI"
-      :color="hasError ? 'red' : 'primary'"
-      :loading="props.loading"
-    >
-      <template v-if="$slots.leading" #leading>
-        <slot name="leading" />
-      </template>
-      <template v-if="$slots.trailing" #trailing>
-        <slot name="trailing" />
-      </template>
-    </UInput>
+  <div class="flex w-full flex-col gap-y-2">
+    <div>
+      <p
+        :class="{
+          'mb-1 font-lato text-base leading-6 text-gray-800': true,
+          'text-red-700': hasError,
+        }"
+      >
+        {{ label }}
+      </p>
+      <UInput
+        v-model="mValue"
+        :placeholder="placeholder"
+        :color="hasError ? 'red' : 'primary'"
+        :loading="props.loading"
+        :type="type"
+      />
+    </div>
 
     <div v-show="hasError" class="flex flex-col gap-y-2">
       <span
@@ -30,23 +31,25 @@
 </template>
 
 <script setup lang="ts">
-  const UI = {
-    rounded: 'rounded-lg',
-    placeholder: 'text-gray-500',
-    color: {
-      white: {
-        outline: 'shadow-none font-lato text-gray-800',
-      },
-    },
-    padding: {
-      sm: 'px-2.5 py-2',
-    },
-  }
+  type IInputType = 'text' | 'password' | 'email'
 
   const props = defineProps({
     value: {
       type: String,
       default: null,
+    },
+    // eslint-disable-next-line vue/require-prop-types
+    type: {
+      label: String as PropType<IInputType>,
+      default: 'text',
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
+      type: String,
+      default: '',
     },
     loading: {
       type: Boolean,

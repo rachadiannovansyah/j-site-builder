@@ -29,12 +29,12 @@
     "yaml"
   ],
 
-  "tailwindCSS.experimental.configFile": "tailwind.config.ts",
+  "tailwindCSS.classAttributes": ["class", "ui"],
+  "tailwindCSS.experimental.configFile": "tailwind.config.js",
   "tailwindCSS.experimental.classRegex": [
     ["ui:\\s*{([^)]*)\\s*}", "[\"'`]([^\"'`]*).*?[\"'`]"],
     ["/\\*ui\\*/\\s*{([^;]*)}", ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "ui"],
 
   // Disable Vetur
   "vetur.validation.template": false,
