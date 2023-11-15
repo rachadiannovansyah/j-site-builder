@@ -64,8 +64,10 @@
         >
           Simpan Draft
         </button>
+        <!-- TODO: update preview feature -->
         <button
           class="flex items-center justify-center gap-2 rounded-lg border-2 border-green-700 bg-[#F4FFFA] px-4 py-1.5 font-lato text-sm font-bold text-green-700"
+          disabled
           @click="$emit('preview')"
         >
           <p>Pratinjau</p>
