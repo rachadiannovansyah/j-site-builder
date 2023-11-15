@@ -29,4 +29,8 @@ export default defineNuxtConfig({
   ui: {
     global: true,
   },
+  // Disable Nuxt UI Dark Mode
+  colorMode: {
+    preference: 'light',
+  },
 })
