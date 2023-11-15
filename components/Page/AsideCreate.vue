@@ -42,6 +42,7 @@
           v-model="state.title"
           name="title"
           type="text"
+          maxlength="100"
           placeholder="Homepage"
           class="w-full rounded-lg border border-blue-gray-50 bg-gray-50 p-2 text-gray-600"
         />
