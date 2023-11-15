@@ -7,6 +7,7 @@
       <UButton color="red">Default</UButton>
       <UButton color="red" variant="outline">Default</UButton>
       <UButton block>Default</UButton>
+      <UButton disabled loading block>Default</UButton>
     </div>
 
     <h1 class="text-lg">Link Button</h1>
