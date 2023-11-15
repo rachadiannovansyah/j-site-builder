@@ -62,6 +62,23 @@
     <div class="mb-8 w-full">
       <UTable :rows="people" :columns="columns" />
     </div>
+
+    <h1 class="mb-4 text-lg">Pagination</h1>
+    <div class="mb-8 w-full">
+      <BasePagination
+        :current-page="pagination.currentPage"
+        :total-rows="pagination.totalRows"
+        :total-page="pagination.totalPage"
+        :limit="pagination.itemsPerPage"
+        :limit-options="['5', '10', '15', '20']"
+        @change-limit="pagination.itemsPerPage = $event"
+        @change-page="pagination.currentPage = $event"
+        @next-page="pagination.currentPage++"
+        @previous-page="pagination.currentPage--"
+      />
+      <br />
+      <p>{{ JSON.stringify(pagination) }}</p>
+    </div>
   </main>
 </template>
 
@@ -137,4 +154,11 @@
       role: 'Member',
     },
   ]
+
+  const pagination = reactive({
+    totalRows: 100,
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalPage: 20,
+  })
 </script>
