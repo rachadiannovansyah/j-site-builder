@@ -39,10 +39,10 @@
           Judul Halaman
         </label>
         <input
+          v-model="state.title"
           name="title"
           type="text"
           placeholder="Homepage"
-          :value="title"
           class="w-full rounded-lg border border-blue-gray-50 bg-gray-50 p-2 text-gray-600"
         />
       </div>
@@ -54,8 +54,9 @@
           name="updated"
           type="text"
           placeholder="12/02/2023"
-          :value="title"
+          :value="props.updated"
           class="w-full rounded-lg border border-blue-gray-50 bg-gray-50 p-2 text-gray-600"
+          disabled
         />
       </div>
     </div>
@@ -63,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-  defineProps({
+  const props = defineProps({
     title: {
       type: String,
       default: '',
@@ -76,9 +77,22 @@
 
   const state = reactive({
     isOpenSide: true,
+    title: props.title,
   })
 
   const toggleOpenSide = () => {
     state.isOpenSide = !state.isOpenSide
   }
+
+  const emit = defineEmits(['update'])
+
+  watch(
+    () => state.title,
+    (value) => {
+      setTimeout(() => {
+        emit('update', value)
+      }, 1000)
+    },
+    { deep: true },
+  )
 </script>

@@ -20,6 +20,21 @@ class TemplateModules extends FetchFactory {
       )
     }, options)
   }
+
+  async getSettingsById(
+    id: string,
+    fetchOptions?: FetchOptions<'json'>,
+    options?: AsyncDataOptions<ISettingsResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ISettingsResponse>(
+        'GET',
+        `${this.RESOURCE}/${id}`,
+        undefined, // body
+        fetchOptions,
+      )
+    }, options)
+  }
 }
 
 export default TemplateModules

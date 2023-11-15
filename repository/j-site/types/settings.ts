@@ -27,5 +27,5 @@ export interface IMetaData {
 
 export interface ISettingsResponse {
   data: ISiteSetting[]
-  meta: IMetaData
+  meta?: IMetaData
 }

@@ -43,13 +43,13 @@
         <span
           class="rounded-lg bg-[#F7F7F9] px-2 py-1.5 text-xs text-[#788896]"
         >
-          {{ siteName }}
+          {{ fullSiteName }}
         </span>
       </div>
       <div class="flex items-center justify-center gap-4">
         <button
           class="flex items-center justify-center gap-2 font-lato text-sm font-bold text-green-700"
-          @click="backToPage"
+          @click="$emit('back')"
         >
           <NuxtIcon
             name="common/arrow-left"
@@ -99,24 +99,24 @@
 </template>
 
 <script setup lang="ts">
-  defineProps({
+  const props = defineProps({
     siteName: {
       type: String,
       default: 'www.jabarprov.go.id',
     },
   })
 
+  const fullSiteName = computed(() => {
+    return props.siteName
+  })
+
   const state = reactive({
     isOpenHeader: true,
   })
 
-  defineEmits(['draft', 'preview', 'publish'])
+  defineEmits(['back', 'draft', 'preview', 'publish'])
 
   const toggleOpenHeader = () => {
     state.isOpenHeader = !state.isOpenHeader
-  }
-
-  const backToPage = () => {
-    navigateTo({ path: '/halaman/semua' })
   }
 </script>
