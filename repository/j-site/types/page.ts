@@ -6,6 +6,6 @@ export interface IPageData {
 
 export interface IPageResponse {
   data?: IPageData
-  status?: number
-  message?: string
+  status?: object
+  error?: object
 }

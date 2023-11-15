@@ -1,23 +1,22 @@
 <template>
-  <BaseModal :open="open">
+  <BaseModal :open="props.open">
     <div class="h-full w-full px-2 pb-4">
-      <h1
-        class="mb-6 font-roboto text-[21px] font-medium leading-[34px] text-green-700"
-      >
-        {{ title }}
-      </h1>
-      <p class="text-center text-sm leading-6 text-blue-gray-800">
-        {{ message }}
-      </p>
+      <ModalTitle class="flex justify-between"> {{ props.title }}</ModalTitle>
+
+      <ModalBody class="text-center">
+        <p class="text-center text-sm leading-6 text-blue-gray-800">
+          {{ props.message }}
+        </p>
+      </ModalBody>
     </div>
-    <template #footer>
-      <progress max="100" :value="value" />
-    </template>
+    <ModalFooter class="py-4" position="center">
+      <progress max="100" :value="props.value" />
+    </ModalFooter>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
-  defineProps({
+  const props = defineProps({
     open: {
       type: Boolean,
       required: true,

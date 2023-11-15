@@ -80,12 +80,16 @@
     <ModalFooter v-else position="right">
       <BaseButton variant="secondary" @click="onCancel"> Batalkan </BaseButton>
       <BaseButton
+        v-if="state.modal.status === MODAL_STATE.STATUS_DRAFT"
         variant="primary"
-        @click="
-          state.modal.status === MODAL_STATE.STATUS_DRAFT
-            ? actionDraftPage()
-            : actionPublishPage()
-        "
+        @click="actionDraftPage()"
+      >
+        Iya, saya yakin
+      </BaseButton>
+      <BaseButton
+        v-if="state.modal.status === MODAL_STATE.STATUS_PUBLISH"
+        variant="primary"
+        @click="actionPublishPage()"
       >
         Iya, saya yakin
       </BaseButton>
@@ -94,16 +98,18 @@
 
   <!-- Action Progress -->
   <ProgressModal
-    v-if="state.modal.status === MODAL_STATE.LOADING"
     :open="state.modal.status === MODAL_STATE.LOADING"
     :value="state.loading.progressValue"
     :title="state.loading.title"
     :message="state.loading.message"
   />
 
-  <!-- Success Modal -->
+  <!-- Error / Success Modal -->
   <BaseModal
-    :open="state.modal.status === MODAL_STATE.SUCCESS"
+    :open="
+      state.modal.status === MODAL_STATE.SUCCESS ||
+      state.modal.status === MODAL_STATE.ERROR
+    "
     max-width="max-w-[533px]"
     @close="onCancel"
   >
@@ -114,8 +120,15 @@
       <div class="flex items-center justify-center gap-2">
         <div class="flex h-full w-[18px] items-center justify-center">
           <NuxtIcon
+            v-if="state.modal.status === MODAL_STATE.SUCCESS"
             name="common/check-circle"
             class="text-base text-green-700"
+            aria-hidden="true"
+          />
+          <NuxtIcon
+            v-else
+            name="common/warning-triangle"
+            class="text-base text-red-600"
             aria-hidden="true"
           />
         </div>
@@ -127,7 +140,7 @@
       </div>
     </ModalBody>
     <ModalFooter position="center">
-      <BaseButton variant="primary" @click="onCancel">
+      <BaseButton variant="primary" @click="onSuccessStorePage">
         Saya Mengerti
       </BaseButton>
     </ModalFooter>
@@ -172,6 +185,7 @@
 
   onMounted(() => {
     getSiteDetail()
+    state.params.title = data.type
   })
 
   const getSiteDetail = async () => {
@@ -212,58 +226,74 @@
     state.modal.status = MODAL_STATE.NONE
   }
 
+  const onSuccessStorePage = async () => {
+    await navigateTo({ path: '/halaman/semua' })
+  }
+
   const actionDraftPage = async () => {
     state.params.status = MODAL_STATE.STATUS_DRAFT
-    try {
-      state.modal.status = MODAL_STATE.LOADING
-      const response = await $jSiteApi.page.storePage(
-        state.siteId,
-        JSON.parse(JSON.stringify(state.params)),
-        { server: false },
-      )
-      if (Number(response.status) === 200) {
-        state.loading.progressValue = 25
+    state.modal.status = MODAL_STATE.LOADING
+    state.loading.title = 'Menyimpan ke draft'
+    state.loading.message = 'Mohon tunggu, penyimpanan Halaman sedang diproses.'
+
+    const response = await $jSiteApi.page.storePage(
+      state.siteId,
+      JSON.parse(JSON.stringify(state.params)),
+      { server: false },
+    )
+
+    const { status, error } = response
+    if (status.value === 'success') {
+      state.loading.progressValue = 25
+      setTimeout(() => {
+        state.loading.progressValue = 100
         setTimeout(() => {
-          state.loading.progressValue = 75
-          setTimeout(() => {
-            state.modal.status = MODAL_STATE.SUCCESS
-            state.modal.title = 'Berhasil'
-            state.modal.message =
-              'Halaman yang Anda buat berhasil disimpan ke draft.'
-          }, 150)
-        }, 150)
-      }
-      await navigateTo({ path: '/halaman/semua' })
-    } catch (error) {
-      // TODO: error handling
-      console.error(error)
+          state.modal.status = MODAL_STATE.SUCCESS
+          state.modal.title = 'Berhasil!'
+          state.modal.message =
+            'Halaman yang Anda buat berhasil disimpan ke draft.'
+        }, 250)
+      }, 250)
+    } else {
+      const { data } = JSON.parse(JSON.stringify(error.value))
+      state.modal.status = MODAL_STATE.ERROR
+      state.modal.title = 'Gagal!'
+      state.modal.message =
+        data?.error || 'Halaman yang Anda buat gagal disimpan ke draft.'
     }
   }
 
   const actionPublishPage = async () => {
     state.params.status = MODAL_STATE.STATUS_PUBLISH
-    try {
-      state.modal.status = MODAL_STATE.LOADING
-      const response = await $jSiteApi.page.storePage(
-        state.siteId,
-        JSON.parse(JSON.stringify(state.params)),
-        { server: false },
-      )
-      if (Number(response.status) === 200) {
-        state.loading.progressValue = 25
+    state.modal.status = MODAL_STATE.LOADING
+    state.loading.title = 'Menerbitkan Halaman'
+    state.loading.message = 'Mohon tunggu, penerbitan Halaman sedang diproses.'
+
+    const response = await $jSiteApi.page.storePage(
+      state.siteId,
+      JSON.parse(JSON.stringify(state.params)),
+      { server: false },
+    )
+
+    const { status, error } = response
+    if (status.value === 'success') {
+      state.loading.progressValue = 25
+      setTimeout(() => {
+        state.loading.progressValue = 100
         setTimeout(() => {
-          state.loading.progressValue = 75
-          setTimeout(() => {
-            state.modal.status = MODAL_STATE.SUCCESS
-            state.modal.title = 'Berhasil'
-            state.modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
-          }, 150)
-        }, 150)
-      }
-      await navigateTo({ path: '/halaman/semua' })
-    } catch (error) {
-      // TODO: error handling
-      console.error(error)
+          state.modal.status = MODAL_STATE.SUCCESS
+          state.modal.title = 'Berhasil!'
+          state.modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
+        }, 250)
+      }, 250)
+    } else {
+      const { data } = JSON.parse(JSON.stringify(error.value))
+      state.modal.status = MODAL_STATE.ERROR
+      state.modal.title = 'Gagal!'
+      state.modal.message =
+        data?.error ||
+        data?.errors ||
+        'Halaman yang Anda buat gagal diterbitkan.'
     }
   }
 
