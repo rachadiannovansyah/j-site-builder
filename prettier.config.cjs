@@ -1,5 +1,5 @@
 module.exports = {
-  tailwindConfig: './tailwind.config.js',
+  tailwindConfig: './tailwind.config.ts',
   plugins: ['prettier-plugin-tailwindcss'],
   semi: false,
   tabWidth: 2,
