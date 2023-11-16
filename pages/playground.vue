@@ -119,6 +119,40 @@
         </template>
       </BaseSelect>
     </div>
+
+    <h1>Textarea</h1>
+    <div class="mb-8 w-full flex flex-col gap-4">
+      <BaseTextarea
+        v-model="inputTextarea"
+        helper="Teks Helper"
+        label="Label input"
+        placeholder="Teks Placeholder"
+        :max-length="100"
+      />
+      <BaseTextarea
+        v-model="inputTextarea"
+        helper="Teks Helper"
+        label="Label input"
+        placeholder="Teks Placeholder"
+        :max-length="100"
+      />
+      <BaseTextarea
+        v-model="inputTextarea"
+        disabled
+        :errors="['Wajib diisi!']"
+        helper="Teks Helper"
+        label="Label input"
+        placeholder="Teks Placeholder"
+        :max-length="100"
+      />
+      <BaseTextarea
+        v-model="inputTextarea"
+        helper="Teks Helper"
+        label="Label input"
+        placeholder="Teks Placeholder"
+        :max-length="100"
+      />
+    </div>
   </main>
 </template>
 
@@ -129,6 +163,7 @@
 
   const search = ref('')
   const input = ref('')
+  const inputTextarea = ref('')
   
   const names = ['Wade Cooper', 'Arlene Mccoy', 'Devon Webb', 'Tom Cook', 'Tanya Fox', 'Hellen Schmidt', 'Caroline Schultz', 'Mason Heaney', 'Claudie Smitham', 'Emil Schaefer']
   const selected = ref('')
