@@ -80,6 +80,45 @@
       <br />
       <p>{{ JSON.stringify(pagination) }}</p>
     </div>
+
+    <h1>Select</h1>
+    <div class="mb-8 w-full flex flex-col gap-4">
+      <BaseSelect
+        v-model="selected"
+        label="Select Item"
+        helper="Pilih satu"
+        placeholder="Item yang tersedia"
+        :options="names" 
+      />
+      <BaseSelect
+        v-model="selected"
+        label="Select Item"
+        helper="Pilih satu"
+        placeholder="Item yang tersedia"
+        :errors="['Wajib diisi!']"
+        :options="names" 
+      />
+      <BaseSelect
+        v-model="selected"
+        label="Select Item"
+        helper="Pilih satu"
+        placeholder="Item yang tersedia"
+        :options="names"
+        disabled
+      />
+      <BaseSelect
+        v-model="selected"
+        label="Select Item dengan search item"
+        helper="Pilih satu"
+        placeholder="Item yang tersedia"
+        :options="names"
+        searchable
+      > 
+        <template #option-empty="{ query }">
+         "{{ query }}" tidak ditemukan
+        </template>
+      </BaseSelect>
+    </div>
   </main>
 </template>
 
@@ -90,6 +129,9 @@
 
   const search = ref('')
   const input = ref('')
+  
+  const names = ['Wade Cooper', 'Arlene Mccoy', 'Devon Webb', 'Tom Cook', 'Tanya Fox', 'Hellen Schmidt', 'Caroline Schultz', 'Mason Heaney', 'Claudie Smitham', 'Emil Schaefer']
+  const selected = ref('')
 
   const columns = [
     {
