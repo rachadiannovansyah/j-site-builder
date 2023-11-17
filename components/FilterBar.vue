@@ -6,7 +6,7 @@
       aria-hidden="true"
     />
     <p class="font-lato text-sm text-blue-gray-800">Filter :</p>
-    <Button
+    <button
       class="rounded-full bg-gray-300 px-4 py-[10px] font-lato text-sm text-gray-600"
       disabled
     >
@@ -18,8 +18,6 @@
           aria-hidden="true"
         />
       </div>
-    </Button>
+    </button>
   </section>
 </template>
-
-<script></script>
