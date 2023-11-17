@@ -1,6 +1,11 @@
 <template>
   <TransitionRoot appear :show="props.open" as="template">
-    <Dialog as="div" class="relative z-10" @close="$emit('close')">
+    <Dialog
+      as="div"
+      class="relative z-10"
+      :unmount="true"
+      @close="$emit('close')"
+    >
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"

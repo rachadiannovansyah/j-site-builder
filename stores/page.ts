@@ -1,18 +1,17 @@
-import { IPageStructure } from '~/types/stores/page'
-
 export const usePageStore = defineStore('page', {
   state: () => ({
-    page: null as null | IPageStructure,
+    builderConfig: {
+      type: '',
+      templateId: '',
+    },
   }),
-  getters: {
-    selectedPage(state) {
-      return state.page
-    },
-  },
+  getters: {},
   actions: {
-    setPage(page: IPageStructure) {
-      this.page = page
+    setPageType(value: string) {
+      this.builderConfig.type = value
+    },
+    setPageTemplate(value: string) {
+      this.builderConfig.templateId = value
     },
   },
-  persist: true,
 })
