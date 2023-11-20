@@ -1,7 +1,7 @@
 <template>
   <header
     :class="{
-      'relative flex h-16 w-full items-center justify-between bg-white px-6 shadow transition-all duration-150 ease-in-out': true,
+      'sticky top-0 z-50 flex h-16 w-full items-center justify-between bg-white px-6 shadow transition-all duration-150 ease-in-out': true,
       '!w-28 rounded-lg': !isOpen,
     }"
   >
@@ -40,7 +40,7 @@
         <span
           class="rounded-lg bg-[#F7F7F9] px-2 py-1.5 text-xs text-[#788896]"
         >
-          {{ props.siteName }}
+          {{ domain }}
         </span>
       </div>
       <div class="flex items-center justify-center gap-4">
@@ -89,15 +89,10 @@
 </template>
 
 <script setup lang="ts">
-  const props = defineProps({
-    loading: {
-      type: Boolean,
-      default: true,
-    },
-    siteName: {
-      type: String,
-      default: '',
-    },
+  const pageStore = usePageStore()
+
+  const domain = computed(() => {
+    return pageStore.builderConfig.domain
   })
 
   const isOpen = ref(true)
