@@ -119,7 +119,9 @@
     await navigateTo({
       path: '/halaman/buat',
       query: {
+        siteId: siteStore.siteId,
         templateId: pageStore.builderConfig.templateId,
+        title: pageStore.builderConfig.type,
       },
     })
   }
