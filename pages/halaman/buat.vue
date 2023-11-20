@@ -1,21 +1,14 @@
 <template>
-  <div class="flex h-screen w-full flex-col overflow-hidden bg-[#F3F4F8]">
-    <PageHeaderCreate
-      :site-name="state.domain"
-      @back="backToPage"
-      @draft="toggleDraftModal"
-      @publish="togglePublishModal"
-    />
-    <div
-      class="mb-4 flex h-full w-full justify-between gap-4 overflow-y-auto px-1 py-4"
-    >
-      <PageContentCreate :data="data.sections" />
-      <PageAsideCreate :title="data.type" @update="onUpdateTitle($event)" />
+  <div class="h-full w-full bg-[#F3F4F8] pb-24">
+    <PageBuilderHeader />
+    <div class="flex h-full w-full justify-between gap-4 px-1 py-4">
+      <PageBuilderContent />
+      <PageBuilderAside />
     </div>
   </div>
 
   <!-- Confirmation Modal -->
-  <BaseModal
+  <!-- <BaseModal
     :open="
       state.modal.status === MODAL_STATE.STATUS_DRAFT ||
       state.modal.status === MODAL_STATE.STATUS_PUBLISH ||
@@ -94,18 +87,18 @@
         Iya, saya yakin
       </BaseButton>
     </ModalFooter>
-  </BaseModal>
+  </BaseModal> -->
 
   <!-- Action Progress -->
-  <ProgressModal
+  <!-- <ProgressModal
     :open="state.modal.status === MODAL_STATE.LOADING"
     :value="state.loading.progressValue"
     :title="state.loading.title"
     :message="state.loading.message"
-  />
+  /> -->
 
   <!-- Error / Success Modal -->
-  <BaseModal
+  <!-- <BaseModal
     :open="
       state.modal.status === MODAL_STATE.SUCCESS ||
       state.modal.status === MODAL_STATE.ERROR
@@ -144,160 +137,169 @@
         Saya Mengerti
       </BaseButton>
     </ModalFooter>
-  </BaseModal>
+  </BaseModal> -->
 </template>
 
 <script setup lang="ts">
-  import { MODAL_STATE } from '~/common/constant/modal'
+  // import { MODAL_STATE } from '~/common/constant/modal'
 
   definePageMeta({
-    layout: 'public',
+    layout: 'full-bleed',
   })
 
-  const state = reactive({
-    siteId: '',
-    params: {
-      title: '',
-      status: '',
-      sections: [],
-    },
-    domain: '',
-    modal: {
-      status: '',
-      icon: '',
-      title: '',
-      message: '',
-    },
-    loading: {
-      progressValue: 0,
-      title: '',
-      message: '',
-    },
-  })
+  // const state = reactive({
+  //   siteId: '',
+  //   params: {
+  //     title: '',
+  //     status: '',
+  //     sections: [],
+  //   },
+  //   domain: '',
+  //   modal: {
+  //     status: '',
+  //     icon: '',
+  //     title: '',
+  //     message: '',
+  //   },
+  //   loading: {
+  //     progressValue: 0,
+  //     title: '',
+  //     message: '',
+  //   },
+  // })
 
   const { $jSiteApi } = useNuxtApp()
+  const route = useRoute()
   const siteStore = useSiteStore()
-  state.siteId = siteStore.siteId || ''
-
   const pageStore = usePageStore()
-  const data = JSON.parse(JSON.stringify(pageStore.page))
-  state.params.sections = data.sections
 
-  onMounted(() => {
-    getSiteDetail()
-    state.params.title = data.type
-  })
+  pageStore.setPageTitle(route.query.title?.toString() ?? '')
+  pageStore.setPageTemplate(route.query.templateId?.toString() ?? '')
 
-  const getSiteDetail = async () => {
-    try {
-      const { data } = await $jSiteApi.settings.getSettingsById(
-        state.siteId,
-        undefined, // no query params for this request
-        { server: false },
-      )
-      const { data: siteData } = JSON.parse(JSON.stringify(data.value))
-      state.domain = siteData.domain
-    } catch (error) {}
-  }
-
-  const backToPage = () => {
-    state.modal.status = MODAL_STATE.CANCEL_CONFIRMATION
-    state.modal.icon = 'common/warning-triangle'
-    state.modal.title = 'Keluar Halaman Builder'
-    state.modal.message =
-      'Apakah anda yakin untuk kembali ke menu halaman? Jika anda kembali ke menu halaman tanpa menyimpan, maka pengaturan anda lakukan sebelumnya dapat hilang atau dihapus.'
-  }
-
-  const toggleDraftModal = () => {
-    state.modal.status = MODAL_STATE.STATUS_DRAFT
-    state.modal.icon = 'navigation/posting-menu-icon'
-    state.modal.title = 'Simpan ke draft'
-    state.modal.message = 'Apakah anda yakin ingin Menyimpan ke Draft ?'
-  }
-
-  const togglePublishModal = () => {
-    state.modal.status = MODAL_STATE.STATUS_PUBLISH
-    state.modal.icon = 'common/plane'
-    state.modal.title = 'Terbitkan Halaman'
-    state.modal.message = 'Apakah anda yakin ingin Menerbitkan Halaman ?'
-  }
-
-  const onCancel = () => {
-    state.modal.status = MODAL_STATE.NONE
-  }
-
-  const onSuccessStorePage = async () => {
-    await navigateTo({ path: '/halaman/semua' })
-  }
-
-  const actionDraftPage = async () => {
-    state.params.status = MODAL_STATE.STATUS_DRAFT
-    state.modal.status = MODAL_STATE.LOADING
-    state.loading.title = 'Menyimpan ke draft'
-    state.loading.message = 'Mohon tunggu, penyimpanan Halaman sedang diproses.'
-
-    const response = await $jSiteApi.page.storePage(
-      state.siteId,
-      JSON.parse(JSON.stringify(state.params)),
+  const { data: settingData, error: fetchSettingError } =
+    await $jSiteApi.settings.getSettingsById(
+      siteStore?.siteId ?? '',
+      undefined, // no query params for this request
       { server: false },
     )
 
-    const { status, error } = response
-    if (status.value === 'success') {
-      state.loading.progressValue = 25
-      setTimeout(() => {
-        state.loading.progressValue = 100
-        setTimeout(() => {
-          state.modal.status = MODAL_STATE.SUCCESS
-          state.modal.title = 'Berhasil!'
-          state.modal.message =
-            'Halaman yang Anda buat berhasil disimpan ke draft.'
-        }, 250)
-      }, 250)
-    } else {
-      const { data } = JSON.parse(JSON.stringify(error.value))
-      state.modal.status = MODAL_STATE.ERROR
-      state.modal.title = 'Gagal!'
-      state.modal.message =
-        data?.error || 'Halaman yang Anda buat gagal disimpan ke draft.'
-    }
+  if (fetchSettingError.value) {
+    console.error(toRaw(fetchSettingError.value))
+  } else {
+    pageStore.setPageDomain(toRaw(settingData.value?.data?.domain || ''))
   }
 
-  const actionPublishPage = async () => {
-    state.params.status = MODAL_STATE.STATUS_PUBLISH
-    state.modal.status = MODAL_STATE.LOADING
-    state.loading.title = 'Menerbitkan Halaman'
-    state.loading.message = 'Mohon tunggu, penerbitan Halaman sedang diproses.'
-
-    const response = await $jSiteApi.page.storePage(
-      state.siteId,
-      JSON.parse(JSON.stringify(state.params)),
-      { server: false },
+  const { data: templateData, error: fetchTemplateError } =
+    await $jSiteApi.templates.getTemplateById(
+      pageStore.builderConfig?.templateId ?? '',
+      undefined, // no query params for this request
+      {
+        server: false,
+      },
     )
 
-    const { status, error } = response
-    if (status.value === 'success') {
-      state.loading.progressValue = 25
-      setTimeout(() => {
-        state.loading.progressValue = 100
-        setTimeout(() => {
-          state.modal.status = MODAL_STATE.SUCCESS
-          state.modal.title = 'Berhasil!'
-          state.modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
-        }, 250)
-      }, 250)
-    } else {
-      const { data } = JSON.parse(JSON.stringify(error.value))
-      state.modal.status = MODAL_STATE.ERROR
-      state.modal.title = 'Gagal!'
-      state.modal.message =
-        data?.error ||
-        data?.errors ||
-        'Halaman yang Anda buat gagal diterbitkan.'
-    }
+  if (fetchTemplateError.value) {
+    console.error(toRaw(fetchTemplateError.value))
+  } else {
+    pageStore.setBuilderSections(
+      toRaw(templateData.value?.data?.sections || []),
+    )
   }
 
-  const onUpdateTitle = (value: string) => {
-    state.params.title = value
-  }
+  // const backToPage = () => {
+  //   state.modal.status = MODAL_STATE.CANCEL_CONFIRMATION
+  //   state.modal.icon = 'common/warning-triangle'
+  //   state.modal.title = 'Keluar Halaman Builder'
+  //   state.modal.message =
+  //     'Apakah anda yakin untuk kembali ke menu halaman? Jika anda kembali ke menu halaman tanpa menyimpan, maka pengaturan anda lakukan sebelumnya dapat hilang atau dihapus.'
+  // }
+
+  // const toggleDraftModal = () => {
+  //   state.modal.status = MODAL_STATE.STATUS_DRAFT
+  //   state.modal.icon = 'navigation/posting-menu-icon'
+  //   state.modal.title = 'Simpan ke draft'
+  //   state.modal.message = 'Apakah anda yakin ingin Menyimpan ke Draft ?'
+  // }
+
+  // const togglePublishModal = () => {
+  //   state.modal.status = MODAL_STATE.STATUS_PUBLISH
+  //   state.modal.icon = 'common/plane'
+  //   state.modal.title = 'Terbitkan Halaman'
+  //   state.modal.message = 'Apakah anda yakin ingin Menerbitkan Halaman ?'
+  // }
+
+  // const onCancel = () => {
+  //   state.modal.status = MODAL_STATE.NONE
+  // }
+
+  // const onSuccessStorePage = async () => {
+  //   await navigateTo({ path: '/halaman/semua' })
+  // }
+
+  // const actionDraftPage = async () => {
+  //   state.params.status = MODAL_STATE.STATUS_DRAFT
+  //   state.modal.status = MODAL_STATE.LOADING
+  //   state.loading.title = 'Menyimpan ke draft'
+  //   state.loading.message = 'Mohon tunggu, penyimpanan Halaman sedang diproses.'
+
+  //   const response = await $jSiteApi.page.storePage(
+  //     state.siteId,
+  //     JSON.parse(JSON.stringify(state.params)),
+  //     { server: false },
+  //   )
+
+  //   const { status, error } = response
+  //   if (status.value === 'success') {
+  //     state.loading.progressValue = 25
+  //     setTimeout(() => {
+  //       state.loading.progressValue = 100
+  //       setTimeout(() => {
+  //         state.modal.status = MODAL_STATE.SUCCESS
+  //         state.modal.title = 'Berhasil!'
+  //         state.modal.message =
+  //           'Halaman yang Anda buat berhasil disimpan ke draft.'
+  //       }, 250)
+  //     }, 250)
+  //   } else {
+  //     const { data } = JSON.parse(JSON.stringify(error.value))
+  //     state.modal.status = MODAL_STATE.ERROR
+  //     state.modal.title = 'Gagal!'
+  //     state.modal.message =
+  //       data?.error || 'Halaman yang Anda buat gagal disimpan ke draft.'
+  //   }
+  // }
+
+  // const actionPublishPage = async () => {
+  //   state.params.status = MODAL_STATE.STATUS_PUBLISH
+  //   state.modal.status = MODAL_STATE.LOADING
+  //   state.loading.title = 'Menerbitkan Halaman'
+  //   state.loading.message = 'Mohon tunggu, penerbitan Halaman sedang diproses.'
+
+  //   const response = await $jSiteApi.page.storePage(
+  //     state.siteId,
+  //     JSON.parse(JSON.stringify(state.params)),
+  //     { server: false },
+  //   )
+
+  //   const { status, error } = response
+  //   if (status.value === 'success') {
+  //     state.loading.progressValue = 25
+  //     setTimeout(() => {
+  //       state.loading.progressValue = 100
+  //       setTimeout(() => {
+  //         state.modal.status = MODAL_STATE.SUCCESS
+  //         state.modal.title = 'Berhasil!'
+  //         state.modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
+  //       }, 250)
+  //     }, 250)
+  //   } else {
+  //     const { data } = JSON.parse(JSON.stringify(error.value))
+  //     state.modal.status = MODAL_STATE.ERROR
+  //     state.modal.title = 'Gagal!'
+  //     state.modal.message =
+  //       data?.error ||
+  //       data?.errors ||
+  //       'Halaman yang Anda buat gagal diterbitkan.'
+  //   }
+  // }
 </script>
