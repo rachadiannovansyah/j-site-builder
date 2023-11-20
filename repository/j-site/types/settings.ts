@@ -29,3 +29,7 @@ export interface ISettingsResponse {
   data: ISiteSetting[]
   meta?: IMetaData
 }
+
+export interface ISettingResponse {
+  data: ISiteSetting
+}
