@@ -11,3 +11,9 @@
 <script setup lang="ts">
   const loadingStore = useLoadingStore()
 </script>
+
+<style>
+  .nuxt-icon svg {
+    @apply mb-0;
+  }
+</style>

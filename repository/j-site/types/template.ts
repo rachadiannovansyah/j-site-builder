@@ -25,7 +25,11 @@ export interface ITemplateData {
   updated_at: string
 }
 
-export type ITemplateResponse = {
+export type ITemplatesResponse = {
   data: ITemplateData[]
   meta: IMetaData
+}
+
+export type ITemplateResponse = {
+  data: ITemplateData
 }
