@@ -37,32 +37,27 @@
     <div v-show="isOpen" class="flex w-full flex-col gap-[14px]">
       <div class="flex w-full flex-col gap-1">
         <BaseInput
-          :model-value="props.title"
+          :model-value="title"
           label="Judul Page"
-          @update:model-value="$emit('update', $event)"
+          @update:model-value="pageStore.setPageTitle($event)"
         />
       </div>
       <div class="flex w-full flex-col gap-1">
-        <BaseInput
-          :model-value="props.lastUpdate"
-          label="Update Terakhir"
-          disabled
-        />
+        <BaseInput :model-value="lastUpdate" label="Update Terakhir" disabled />
       </div>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-  const props = defineProps({
-    title: {
-      type: String,
-      default: '',
-    },
-    lastUpdate: {
-      type: String,
-      default: '',
-    },
+  const pageStore = usePageStore()
+
+  const title = computed(() => {
+    return pageStore.builderConfig.title?.toString()
+  })
+
+  const lastUpdate = computed(() => {
+    return pageStore.builderConfig.lastUpdate?.toString()
   })
 
   const isOpen = ref(true)
@@ -70,6 +65,4 @@
   const toggleOpenSide = () => {
     isOpen.value = !isOpen.value
   }
-
-  defineEmits(['update'])
 </script>
