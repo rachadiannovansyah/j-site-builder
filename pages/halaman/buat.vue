@@ -1,8 +1,8 @@
 <template>
   <div class="h-full w-full bg-[#F3F4F8] pb-24">
-    <PageBuilderHeader :loading="fetchSettingStatus === 'pending'" />
+    <PageBuilderHeader :loading="fetchSettingLoading" />
     <div class="flex h-full w-full justify-between gap-4 px-1 py-4">
-      <PageBuilderContent :loading="fetchTemplateStatus === 'pending'" />
+      <PageBuilderContent :loading="fetchTemplateLoading" />
       <PageBuilderAside />
     </div>
   </div>
@@ -176,7 +176,7 @@
   pageStore.setPageTitle(route.query.title?.toString() ?? '')
   pageStore.setPageTemplate(route.query.templateId?.toString() ?? '')
 
-  const { data: setting, status: fetchSettingStatus } =
+  const { data: setting, pending: fetchSettingLoading } =
     await $jSiteApi.settings.getSettingsById(
       siteStore?.siteId ?? '',
       undefined, // no query params for this request
@@ -187,7 +187,7 @@
     pageStore.setPageDomain(toRaw(setting.value?.data?.domain || ''))
   })
 
-  const { data: template, status: fetchTemplateStatus } =
+  const { data: template, pending: fetchTemplateLoading } =
     await $jSiteApi.templates.getTemplateById(
       pageStore.builderConfig?.templateId ?? '',
       undefined, // no query params for this request
