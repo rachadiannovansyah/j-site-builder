@@ -4,7 +4,7 @@
     <template v-if="props.loading">
       <div class="flex flex-col gap-y-[27px]">
         <section
-          v-for="index in 8"
+          v-for="index in 7"
           :key="`builder-skeleton-${index}`"
           class="h-[406px] w-full animate-pulse rounded-lg bg-gray-200"
         />
