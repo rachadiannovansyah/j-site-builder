@@ -37,7 +37,13 @@
           class="fill-green-500 text-base text-green-500"
           aria-hidden="true"
         />
+        <!-- Loading Skeleton -->
         <span
+          v-if="props.loading"
+          class="h-[26px] w-[150px] animate-pulse rounded-lg bg-gray-200"
+        />
+        <span
+          v-else
           class="rounded-lg bg-[#F7F7F9] px-2 py-1.5 text-xs text-[#788896]"
         >
           {{ domain }}
@@ -89,6 +95,13 @@
 </template>
 
 <script setup lang="ts">
+  const props = defineProps({
+    loading: {
+      type: Boolean,
+      default: true,
+    },
+  })
+
   const pageStore = usePageStore()
 
   const domain = computed(() => {

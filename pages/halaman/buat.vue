@@ -1,8 +1,8 @@
 <template>
   <div class="h-full w-full bg-[#F3F4F8] pb-24">
-    <PageBuilderHeader />
+    <PageBuilderHeader :loading="fetchSettingLoading" />
     <div class="flex h-full w-full justify-between gap-4 px-1 py-4">
-      <PageBuilderContent />
+      <PageBuilderContent :loading="fetchTemplateLoading" />
       <PageBuilderAside />
     </div>
   </div>
@@ -176,35 +176,27 @@
   pageStore.setPageTitle(route.query.title?.toString() ?? '')
   pageStore.setPageTemplate(route.query.templateId?.toString() ?? '')
 
-  const { data: settingData, error: fetchSettingError } =
+  const { data: setting, pending: fetchSettingLoading } =
     await $jSiteApi.settings.getSettingsById(
       siteStore?.siteId ?? '',
       undefined, // no query params for this request
-      { server: false },
+      { server: false, lazy: true },
     )
 
-  if (fetchSettingError.value) {
-    console.error(toRaw(fetchSettingError.value))
-  } else {
-    pageStore.setPageDomain(toRaw(settingData.value?.data?.domain || ''))
-  }
+  watch(setting, () => {
+    pageStore.setPageDomain(toRaw(setting.value?.data?.domain || ''))
+  })
 
-  const { data: templateData, error: fetchTemplateError } =
+  const { data: template, pending: fetchTemplateLoading } =
     await $jSiteApi.templates.getTemplateById(
       pageStore.builderConfig?.templateId ?? '',
       undefined, // no query params for this request
-      {
-        server: false,
-      },
+      { server: false, lazy: true },
     )
 
-  if (fetchTemplateError.value) {
-    console.error(toRaw(fetchTemplateError.value))
-  } else {
-    pageStore.setBuilderSections(
-      toRaw(templateData.value?.data?.sections || []),
-    )
-  }
+  watch(template, () => {
+    pageStore.setBuilderSections(toRaw(template.value?.data?.sections || []))
+  })
 
   // const backToPage = () => {
   //   state.modal.status = MODAL_STATE.CANCEL_CONFIRMATION
