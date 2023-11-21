@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ui: {
     global: true,
+    safelistColors: ['blue', 'gray', 'red'],
   },
   colorMode: {
     preference: 'light',
@@ -24,6 +25,7 @@ export default defineNuxtConfig({
         },
       },
     ],
+    '@nuxt/image',
   ],
   runtimeConfig: {
     // Public keys that are exposed to the client
