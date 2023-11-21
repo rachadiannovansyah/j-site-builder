@@ -3,7 +3,7 @@
     <!-- @todo: add widget selection menu and grid selector for specific widget -->
     <UPopover class="mb-3">
       <UButton color="white" trailing-icon="i-heroicons-chevron-down-20-solid">
-        {{ props.widget }}
+        {{ props.widgetName }}
       </UButton>
       <template #panel>
         <div class="p-4">
@@ -34,6 +34,10 @@
 <script setup lang="ts">
   const props = defineProps({
     widget: {
+      type: String,
+      default: '',
+    },
+    widgetName: {
       type: String,
       default: '',
     },
