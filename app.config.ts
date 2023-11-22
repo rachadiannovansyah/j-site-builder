@@ -26,21 +26,21 @@ export default defineAppConfig({
         size: 'md',
         color: 'white',
       },
-      base: 'disabled:opacity-100',
+      base: 'disabled:opacity-100 font-lato',
       rounded: 'rounded-lg',
-      placeholder: 'placeholder-gray-500',
+      placeholder: 'placeholder-gray-600',
       padding: {
         md: 'px-2 py-2.5',
       },
       color: {
         white: {
           outline:
-            'shadow-none text-gray-800 ring-gray-300 focus:ring-primary-500 disabled:bg-gray-50',
+            'shadow-none bg-[#FDFDFD] text-gray-800 ring-gray-400 focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400',
         },
       },
       variant: {
         outline:
-          'shadow-none text-gray-800 ring-{color}-500 focus:ring-{color}-500 disabled:bg-gray-50',
+          'shadow-none text-gray-800 ring-{color}-500 focus:ring-{color}-500 disabled:bg-gray-100',
       },
     },
     table: {
