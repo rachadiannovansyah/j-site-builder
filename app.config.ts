@@ -43,6 +43,16 @@ export default defineAppConfig({
           'shadow-none text-gray-800 ring-{color}-500 focus:ring-{color}-500 disabled:bg-gray-100',
       },
     },
+    formGroup: {
+      label: {
+        base: 'block font-medium font-lato text-[0.9375rem] leading-6 text-gray-800',
+      },
+      description: 'text-gray-700 font-lato text-[0.8125rem] leading-6',
+      error: 'mt-1 font-lato text-red-700 text-[0.8125rem] leading-6',
+      default: {
+        size: 'md',
+      },
+    },
     table: {
       wrapper: 'border border-gray-300 rounded-lg',
       divide: 'divide-y divide-gray-300',
