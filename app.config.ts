@@ -20,5 +20,15 @@ export default defineAppConfig({
         leaveTo: 'sm:translate-y-20 sm:scale-100',
       },
     },
+    alert: {
+      default: {
+        color: 'blue',
+        variant: 'subtle',
+        icon: 'i-heroicons-information-circle-20-solid',
+      },
+      variant: {
+        subtle: 'bg-{color}-50 text-{color}-800 ring-{color}-800',
+      },
+    },
   },
 })

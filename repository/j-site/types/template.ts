@@ -9,6 +9,7 @@ export interface IMetaData {
 export interface ITemplateWidget {
   grid_span: number
   name: string
+  widget?: string
 }
 export interface ITemplateSection {
   grid_column: number
