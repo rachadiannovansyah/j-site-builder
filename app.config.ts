@@ -43,6 +43,24 @@ export default defineAppConfig({
           'shadow-none text-gray-800 ring-{color}-500 focus:ring-{color}-500 disabled:bg-gray-100',
       },
     },
+    textarea: {
+      default: {
+        size: 'md',
+        color: 'white',
+      },
+      base: 'disabled:opacity-100 font-lato',
+      rounded: 'rounded-lg',
+      placeholder: 'placeholder-gray-600',
+      padding: {
+        md: 'px-2 py-2.5',
+      },
+      color: {
+        white: {
+          outline:
+            'shadow-none bg-[#FDFDFD] text-gray-800 ring-gray-400 focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400',
+        },
+      },
+    },
     formGroup: {
       label: {
         base: 'block font-medium font-lato text-[0.9375rem] leading-6 text-gray-800',
