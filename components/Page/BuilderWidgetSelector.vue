@@ -53,6 +53,7 @@
 
   // Widget Dynamic import
   const WidgetSlideshow = resolveComponent('WidgetSlideshow')
+  const WidgetGallery = resolveComponent('WidgetGallery')
   const WidgetShowcase = resolveComponent('WidgetShowcase')
   // add another widget here...
 
@@ -68,6 +69,8 @@
         return WidgetSlideshow
       case 'Showcase':
         return WidgetShowcase
+      case 'Gallery':
+        return WidgetGallery
       // add another case here
       default:
         break
