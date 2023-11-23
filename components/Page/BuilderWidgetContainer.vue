@@ -51,7 +51,8 @@
         }"
       >
         <PageBuilderWidgetSelector
-          :widget="widget.name"
+          :widget="widget.widget"
+          :widget-name="widget.name"
           :widget-index="index"
           :section-index="props.sectionIndex"
         />
