@@ -1,66 +1,52 @@
 <template>
-  <TransitionRoot appear :show="props.open" as="template">
-    <Dialog
-      as="div"
-      class="relative z-10"
-      :unmount="true"
-      @close="$emit('close')"
-    >
-      <TransitionChild
-        as="template"
-        enter="duration-300 ease-out"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
-        leave="duration-200 ease-in"
-        leave-from="opacity-100"
-        leave-to="opacity-0"
-      >
-        <div class="fixed inset-0 bg-black bg-opacity-25" />
-      </TransitionChild>
-
-      <div class="fixed inset-0 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4">
-          <TransitionChild
-            as="template"
-            enter="duration-300 ease-out"
-            enter-from="opacity-0 translate-y-20"
-            enter-to="opacity-100 translate-y-0"
-            leave="duration-200 ease-in"
-            leave-from="opacity-100 translate-y-0"
-            leave-to="opacity-0 translate-y-20"
-          >
-            <DialogPanel
-              :class="`translate-y relative grid max-h-[90vh] w-full ${maxWidth} transform grid-cols-1 overflow-auto rounded-xl bg-white transition-all`"
+  <UModal
+    v-model="mOpen"
+    :ui="props.modalUi"
+    :prevent-close="props.preventClose"
+    :overlay="props.overlay"
+  >
+    <UCard :ui="props.cardUi">
+      <template #header>
+        <slot name="header">
+          <div class="flex items-center justify-between">
+            <h3
+              class="font-roboto text-xl font-medium leading-8 text-green-800"
             >
-              <button
-                v-if="props.withCloseButton"
-                class="absolute right-6 top-4 flex items-center justify-center overflow-hidden rounded-full transition-colors ease-in hover:bg-gray-100"
-                @click="$emit('close')"
-              >
-                <NuxtIcon
-                  name="common/close"
-                  class="text-4xl text-gray-800"
-                  aria-hidden="true"
-                />
-              </button>
-              <slot />
-            </DialogPanel>
-          </TransitionChild>
-        </div>
-      </div>
-    </Dialog>
-  </TransitionRoot>
+              {{ props.header }}
+            </h3>
+            <UButton
+              v-if="props.withCloseButton"
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="$emit('close')"
+            />
+          </div>
+        </slot>
+      </template>
+
+      <slot></slot>
+
+      <template #footer>
+        <section
+          :class="{
+            'flex items-center gap-x-4': true,
+            'justify-end': props.buttonPosition === 'right',
+            'justify-start': props.buttonPosition === 'left',
+            'justify-center': props.buttonPosition === 'center',
+            'justify-between': props.buttonPosition === 'between',
+          }"
+        >
+          <slot name="footer"></slot>
+        </section>
+      </template>
+    </UCard>
+  </UModal>
 </template>
 
 <script setup lang="ts">
-  import {
-    TransitionRoot,
-    TransitionChild,
-    Dialog,
-    DialogPanel,
-  } from '@headlessui/vue'
-
-  defineEmits(['close'])
+  type IPositionType = 'center' | 'left' | 'right' | 'between'
 
   const props = defineProps({
     open: {
@@ -71,9 +57,40 @@
       type: Boolean,
       default: false,
     },
-    maxWidth: {
+    preventClose: {
+      type: Boolean,
+      default: false,
+    },
+    overlay: {
+      type: Boolean,
+      default: true,
+    },
+    header: {
       type: String,
-      default: 'max-w-xl',
+      default: '',
+    },
+    modalUi: {
+      type: Object,
+      default: () => ({}),
+    },
+    cardUi: {
+      type: Object,
+      default: () => ({}),
+    },
+    buttonPosition: {
+      type: String as PropType<IPositionType>,
+      default: 'center',
     },
   })
+
+  const mOpen = computed({
+    get() {
+      return props.open
+    },
+    set() {
+      emit('close')
+    },
+  })
+
+  const emit = defineEmits(['close'])
 </script>

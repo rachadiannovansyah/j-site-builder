@@ -89,6 +89,18 @@ export default defineAppConfig({
         leaveTo: 'sm:translate-y-20 sm:scale-100',
       },
     },
+    card: {
+      body: {
+        padding: 'sm:py-4 sm:px-6',
+      },
+      header: {
+        padding: 'sm:py-2 sm:px-6',
+      },
+      footer: {
+        background: 'bg-gray-50',
+        padding: 'sm:py-4 sm:px-6',
+      },
+    },
     alert: {
       default: {
         color: 'blue',
