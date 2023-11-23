@@ -49,6 +49,7 @@
 
   // Widget Dynamic import
   const WidgetSlideshow = resolveComponent('WidgetSlideshow')
+  const WidgetShowcase = resolveComponent('WidgetShowcase')
   // add another widget here...
 
   const isConfigOpen = ref(false)
@@ -61,6 +62,8 @@
     switch (props.widget) {
       case 'Slideshow':
         return WidgetSlideshow
+      case 'Showcase':
+        return WidgetShowcase
       // add another case here
       default:
         break
