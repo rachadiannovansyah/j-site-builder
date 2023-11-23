@@ -26,7 +26,7 @@ export default defineAppConfig({
         size: 'md',
         color: 'white',
       },
-      base: 'disabled:opacity-100 font-lato',
+      base: 'disabled:opacity-100 disabled:placeholder-gray-300 font-lato',
       rounded: 'rounded-lg',
       placeholder: 'placeholder-gray-600',
       padding: {
@@ -48,7 +48,7 @@ export default defineAppConfig({
         size: 'md',
         color: 'white',
       },
-      base: 'disabled:opacity-100 font-lato',
+      base: 'disabled:opacity-100 disabled:placeholder-gray-300 font-lato',
       rounded: 'rounded-lg',
       placeholder: 'placeholder-gray-600',
       padding: {
