@@ -1,17 +1,11 @@
 <template>
-  <BaseModal :open="props.open">
-    <div class="h-full w-full px-2 pb-4">
-      <ModalTitle class="flex justify-between"> {{ props.title }}</ModalTitle>
-
-      <ModalBody class="text-center">
-        <p class="text-center text-sm leading-6 text-blue-gray-800">
-          {{ props.message }}
-        </p>
-      </ModalBody>
-    </div>
-    <ModalFooter class="py-4" position="center">
+  <BaseModal :open="props.open" :header="props.title" prevent-close>
+    <p class="text-center text-sm leading-6 text-blue-gray-800">
+      {{ props.message }}
+    </p>
+    <template #footer>
       <progress max="100" :value="props.value" />
-    </ModalFooter>
+    </template>
   </BaseModal>
 </template>
 
