@@ -9,7 +9,7 @@
     <UCard
       :ui="{
         body: {
-          padding: 'sm:px-10 sm:py-3',
+          padding: 'sm:px-8 sm:py-3',
         },
         header: {
           padding: 'sm:py-4 sm:px-6',
@@ -36,7 +36,7 @@
       </template>
 
       <section
-        class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto py-2"
+        class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
         <div
           class="custom-border-dash mb-2 flex h-[206px] w-[719px] flex-col items-center justify-center gap-3 bg-gray-50"
@@ -93,15 +93,12 @@
         <UFormGroup label="Link Redirect">
           <template #hint>
             <div class="flex w-full justify-between">
-              <UToggle
-                v-model="state.isActiveLink"
-                color="primary"
-                class="right-0"
-              />
+              <UToggle v-model="isActiveLink" color="primary" class="right-0" />
             </div>
           </template>
           <UInput
             v-model="state.link"
+            :disabled="!isActiveLink"
             placeholder="contoh: https://"
             color="gray"
           />
@@ -139,8 +136,8 @@
     title: '',
     description: '',
     link: '',
-    isActiveLink: false,
   })
+  const isActiveLink = ref(false)
 
   defineEmits(['close'])
 </script>
