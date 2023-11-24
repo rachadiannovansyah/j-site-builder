@@ -90,6 +90,7 @@ export default defineAppConfig({
       },
     },
     card: {
+      divide: 'divide-y-0',
       body: {
         padding: 'sm:py-4 sm:px-6',
       },
