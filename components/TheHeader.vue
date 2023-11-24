@@ -13,21 +13,18 @@
   </header>
 
   <!-- Logout Modal -->
-  <BaseModal :open="state.isModalOpen">
-    <ModalTitle class="text-center"> Keluar J-Site </ModalTitle>
-    <ModalBody class="text-center">
-      <span class="font-lato text-sm leading-6 text-gray-800">
-        Apakah Anda yakin akan keluar dari J-Site?
-      </span>
-    </ModalBody>
-    <ModalFooter position="center">
-      <BaseButton variant="secondary" @click="toggleLogoutModal">
-        Batal
-      </BaseButton>
-      <BaseButton variant="primary" @click="handleLogout">
-        Ya, saya yakin
-      </BaseButton>
-    </ModalFooter>
+  <BaseModal
+    :open="state.isModalOpen"
+    header="Keluar J-Site"
+    button-position="center"
+  >
+    <p class="font-lato text-sm leading-6 text-gray-800">
+      Apakah Anda yakin akan keluar dari J-Site?
+    </p>
+    <template #footer>
+      <UButton variant="outline" @click="toggleLogoutModal"> Batal </UButton>
+      <UButton @click="handleLogout"> Ya, saya yakin </UButton>
+    </template>
   </BaseModal>
 </template>
 
