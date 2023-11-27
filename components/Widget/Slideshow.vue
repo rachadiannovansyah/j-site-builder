@@ -30,7 +30,14 @@
       </template>
 
       <section class="grid grid-cols-1 gap-y-4">
-        <div class="flex justify-end px-6">
+        <input
+          ref="imageUploader"
+          type="file"
+          hidden
+          @change="handleImageChange"
+        />
+
+        <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
           <UButton variant="outline" @click="selectImage">
             <template #leading>
               <NuxtIcon
@@ -42,15 +49,9 @@
             </template>
             Upload Gambar
           </UButton>
-          <input
-            ref="imageUploader"
-            type="file"
-            hidden
-            @change="handleImageChange"
-          />
         </div>
 
-        <div class="px-6">
+        <div v-show="uploadedImages.length !== 0" class="px-6">
           <UAlert title="">
             <template #title>
               <span class="font-lato text-sm text-gray-900">
@@ -62,8 +63,7 @@
           </UAlert>
         </div>
 
-        <div class="flex justify-end px-6">
-          <!-- @todo: change data to be dynamic -->
+        <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
           <UBadge color="blue" size="lg" variant="subtle">
             <div class="flex items-center gap-x-1.5">
               <span
@@ -113,7 +113,23 @@
           </template>
 
           <template v-else>
-            <p>Gambar Kosong...</p>
+            <NoData
+              class="col-span-4"
+              title="Kamu belum memiliki media"
+              description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar dibawah dengan rekomendasi ukuran gambar adalah resolusi 1600 x 900 pixel  (.jpg dan png). "
+            >
+              <UButton class="mt-7" @click="selectImage">
+                <template #leading>
+                  <NuxtIcon
+                    name="common/upload"
+                    class="text-lg"
+                    aria-hidden="true"
+                    filled
+                  />
+                </template>
+                Upload Gambar
+              </UButton>
+            </NoData>
           </template>
         </div>
       </section>
@@ -230,10 +246,6 @@
     imageId: '', // for delete purposes
   })
 
-  onMounted(() => {
-    resetInitalState()
-  })
-
   function selectImage() {
     imageUploader.value?.click()
   }
@@ -242,10 +254,6 @@
     if (imageUploader.value) {
       imageUploader.value.value = ''
     }
-  }
-
-  function resetInitalState() {
-    uploadedImages.length = 0
   }
 
   function handleImageChange(event: Event) {
