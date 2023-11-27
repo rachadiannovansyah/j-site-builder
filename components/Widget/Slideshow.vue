@@ -212,6 +212,18 @@
   const siteStore = useSiteStore()
 
   const imageUploader = ref<HTMLInputElement | null>(null)
+  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+  const imageUploadProgress = ref(0)
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    imageId: '', // for delete purposes
+  })
+
+  onMounted(() => {
+    resetInitalState()
+  })
 
   function selectImage() {
     imageUploader.value?.click()
@@ -223,14 +235,9 @@
     }
   }
 
-  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
-  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
-  const imageUploadProgress = ref(0)
-  const confirmation = reactive({
-    title: '',
-    body: '',
-    imageId: '', // for delete purposes
-  })
+  function resetInitalState() {
+    uploadedImages.length = 0
+  }
 
   function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
@@ -309,20 +316,6 @@
     })
   }
 
-  function removeUploadedImage(id: string) {
-    const imageIndex = uploadedImages.findIndex((image) => image.id === id)
-    uploadedImages.splice(imageIndex, 1)
-  }
-
-  function showDeleteConfirmation(imageId: string) {
-    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
-    setConfirmation({
-      title: 'Menghapus Gambar',
-      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
-      imageId,
-    })
-  }
-
   async function deleteUploadedImage(id: string) {
     const { status } = await $jSiteApi.media.deleteMedia(id, undefined, {
       server: false,
@@ -344,6 +337,24 @@
         body: 'Mohon maaf, gambar gagal dihapus. Silakan coba beberapa saat lagi',
       })
     }
+  }
+
+  /**
+   * Remove image by id from `uploadedImage` state
+   * @param id - id of images stored on `uploadedImages`
+   */
+  function removeUploadedImage(id: string) {
+    const imageIndex = uploadedImages.findIndex((image) => image.id === id)
+    uploadedImages.splice(imageIndex, 1)
+  }
+
+  function showDeleteConfirmation(imageId: string) {
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
+      imageId,
+    })
   }
 
   function setConfirmation({
@@ -369,16 +380,16 @@
     confirmation.imageId = ''
   }
 
+  function closeConfirmationModal() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
+  }
+
   function setModalStatus(value: string) {
     imageUploadStatus.value = value
   }
 
   function setUploadProgress(value: number) {
     imageUploadProgress.value = value
-  }
-
-  function closeConfirmationModal() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
   }
 
   /**
