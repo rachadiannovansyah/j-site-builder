@@ -70,6 +70,7 @@ export default defineAppConfig({
       default: {
         size: 'md',
       },
+      help: 'font-lato font-normal text-gray-700 text-[12px] leading-[19px] flex justify-end',
     },
     table: {
       default: {
