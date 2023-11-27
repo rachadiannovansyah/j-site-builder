@@ -1,5 +1,12 @@
 <template>
-  <BaseModal :open="props.open" :header="props.title" prevent-close>
+  <BaseModal
+    :open="props.open"
+    :header="props.title"
+    prevent-close
+    :modal-ui="{
+      width: 'sm:max-w-[533px]',
+    }"
+  >
     <p class="text-center text-sm leading-6 text-blue-gray-800">
       {{ props.message }}
     </p>
