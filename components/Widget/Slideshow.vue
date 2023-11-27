@@ -176,7 +176,7 @@
             aria-hidden="true"
           />
           <NuxtIcon
-            v-if="imageUploadStatus === 'ERROR'"
+            v-else
             name="common/warning-triangle"
             class="mr-3 inline-block text-xl text-yellow-500"
             aria-hidden="true"
