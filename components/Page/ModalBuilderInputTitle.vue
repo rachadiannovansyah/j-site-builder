@@ -33,8 +33,8 @@
       </template>
 
       <section class="grid grid-cols-1 gap-y-4">
-        <img
-          src="~/assets/images/illustration-title-input.svg"
+        <NuxtImg
+          src="/images/illustration-title-input.svg"
           width="548"
           height="345"
           class="justify-self-center"
