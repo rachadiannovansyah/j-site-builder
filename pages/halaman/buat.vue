@@ -89,7 +89,6 @@
       <BaseButton
         v-if="modal.status === MODAL_STATE.STATUS_PUBLISH"
         variant="primary"
-        :disabled="true"
         @click="actionPublishPage()"
       >
         Iya, saya yakin
@@ -266,33 +265,7 @@
   }
 
   const actionPublishPage = async () => {
-    //   modal.status = MODAL_STATE.LOADING
-    //   modal.title = 'Menerbitkan Halaman'
-    //   modal.message = 'Mohon tunggu, penerbitan Halaman sedang diproses.'
-    //   const response = await $jSiteApi.page.storePage(
-    //     siteStore?.siteId ?? '',
-    //     JSON.parse(JSON.stringify(state.params)),
-    //     { server: false },
-    //   )
-    //   const { status, error } = response
-    //   if (status.value === 'success') {
-    //     setLoadingProgress(25)
-    //     setTimeout(() => {
-    //       setLoadingProgress(100)
-    //       setTimeout(() => {
-    //         modal.status = MODAL_STATE.SUCCESS
-    //         modal.title = 'Berhasil!'
-    //         modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
-    //       }, 250)
-    //     }, 250)
-    //   } else {
-    //     const { data } = JSON.parse(JSON.stringify(error.value))
-    //     modal.status = MODAL_STATE.ERROR
-    //     modal.title = 'Gagal!'
-    //     modal.message =
-    //       data?.error ||
-    //       data?.errors ||
-    //       'Halaman yang Anda buat gagal diterbitkan.'
-    //   }
+    // TODO: update publish page function
+    modal.status = MODAL_STATE.NONE
   }
 </script>
