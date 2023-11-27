@@ -129,22 +129,36 @@
       <!-- Delete Confirmation -->
       <BaseModal
         :open="imageUploadStatus === 'DELETING'"
-        :header="confirmation.title"
+        with-close-button
+        header=""
+        button-position="right"
       >
-        <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
+        <div class="flex items-start">
           <NuxtIcon
-            name="common/warning-triangle"
-            class="mr-3 inline-block text-xl text-yellow-500"
+            name="common/trash-circle"
+            class="mr-4 inline-block flex-shrink-0 text-5xl"
             aria-hidden="true"
+            filled
           />
-          {{ confirmation.body }}
-        </p>
+          <div>
+            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+              {{ confirmation.title }}
+            </h3>
+            <p class="font-lato text-sm leading-6 text-gray-600">
+              {{ confirmation.body }}
+            </p>
+          </div>
+        </div>
         <template #footer>
-          <UButton variant="outline" @click="closeConfirmationModal">
-            Tidak
+          <UButton
+            variant="outline"
+            color="gray"
+            @click="closeConfirmationModal"
+          >
+            Batalkan
           </UButton>
           <UButton @click="deleteUploadedImage(confirmation.imageId)">
-            Ya, hapus gambar
+            Ya, saya yakin
           </UButton>
         </template>
       </BaseModal>
@@ -221,6 +235,7 @@
   function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
 
+    // TODO: add image validation
     if (image) {
       uploadImage(image)
     } else {
@@ -244,37 +259,41 @@
     formData.append('category', 'slideshow')
     formData.append('setting_id', siteStore.siteId ?? '')
 
-    try {
-      setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)
-      setUploadProgress(25)
+    setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)
+    setUploadProgress(25)
 
-      const response = await $jSiteApi.media.uploadMedia(formData, undefined, {
+    const { data: uploadResponse, status } = await $jSiteApi.media.uploadMedia(
+      formData,
+      undefined,
+      {
         server: false,
-      })
+      },
+    )
 
-      setUploadProgress(75)
+    setUploadProgress(75)
 
-      if (response.status.value === 'success') {
-        const data = toRaw(response?.data?.value?.data)
+    if (status.value === 'success') {
+      const data = toRaw(uploadResponse?.value?.data)
 
-        if (data) {
-          pushUploadedImage(data)
-          resetImageUploader()
+      if (data) {
+        pushUploadedImage(data)
+        resetImageUploader()
+
+        setTimeout(() => {
+          setUploadProgress(100)
 
           setTimeout(() => {
-            setUploadProgress(100)
-
-            setTimeout(() => {
-              setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
-              setConfirmation({
-                title: 'Berhasil!',
-                body: 'Gambar yang Anda unggah berhasil ditambahkan.',
-              })
-            }, 300)
+            setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
+            setConfirmation({
+              title: 'Berhasil!',
+              body: 'Gambar yang Anda unggah berhasil ditambahkan.',
+            })
           }, 300)
-        }
+        }, 300)
       }
-    } catch (error) {
+    }
+
+    if (status.value === 'error') {
       setModalStatus(MEDIA_UPLOAD_STATUS.ERROR)
       setConfirmation({
         title: 'Oops, Upload Gambar Gagal!',
@@ -298,28 +317,27 @@
   function showDeleteConfirmation(imageId: string) {
     setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
     setConfirmation({
-      title: 'Hapus Gambar',
-      body: 'Apakah anda yakin ingin menghapus gambar ini?',
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
       imageId,
     })
   }
 
   async function deleteUploadedImage(id: string) {
-    try {
-      const response = await $jSiteApi.media.deleteMedia(id, undefined, {
-        server: false,
+    const { status } = await $jSiteApi.media.deleteMedia(id, undefined, {
+      server: false,
+    })
+
+    if (status.value === 'success') {
+      removeUploadedImage(id)
+      setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
+      setConfirmation({
+        title: 'Berhasil!',
+        body: 'Gambar berhasil dihapus dari daftar slideshow.',
       })
+    }
 
-      if (response.status.value === 'success') {
-        removeUploadedImage(id)
-
-        setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
-        setConfirmation({
-          title: 'Berhasil!',
-          body: 'Gambar berhasil dihapus.',
-        })
-      }
-    } catch (error) {
+    if (status.value === 'error') {
       setModalStatus(MEDIA_UPLOAD_STATUS.ERROR)
       setConfirmation({
         title: 'Oops, Gagal menghapus gambar!',
