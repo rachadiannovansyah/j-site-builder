@@ -2,11 +2,13 @@ import { $fetch, FetchOptions } from 'ofetch'
 import TemplateModule from '~/repository/j-site/modules/template'
 import SettingsModule from '~/repository/j-site/modules/settings'
 import PageModule from '~/repository/j-site/modules/page'
+import MediaModule from '~/repository/j-site/modules/media'
 
 interface IApiInstance {
   templates: TemplateModule
   settings: SettingsModule
   page: PageModule
+  media: MediaModule
   // ...add another modules here
 }
 
@@ -35,6 +37,7 @@ export default defineNuxtPlugin(async () => {
     templates: new TemplateModule(apiFecther),
     settings: new SettingsModule(apiFecther),
     page: new PageModule(apiFecther),
+    media: new MediaModule(apiFecther),
     // ...add other modules here
   }
 
