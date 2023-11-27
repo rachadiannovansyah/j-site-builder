@@ -4,7 +4,7 @@
       class="flex items-center justify-between pb-4 font-lato text-xs font-medium"
     >
       <div class="flex items-center justify-center gap-2.5">
-        <UButton size="xs" color="blue">
+        <UButton size="xs" color="blue" @click="isInputModalOpen = true">
           <template #leading>
             <NuxtIcon name="common/icon-input-text" aria-hidden="true" />
           </template>
@@ -61,6 +61,8 @@
   </section>
 
   <!-- @todo: Add popup for input Title and Description -->
+  <PageModalBuilderInputTitle :open="isInputModalOpen" @close="isInputModalOpen = false" />
+
 </template>
 
 <script setup lang="ts">
@@ -76,6 +78,8 @@
       default: null,
     },
   })
+
+  const isInputModalOpen = ref(false)
 </script>
 
 <style scoped>
