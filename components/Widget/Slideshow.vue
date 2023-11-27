@@ -80,7 +80,6 @@
         <div
           class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
         >
-          <!-- @todo: change image data to be dynamic -->
           <template v-if="uploadedImages.length !== 0">
             <div
               v-for="(image, index) in uploadedImages"
@@ -96,8 +95,12 @@
               <div
                 class="absolute inset-0 h-full w-full p-2.5 transition-colors ease-in group-hover:bg-black/20"
               >
-                <!-- @todo: add delete image functionality -->
-                <UButton square color="gray" variant="ghost">
+                <UButton
+                  square
+                  color="gray"
+                  variant="ghost"
+                  @click="showDeleteConfirmation(image.id)"
+                >
                   <NuxtIcon
                     name="common/trash"
                     class="text-lg"
@@ -123,28 +126,48 @@
         message="Mohon tunggu, pengunggahan gambar sedang diproses."
       />
 
-      <!-- Upload Success-->
-      <BaseModal :open="imageUploadStatus === 'SUCCESS'" header="Berhasil!">
+      <!-- Delete Confirmation -->
+      <BaseModal
+        :open="imageUploadStatus === 'DELETING'"
+        :header="confirmation.title"
+      >
         <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
           <NuxtIcon
+            name="common/warning-triangle"
+            class="mr-3 inline-block text-xl text-yellow-500"
+            aria-hidden="true"
+          />
+          {{ confirmation.body }}
+        </p>
+        <template #footer>
+          <UButton variant="outline" @click="closeConfirmationModal">
+            Tidak
+          </UButton>
+          <UButton @click="deleteUploadedImage(confirmation.imageId)">
+            Ya, hapus gambar
+          </UButton>
+        </template>
+      </BaseModal>
+
+      <!-- Upload/Delete Status -->
+      <BaseModal
+        :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
+        :header="confirmation.title"
+      >
+        <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
+          <NuxtIcon
+            v-if="imageUploadStatus === 'SUCCESS'"
             name="common/check-circle"
             class="mr-3 inline-block text-xl text-green-700"
             aria-hidden="true"
           />
-          Gambar yang Anda unggah berhasil ditambahkan.
-        </p>
-        <template #footer>
-          <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
-        </template>
-      </BaseModal>
-
-      <!-- Upload Error-->
-      <BaseModal
-        :open="imageUploadStatus === 'ERROR'"
-        header="Oops, Upload Gagal!"
-      >
-        <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
-          Mohon maaf, gambar gagal ditambahkan. Coba beberapa saat lagi.
+          <NuxtIcon
+            v-if="imageUploadStatus === 'ERROR'"
+            name="common/warning-triangle"
+            class="mr-3 inline-block text-xl text-yellow-500"
+            aria-hidden="true"
+          />
+          {{ confirmation.body }}
         </p>
         <template #footer>
           <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
@@ -156,6 +179,13 @@
 
 <script setup lang="ts">
   import { IMediaResponseData } from '~/repository/j-site/types/media'
+  const MEDIA_UPLOAD_STATUS = {
+    NONE: 'NONE',
+    UPLOADING: 'UPLOADING',
+    DELETING: 'DELETING',
+    SUCCESS: 'SUCCESS',
+    ERROR: 'ERROR',
+  }
 
   const props = defineProps({
     open: {
@@ -164,19 +194,10 @@
     },
   })
 
-  const MEDIA_UPLOAD_STATUS = {
-    NONE: 'NONE',
-    UPLOADING: 'UPLOADING',
-    SUCCESS: 'SUCCESS',
-    ERROR: 'ERROR',
-  }
-
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
 
   const imageUploader = ref<HTMLInputElement | null>(null)
-  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
-  const imageUploadProgress = ref(0)
 
   function selectImage() {
     imageUploader.value?.click()
@@ -188,6 +209,15 @@
     }
   }
 
+  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+  const imageUploadProgress = ref(0)
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    imageId: '', // for delete purposes
+  })
+
   function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
 
@@ -197,8 +227,6 @@
       resetImageUploader()
     }
   }
-
-  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
 
   /**
    * NOTE: when this code is written, the `ofetch` library does not offer a way
@@ -238,12 +266,20 @@
 
             setTimeout(() => {
               setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
+              setConfirmation({
+                title: 'Berhasil!',
+                body: 'Gambar yang Anda unggah berhasil ditambahkan.',
+              })
             }, 300)
           }, 300)
         }
       }
     } catch (error) {
       setModalStatus(MEDIA_UPLOAD_STATUS.ERROR)
+      setConfirmation({
+        title: 'Oops, Upload Gambar Gagal!',
+        body: 'Mohon maaf, upload gambar gagal. Silakan coba beberapa saat lagi.',
+      })
     }
   }
 
@@ -252,6 +288,67 @@
       id: id,
       uri: file.uri,
     })
+  }
+
+  function removeUploadedImage(id: string) {
+    const imageIndex = uploadedImages.findIndex((image) => image.id === id)
+    uploadedImages.splice(imageIndex, 1)
+  }
+
+  function showDeleteConfirmation(imageId: string) {
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Hapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar ini?',
+      imageId,
+    })
+  }
+
+  async function deleteUploadedImage(id: string) {
+    try {
+      const response = await $jSiteApi.media.deleteMedia(id, undefined, {
+        server: false,
+      })
+
+      if (response.status.value === 'success') {
+        removeUploadedImage(id)
+
+        setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
+        setConfirmation({
+          title: 'Berhasil!',
+          body: 'Gambar berhasil dihapus.',
+        })
+      }
+    } catch (error) {
+      setModalStatus(MEDIA_UPLOAD_STATUS.ERROR)
+      setConfirmation({
+        title: 'Oops, Gagal menghapus gambar!',
+        body: 'Mohon maaf, gambar gagal dihapus. Silakan coba beberapa saat lagi',
+      })
+    }
+  }
+
+  function setConfirmation({
+    title,
+    body,
+    imageId,
+  }: {
+    title: string
+    body: string
+    imageId?: string
+  }) {
+    confirmation.title = title
+    confirmation.body = body
+
+    if (imageId) {
+      confirmation.imageId = imageId
+    }
+  }
+
+  function resetConfirmation() {
+    confirmation.title = ''
+    confirmation.body = ''
+    confirmation.imageId = ''
   }
 
   function setModalStatus(value: string) {
@@ -267,11 +364,13 @@
   }
 
   /**
-   * Reset upload progress when confirmation modal is closed
+   * Reset confirmation data and upload progress
+   * when confirmation modal is closed
    */
   watch(imageUploadStatus, (newValue) => {
     if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
       setUploadProgress(0)
+      resetConfirmation()
     }
   })
 

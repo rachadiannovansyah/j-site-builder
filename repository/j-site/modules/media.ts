@@ -1,7 +1,7 @@
 import { AsyncDataOptions } from '#app'
 import { FetchOptions } from 'ofetch'
 
-import { IMediaResponse } from '../types/media'
+import { IStoreMediaResponse, IDeleteMediaResponse } from '../types/media'
 
 import FetchFactory from '../../factory'
 
@@ -11,13 +11,28 @@ class PageModules extends FetchFactory {
   async uploadMedia(
     formData: FormData,
     fetchOptions?: FetchOptions<'json'>,
-    options?: AsyncDataOptions<IMediaResponse>,
+    options?: AsyncDataOptions<IStoreMediaResponse>,
   ) {
     return useAsyncData(() => {
-      return this.call<IMediaResponse>(
+      return this.call<IStoreMediaResponse>(
         'POST',
         `${this.RESOURCE}`,
         formData, // body
+        fetchOptions,
+      )
+    }, options)
+  }
+
+  async deleteMedia(
+    id: string,
+    fetchOptions?: FetchOptions<'json'>,
+    options?: AsyncDataOptions<IDeleteMediaResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IDeleteMediaResponse>(
+        'DELETE',
+        `${this.RESOURCE}/${id}`,
+        undefined, // body
         fetchOptions,
       )
     }, options)

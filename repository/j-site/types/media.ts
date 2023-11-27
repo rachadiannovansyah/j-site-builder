@@ -28,7 +28,11 @@ export interface IMediaResponseData {
   id: string
 }
 
-export interface IMediaResponse {
+export interface IStoreMediaResponse {
   data: IMediaResponseData
+  message: string
+}
+
+export interface IDeleteMediaResponse {
   message: string
 }
