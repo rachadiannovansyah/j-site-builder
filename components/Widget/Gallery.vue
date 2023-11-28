@@ -30,11 +30,19 @@
       </template>
 
       <section class="grid grid-cols-1 gap-y-4">
-        <div class="flex justify-between px-6">
+        <div 
+        :class="
+          {
+            'flex  px-6' : true,
+            'justify-end' : uploadedImages.length === 0,
+            'justify-between' : uploadedImages.length !== 0
+          }
+        "
+        >
           <!-- @todo: handle and remove image upload -->
-          <div class="flex flex-row gap-x-2 items-center">
+          <div v-if="uploadedImages.length !== 0" class="flex flex-row gap-x-2 items-center">
             <UCheckbox label="Select all" />
-            <UButton color="red" variant="ghost" @click="selectImage">
+            <UButton color="red" variant="ghost">
               <template #leading>
                 <NuxtIcon
                   name="common/trash"
@@ -73,14 +81,19 @@
           </UAlert>
         </div>
 
-        <div class="flex flex-row gap-x-2.5 px-6">
+        <div class="flex flex-row justify-end gap-x-2.5 px-6">
           
-          <!-- @todo: create search image functionality -->
-          <UFormGroup class="w-full">
+          <!-- @todo: Hide feature -->
+          <UFormGroup v-if="isInputSearchFeature" class="w-full">
               <UInput placeholder="Cari Media" icon="i-heroicons-magnifying-glass" />
           </UFormGroup>
         
-          <UDivider class="h-[38px] w-fit" color="gray" orientation="vertical" />
+          <UDivider
+            v-if="isInputSearchFeature"
+            class="h-[38px] w-fit"
+            color="gray"
+            orientation="vertical"
+          />
           
           <!-- @todo: change data to be dynamic -->
           <UBadge
@@ -159,6 +172,7 @@
   }
 
   const uploadedImages = reactive<{ id: string; uri: string }[]>([])
+  const isInputSearchFeature = ref(false)
 
   defineEmits(['close'])
 </script>
