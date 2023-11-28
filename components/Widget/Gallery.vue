@@ -39,7 +39,6 @@
           }
         "
         >
-          <!-- @todo: handle and remove image upload -->
           <div v-if="uploadedImages.length !== 0" class="flex flex-row gap-x-2 items-center">
             <UCheckbox label="Select all" />
             <UButton color="red" variant="ghost">
@@ -88,7 +87,7 @@
 
         <div class="flex flex-row justify-end gap-x-2.5 px-6">
           
-          <!-- @todo: Hide feature -->
+          <!-- @todo: Hide feature, show it if the feature is ready -->
           <UFormGroup v-if="isInputSearchFeature" class="w-full">
               <UInput placeholder="Cari Media" icon="i-heroicons-magnifying-glass" />
           </UFormGroup>
@@ -100,7 +99,6 @@
             orientation="vertical"
           />
           
-          <!-- @todo: change data to be dynamic -->
           <UBadge
             class="min-w-max self-center"
             color="blue"
@@ -124,7 +122,6 @@
         <div
           class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
         >
-          <!-- @todo: change image data to be dynamic -->
           <div
             v-for="(image, index) in uploadedImages"
               :key="`gallery-image-preview-${index}`"
@@ -137,7 +134,6 @@
               class="rounded-lg h-[173px] w-[216px] object-cover object-center"
             />
             <div class="absolute inset-0 h-full w-full p-2.5">
-              <!-- @todo: add delete image functionality -->
               <UButton
                 square
                 color="gray"
