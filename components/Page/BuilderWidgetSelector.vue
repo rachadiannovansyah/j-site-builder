@@ -55,6 +55,7 @@
   const WidgetSlideshow = resolveComponent('WidgetSlideshow')
   const WidgetGallery = resolveComponent('WidgetGallery')
   const WidgetShowcase = resolveComponent('WidgetShowcase')
+  const WidgetPostCrawler = resolveComponent('WidgetPostCrawler')
   // add another widget here...
 
   const isConfigOpen = ref(false)
@@ -64,6 +65,7 @@
   }
 
   const widgetConfig = computed(() => {
+    console.log(props.widget)
     switch (props.widget) {
       case 'Slideshow':
         return WidgetSlideshow
@@ -71,6 +73,8 @@
         return WidgetShowcase
       case 'Gallery':
         return WidgetGallery
+      case 'PostCrawler':
+        return WidgetPostCrawler
       // add another case here
       default:
         break
