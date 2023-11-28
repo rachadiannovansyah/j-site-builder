@@ -1,7 +1,7 @@
 export interface IPageData {
   title: string
   status: string
-  sections: []
+  sections: unknown[]
 }
 
 export interface IPageResponse {

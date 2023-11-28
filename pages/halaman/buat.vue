@@ -231,18 +231,16 @@
     modal.title = 'Menyimpan ke draft'
     modal.message = 'Mohon tunggu, penyimpanan Halaman sedang diproses.'
 
-    const response = await $jSiteApi.page.storePage(
+    const { status } = await $jSiteApi.page.storePage(
       siteStore?.siteId ?? '',
       {
         title: pageStore.builderConfig?.title ?? '',
         status: 'DRAFT',
-        sections:
-          JSON.parse(JSON.stringify(pageStore.builderConfig?.sections)) ?? null,
+        sections: toRaw(pageStore.builderConfig?.sections),
       },
       { server: false },
     )
 
-    const { status, error } = response
     if (status.value === 'success') {
       setLoadingProgress(25)
       setTimeout(() => {
@@ -253,14 +251,10 @@
           modal.message = 'Halaman yang Anda buat berhasil disimpan ke draft.'
         }, 250)
       }, 250)
-    } else {
-      const { data } = JSON.parse(JSON.stringify(error.value))
+    } else if (status.value === 'error') {
       modal.status = MODAL_STATE.ERROR
       modal.title = 'Gagal!'
-      modal.message =
-        data?.error ||
-        data?.errors ||
-        'Halaman yang Anda buat gagal disimpan ke draft.'
+      modal.message = 'Halaman yang Anda buat gagal disimpan ke draft.'
     }
   }
 
