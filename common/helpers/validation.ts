@@ -13,7 +13,7 @@ export async function validateImage(
   file: File,
   { maxSize, maxWidth, maxHeight, accepted }: IValidateImageConfig,
 ) {
-  const MAX_FILE_SIZE = maxSize ?? 2000000 // default maxSize 1MB
+  const MAX_FILE_SIZE = maxSize ?? 2000000 // default maxSize 2MB
   const MAX_WIDTH = maxWidth ?? 1024 // default maxWidth 1024 pixel
   const MAX_HEIGHT = maxHeight ?? 576 // default maxHeight 576 pixel
   const ACCEPTED_IMAGE_TYPES =
