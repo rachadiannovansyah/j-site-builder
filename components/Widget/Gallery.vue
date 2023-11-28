@@ -30,16 +30,9 @@
       </template>
 
       <section class="grid grid-cols-1 gap-y-4">
-        <div 
-        :class="
-          {
-            'flex  px-6' : true,
-            'justify-end' : uploadedImages.length === 0,
-            'justify-between' : uploadedImages.length !== 0
-          }
-        "
-        >
-          <div v-if="uploadedImages.length !== 0" class="flex flex-row gap-x-2 items-center">
+        <div class="flex justify-end px-6">
+          <!-- hide feature, show if the feature is ready -->
+          <div v-if="isSelectedAllFeatureReady" class="flex flex-row gap-x-2 items-center">
             <UCheckbox label="Select all" />
             <UButton color="red" variant="ghost">
               <template #leading>
@@ -54,7 +47,7 @@
             </UButton>
           </div>
       
-          <UButton variant="outline" @click="selectImage">
+          <UButton v-if="uploadedImages.length !== 0" variant="outline" @click="selectImage">
             <template #leading>
               <NuxtIcon
                 name="common/image-bubble"
@@ -73,13 +66,12 @@
           />
         </div>
 
-        <div class="px-6">
+        <div v-if="uploadedImages.length !== 0" class="px-6">
           <UAlert title="">
             <template #title>
               <span class="font-lato text-sm text-gray-900">
-                Rekomendasi ukuran gambar dengan resolusi
-                <strong>1600 x 900 pixel.</strong> List media dibawah ini
-                merupakan media yang sudah aktif di public view.
+               Rekomendasi resolusi gambar <strong>1024 x 576 pixel</strong> dengan <strong>ukuran maksimal 2 MB .</strong> 
+               List media dibawah ini merupakan media yang sudah aktif dengan batas maksimal <strong>6 media yang bisa diaktifkan .</strong>
               </span>
             </template>
           </UAlert>
@@ -100,6 +92,7 @@
           />
           
           <UBadge
+            v-if="uploadedImages.length !== 0" 
             class="min-w-max self-center"
             color="blue"
             size="lg"
@@ -118,46 +111,63 @@
 
         </div>
 
-        <template v-if="uploadedImages.length !== 0">
-        <div
-          class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
-        >
-          <div
-            v-for="(image, index) in uploadedImages"
+        <div class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6">
+          <template v-if="uploadedImages.length !== 0">
+            <div
+              v-for="(image, index) in uploadedImages"
               :key="`gallery-image-preview-${index}`"
-            class="group relative h-[173px] w-[216px] overflow-hidden rounded-lg"
+              class="group relative h-[173px] w-[216px] overflow-hidden rounded-lg"
+            >
+              <NuxtImg
+                :src="image.uri"
+                width="216"
+                height="173"
+                class="rounded-lg h-[173px] w-[216px] object-cover object-center"
+              />
+              <div class="absolute inset-0 h-full w-full p-2.5">
+                <UButton
+                  square
+                  color="gray"
+                  variant="ghost"
+                  @click="showDeleteConfirmation(image.id)"
+                >
+                  <NuxtIcon
+                    name="common/trash"
+                    class="text-lg"
+                    aria-hidden="true"
+                    filled
+                  />
+                </UButton>
+              </div>
+            </div>
+          </template>
+          
+          <NoData
+            v-else
+            class="col-span-4"
+            title="Kamu belum memiliki media !"
+            description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar dibawah dengan rekomendasi ukuran gambar adalah resolusi 1024 x 576 pixel (.jpg dan png) dan ukuran maksimal 2MB."
           >
-            <NuxtImg
-              :src="image.uri"
-              width="216"
-              height="173"
-              class="rounded-lg h-[173px] w-[216px] object-cover object-center"
-            />
-            <div class="absolute inset-0 h-full w-full p-2.5">
-              <UButton
-                square
-                color="gray"
-                variant="ghost"
-                @click="showDeleteConfirmation(image.id)"
-              >
+            <UButton class="mt-7" @click="selectImage">
+              <template #leading>
                 <NuxtIcon
-                  name="common/trash"
+                  name="common/upload"
                   class="text-lg"
                   aria-hidden="true"
                   filled
                 />
-              </UButton>
-            </div>
-          </div>
+              </template>
+              Upload Gambar
+            </UButton>
+            <input
+              ref="imageUploader"
+              type="file"
+              hidden
+              @change="handleImageChange" 
+            />
+          </NoData>
         </div>
-        </template>
 
-        <NoData
-          v-else
-          class="max-w-[626px] max-h-[336px] mx-auto"
-          title="Kamu belum memiliki media !"
-          description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar dibawah dengan rekomendasi ukuran gambar adalah resolusi 1600 x 900 pixel  (.jpg dan png)."
-        />
       </section>
     </UCard>
 
@@ -258,6 +268,7 @@
 
   const uploadedImages = reactive<{ id: string; uri: string }[]>([])
   const isInputSearchFeature = ref(false)
+  const isSelectedAllFeatureReady = ref(false)
   const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
   const imageUploadProgress = ref(0)
   const confirmation = reactive({
