@@ -35,14 +35,14 @@
           type="file"
           accept="image/jpeg, image/jpg, image/png, image/webp"
           hidden
-          :disabled="uploadedImages.length >= 6"
+          :disabled="uploadedImages.length >= MAX_UPLOADED_IMAGES"
           @change="handleImageChange"
         />
 
         <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
           <UButton
             variant="outline"
-            :disabled="uploadedImages.length >= 6"
+            :disabled="uploadedImages.length >= MAX_UPLOADED_IMAGES"
             @click="selectImage"
           >
             <template #leading>
@@ -257,6 +257,7 @@
     ERROR: 'ERROR',
     VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
+  const MAX_UPLOADED_IMAGES = 6
 
   const props = defineProps({
     open: {
