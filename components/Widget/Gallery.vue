@@ -102,6 +102,7 @@
 
         </div>
 
+        <template v-if="uploadedImages.length !== 0">
         <div
           class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
         >
@@ -130,6 +131,14 @@
             </div>
           </div>
         </div>
+        </template>
+
+        <NoData
+          v-else
+          class="max-w-[626px] max-h-[336px] mx-auto"
+          title="Kamu belum memiliki media !"
+          description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar dibawah dengan rekomendasi ukuran gambar adalah resolusi 1600 x 900 pixel  (.jpg dan png)."
+        />
       </section>
     </UCard>
   </UModal>
@@ -148,6 +157,8 @@
   function selectImage() {
     imageUploader.value?.click()
   }
+
+  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
 
   defineEmits(['close'])
 </script>
