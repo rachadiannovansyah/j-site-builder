@@ -33,12 +33,18 @@
         <input
           ref="imageUploader"
           type="file"
+          accept="image/jpeg, image/jpg, image/png, image/webp"
           hidden
+          :disabled="uploadedImages.length >= 6"
           @change="handleImageChange"
         />
 
         <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
-          <UButton variant="outline" @click="selectImage">
+          <UButton
+            variant="outline"
+            :disabled="uploadedImages.length >= 6"
+            @click="selectImage"
+          >
             <template #leading>
               <NuxtIcon
                 name="common/image-bubble"
@@ -56,8 +62,11 @@
             <template #title>
               <span class="font-lato text-sm text-gray-900">
                 Rekomendasi ukuran gambar dengan resolusi
-                <strong>1600 x 900 pixel.</strong> List media dibawah ini
-                merupakan media yang sudah aktif di public view.
+                <strong>1024 x 576 pixel</strong> dengan
+                <strong>ukuran maksimal 2MB.</strong>
+                List media dibawah ini merupakan media yang sudah aktif dengan
+                batas maksimal
+                <strong>6 media yang bisa diaktifkan</strong>
               </span>
             </template>
           </UAlert>
@@ -116,7 +125,9 @@
             <NoData
               class="col-span-4"
               title="Kamu belum memiliki media"
-              description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar dibawah dengan rekomendasi ukuran gambar adalah resolusi 1600 x 900 pixel  (.jpg dan png). "
+              description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar 
+              dibawah dengan rekomendasi ukuran gambar adalah resolusi 1024 x 576 pixel (.jpg dan png) 
+              dan ukuran maksimal 2MB."
             >
               <UButton class="mt-7" @click="selectImage">
                 <template #leading>
@@ -179,6 +190,34 @@
         </template>
       </BaseModal>
 
+      <!-- Validation Error -->
+      <BaseModal
+        :open="imageUploadStatus === 'VALIDATION_ERROR'"
+        with-close-button
+        button-position="center"
+        @close="closeConfirmationModal"
+      >
+        <div class="flex items-start">
+          <NuxtIcon
+            name="common/warning-circle"
+            class="mr-4 inline-block flex-shrink-0 text-5xl"
+            aria-hidden="true"
+            filled
+          />
+          <div>
+            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+              {{ confirmation.title }}
+            </h3>
+            <p class="font-lato text-sm leading-6 text-gray-600">
+              {{ confirmation.body }}
+            </p>
+          </div>
+        </div>
+        <template #footer>
+          <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+        </template>
+      </BaseModal>
+
       <!-- Upload/Delete Status -->
       <BaseModal
         :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
@@ -186,13 +225,13 @@
       >
         <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
           <NuxtIcon
-            v-if="imageUploadStatus === 'SUCCESS'"
+            v-show="imageUploadStatus === 'SUCCESS'"
             name="common/check-circle"
             class="mr-3 inline-block text-xl text-green-700"
             aria-hidden="true"
           />
           <NuxtIcon
-            v-else
+            v-show="imageUploadStatus === 'ERROR'"
             name="common/warning-triangle"
             class="mr-3 inline-block text-xl text-yellow-500"
             aria-hidden="true"
@@ -208,6 +247,7 @@
 </template>
 
 <script setup lang="ts">
+  import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
   const MEDIA_UPLOAD_STATUS = {
     NONE: 'NONE',
@@ -215,6 +255,7 @@
     DELETING: 'DELETING',
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR',
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
 
   const props = defineProps({
@@ -256,15 +297,33 @@
     }
   }
 
-  function handleImageChange(event: Event) {
+  async function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
 
-    // TODO: add image validation
-    if (image) {
+    if (!image) {
+      return resetImageUploader()
+    }
+
+    try {
+      await validateImage(image, {
+        maxSize: 2097152, // 2MB
+        maxWidth: 1024, // 1024 pixel
+        maxHeight: 576, // 576 pixel
+      })
       uploadImage(image)
-    } else {
+    } catch (error) {
+      showValidationError()
+    } finally {
       resetImageUploader()
     }
+  }
+
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
   }
 
   /**
