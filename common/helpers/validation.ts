@@ -45,7 +45,8 @@ export async function validateImage(
         return fileSize <= MAX_FILE_SIZE
       },
       {
-        message: `Ukuran gambar boleh melebihi ${getFileSize(MAX_FILE_SIZE)}!`,
+        message: `
+        Ukuran gambar tidak boleh melebihi ${getFileSize(MAX_FILE_SIZE)}!`,
       },
     )
     .refine(
