@@ -65,7 +65,6 @@
   }
 
   const widgetConfig = computed(() => {
-    console.log(props.widget)
     switch (props.widget) {
       case 'Slideshow':
         return WidgetSlideshow
