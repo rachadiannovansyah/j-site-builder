@@ -24,6 +24,15 @@
           />
         </template>
         Setup Konten
+        <template v-if="activeContent !== 0" #trailing>
+          <div
+            class="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-red-600"
+          >
+            <span class="font-roboto text-xs font-medium leading-none">
+              {{ activeContent }}
+            </span>
+          </div>
+        </template>
       </UButton>
     </div>
   </div>
@@ -34,6 +43,7 @@
     :section-index="props.sectionIndex"
     :widget-index="props.widgetIndex"
     @close="toggleConfig"
+    @set-active-content="activeContent = $event"
   />
 </template>
 
@@ -65,6 +75,7 @@
   // add another widget here...
 
   const isConfigOpen = ref(false)
+  const activeContent = ref(0)
 
   function toggleConfig() {
     isConfigOpen.value = !isConfigOpen.value
