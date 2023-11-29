@@ -6,7 +6,7 @@
       @click="toggleOpenModal"
     >
       <NuxtIcon
-        name="common/widget-layout-option"
+        name="widget/layout-option"
         class="text-2xl"
         aria-hidden="true"
         filled
@@ -45,12 +45,12 @@
     {
       id: 'row',
       label: 'Row',
-      icon: 'common/widget-layout-option-row',
+      icon: 'widget/layout-option-row',
     },
     {
       id: 'grid',
       label: 'Grid',
-      icon: 'common/widget-layout-option-grid',
+      icon: 'widget/layout-option-grid',
     },
   ]
   const selectedWidgetLayout = ref(widgetLayoutOption[0])
