@@ -112,9 +112,6 @@
    * @returns {string} - widget icon name
    */
   const widgetIcon = computed<string>(() => {
-    type IWidgetKey = keyof typeof WIDGET_ICON_MAP
-
-    const widgetKey = props.widget as IWidgetKey
-    return WIDGET_ICON_MAP[widgetKey] ?? ''
+    return WIDGET_ICON_MAP[props.widget] ?? ''
   })
 </script>
