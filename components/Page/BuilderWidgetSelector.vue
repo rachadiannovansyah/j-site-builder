@@ -7,12 +7,6 @@
           color="white"
           trailing-icon="i-heroicons-chevron-down-20-solid"
         >
-          <NuxtIcon
-            :name="`widget/${props.widget}`"
-            class="text-2xl"
-            aria-hidden="true"
-            filled
-          />
           {{ props.widgetName }}
         </UButton>
         <template #panel>
