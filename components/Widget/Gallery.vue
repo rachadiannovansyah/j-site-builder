@@ -239,10 +239,39 @@
           <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
         </template>
       </BaseModal>
+
+       <!-- Validation Error -->
+      <BaseModal
+        :open="imageUploadStatus === 'VALIDATION_ERROR'"
+        with-close-button
+        button-position="center"
+        @close="closeConfirmationModal"
+      >
+        <div class="flex items-start">
+          <NuxtIcon
+            name="common/warning-circle"
+            class="mr-4 inline-block flex-shrink-0 text-5xl"
+            aria-hidden="true"
+            filled
+          />
+          <div>
+            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+              {{ confirmation.title }}
+            </h3>
+            <p class="font-lato text-sm leading-6 text-gray-600">
+              {{ confirmation.body }}
+            </p>
+          </div>
+        </div>
+        <template #footer>
+          <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+        </template>
+      </BaseModal>
   </UModal>
 </template>
 
 <script setup lang="ts">
+  import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
   const MEDIA_UPLOAD_STATUS = {
     NONE: 'NONE',
@@ -250,6 +279,7 @@
     DELETING: 'DELETING',
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR',
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
   const props = defineProps({
     open: {
@@ -283,15 +313,33 @@
     }
   }
 
-  function handleImageChange(event: Event) {
+  async function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
 
-    // TODO: add image validation
-    if (image) {
+    if (!image) {
+      return resetImageUploader()
+    }
+
+    try {
+      await validateImage(image, {
+        maxSize: 2097152, // 2MB
+        maxWidth: 1024, // 1024 pixel
+        maxHeight: 576, // 576 pixel
+      })
       uploadImage(image)
-    } else {
+    } catch (error) {
+      showValidationError()
+    } finally {
       resetImageUploader()
     }
+  }
+  
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
   }
   
     /**
