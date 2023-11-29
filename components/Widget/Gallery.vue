@@ -71,7 +71,7 @@
             <template #title>
               <span class="font-lato text-sm text-gray-900">
                Rekomendasi resolusi gambar <strong>1024 x 576 pixel</strong> dengan <strong>ukuran maksimal 2 MB .</strong> 
-               List media dibawah ini merupakan media yang sudah aktif dengan batas maksimal <strong>6 media yang bisa diaktifkan .</strong>
+               List media dibawah ini merupakan media yang sudah aktif.
               </span>
             </template>
           </UAlert>
