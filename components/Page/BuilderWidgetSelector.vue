@@ -34,7 +34,7 @@
         Setup Konten
         <template v-if="activeContent !== 0" #trailing>
           <div
-            class="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-red-600"
+            class="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full bg-red-600"
           >
             <span class="font-roboto text-xs font-medium leading-none">
               {{ activeContent }}
