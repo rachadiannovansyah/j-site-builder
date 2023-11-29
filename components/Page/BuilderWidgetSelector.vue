@@ -28,7 +28,13 @@
     </div>
   </div>
 
-  <component :is="widgetConfig" :open="isConfigOpen" @close="toggleConfig" />
+  <component
+    :is="widgetConfig"
+    :open="isConfigOpen"
+    :section-index="props.sectionIndex"
+    :widget-index="props.widgetIndex"
+    @close="toggleConfig"
+  />
 </template>
 
 <script setup lang="ts">
