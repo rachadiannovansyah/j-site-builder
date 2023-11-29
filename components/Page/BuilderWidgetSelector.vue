@@ -1,24 +1,34 @@
 <template>
   <div class="flex flex-col items-center justify-center">
-    <!-- @todo: add widget selection menu and grid selector for specific widget -->
-    <UPopover class="mb-3">
-      <UButton color="white" trailing-icon="i-heroicons-chevron-down-20-solid">
-        <template #leading>
-          <NuxtIcon
-            :name="widgetIcon"
-            class="text-2xl"
-            aria-hidden="true"
-            filled
-          />
+    <div class="flex gap-[10px]">
+      <!-- Popup Change Widget -->
+      <UPopover class="mb-3">
+        <UButton
+          color="white"
+          trailing-icon="i-heroicons-chevron-down-20-solid"
+        >
+          <template #leading>
+            <NuxtIcon
+              :name="widgetIcon"
+              class="text-2xl"
+              aria-hidden="true"
+              filled
+            />
+          </template>
+          {{ props.widgetName }}
+        </UButton>
+        <template #panel>
+          <div class="p-4">
+            <div class="h-[400px] w-[600px] bg-gray-200" />
+          </div>
         </template>
-        {{ props.widgetName }}
-      </UButton>
-      <template #panel>
-        <div class="p-4">
-          <div class="h-[400px] w-[600px] bg-gray-200" />
-        </div>
-      </template>
-    </UPopover>
+      </UPopover>
+
+      <!-- Popup Setup Layout (Grid/Row) -->
+      <PageBuilderWidgetSelectorLayout
+        v-if="props.widget === 'Showcase' || props.widget === 'Gallery'"
+      />
+    </div>
     <p class="mb-8 text-center font-lato text-sm leading-6 text-gray-500">
       Setup element sesuai dengan kebutuhan kamu
     </p>
