@@ -286,9 +286,18 @@
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
+  const pageStore = usePageStore()
 
   const imageUploader = ref<HTMLInputElement | null>(null)
 
@@ -481,7 +490,7 @@
     imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
   }
 
-    /**
+  /**
    * Reset confirmation data and upload progress
    * when confirmation modal is closed
    */
@@ -491,5 +500,24 @@
       resetConfirmation()
     }
   })
+
+  /**
+   * Mutate `page` store evey time `uploadedImages` changes
+   */
+  watch(
+    uploadedImages,
+    async () => {
+      await nextTick()
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: {
+          images: uploadedImages,
+        },
+      })
+    },
+    { immediate: true },
+  )
+
   defineEmits(['close'])
 </script>
