@@ -30,5 +30,24 @@ export const usePageStore = defineStore('page', {
     setBuilderSections(value: ITemplateSection[]) {
       this.builderConfig.sections = value
     },
+    /**
+     * Store widget configuration data for each section
+     * @param sectionIndex - index of section currently being changed
+     * @param widgetIndex - index of widget currently being changed
+     * @param payload - widget payload used for submiting data
+     */
+    setWidgetPayload({
+      sectionIndex,
+      widgetIndex,
+      payload,
+    }: {
+      sectionIndex: number
+      widgetIndex: number
+      payload: object
+    }) {
+      this.builderConfig.sections[sectionIndex].widgets[widgetIndex].payload = {
+        ...payload,
+      }
+    },
   },
 })

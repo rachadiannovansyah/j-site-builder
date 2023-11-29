@@ -19,7 +19,7 @@
           <li
             v-for="option in widgetLayoutOption"
             :key="option.id"
-            class="flex cursor-pointer gap-[10px] px-3 py-2"
+            class="flex cursor-pointer items-center gap-[10px] px-3 py-2"
             @click="onSelectWidgetLayout(option)"
           >
             <div class="h-6 w-6">
@@ -30,7 +30,7 @@
                 filled
               />
             </div>
-            <p class="font-inter text-base font-medium text-gray-700">
+            <p class="font-inter text-sm font-medium text-gray-700">
               {{ option.label }}
             </p>
           </li>

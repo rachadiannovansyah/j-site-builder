@@ -30,40 +30,67 @@
       </template>
 
       <section class="grid grid-cols-1 gap-y-4">
-        <div class="flex justify-end px-6">
-          <UButton variant="outline" @click="selectImage">
-            <template #leading>
-              <NuxtIcon
-                name="common/image-bubble"
-                class="text-lg"
-                aria-hidden="true"
-                filled
-              />
-            </template>
-            Upload Gambar
-          </UButton>
-          <input
-            ref="imageUploader"
-            type="file"
-            hidden
-            @change="handleImageChange"
-          />
+        <input
+          ref="imageUploader"
+          type="file"
+          accept="image/jpeg, image/jpg, image/png, image/webp"
+          hidden
+          :disabled="exceedMaximumFiles"
+          @change="handleImageChange"
+        />
+
+        <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
+          <UTooltip
+            text="Konten yang anda pasang sudah mencapai batas maksimal. 
+            Silakan hapus terlebih dahulu media yang sedang aktif untuk melakukan upload."
+            :ui="{
+              background: 'bg-[#EEEEEE]',
+              base: exceedMaximumFiles
+                ? 'h-full px-3 py-2 whitespace-normal font-lato text-sm'
+                : 'hidden',
+              rounded: 'rounded-lg',
+              ring: 'ring-[#BDBDBD]',
+              color: 'text-[#616161]',
+            }"
+            :popper="{
+              placement: 'bottom-start',
+              offsetDistance: 8,
+            }"
+          >
+            <UButton
+              variant="outline"
+              :disabled="exceedMaximumFiles"
+              @click="selectImage"
+            >
+              <template #leading>
+                <NuxtIcon
+                  name="common/image-bubble"
+                  class="text-lg"
+                  aria-hidden="true"
+                  filled
+                />
+              </template>
+              Upload Gambar
+            </UButton>
+          </UTooltip>
         </div>
 
-        <div class="px-6">
+        <div v-show="uploadedImages.length !== 0" class="px-6">
           <UAlert title="">
             <template #title>
               <span class="font-lato text-sm text-gray-900">
                 Rekomendasi ukuran gambar dengan resolusi
-                <strong>1600 x 900 pixel.</strong> List media dibawah ini
-                merupakan media yang sudah aktif di public view.
+                <strong>1024 x 576 pixel</strong> dengan
+                <strong>ukuran maksimal 2MB.</strong>
+                List media dibawah ini merupakan media yang sudah aktif dengan
+                batas maksimal
+                <strong>6 media yang bisa diaktifkan</strong>
               </span>
             </template>
           </UAlert>
         </div>
 
-        <div class="flex justify-end px-6">
-          <!-- @todo: change data to be dynamic -->
+        <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
           <UBadge color="blue" size="lg" variant="subtle">
             <div class="flex items-center gap-x-1.5">
               <span
@@ -113,7 +140,25 @@
           </template>
 
           <template v-else>
-            <p>Gambar Kosong...</p>
+            <NoData
+              class="col-span-4"
+              title="Kamu belum memiliki media"
+              description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar 
+              dibawah dengan rekomendasi ukuran gambar adalah resolusi 1024 x 576 pixel (.jpg dan png) 
+              dan ukuran maksimal 2MB."
+            >
+              <UButton class="mt-7" @click="selectImage">
+                <template #leading>
+                  <NuxtIcon
+                    name="common/upload"
+                    class="text-lg"
+                    aria-hidden="true"
+                    filled
+                  />
+                </template>
+                Upload Gambar
+              </UButton>
+            </NoData>
           </template>
         </div>
       </section>
@@ -163,6 +208,34 @@
         </template>
       </BaseModal>
 
+      <!-- Validation Error -->
+      <BaseModal
+        :open="imageUploadStatus === 'VALIDATION_ERROR'"
+        with-close-button
+        button-position="center"
+        @close="closeConfirmationModal"
+      >
+        <div class="flex items-start">
+          <NuxtIcon
+            name="common/warning-circle"
+            class="mr-4 inline-block flex-shrink-0 text-5xl"
+            aria-hidden="true"
+            filled
+          />
+          <div>
+            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+              {{ confirmation.title }}
+            </h3>
+            <p class="font-lato text-sm leading-6 text-gray-600">
+              {{ confirmation.body }}
+            </p>
+          </div>
+        </div>
+        <template #footer>
+          <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+        </template>
+      </BaseModal>
+
       <!-- Upload/Delete Status -->
       <BaseModal
         :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
@@ -170,13 +243,13 @@
       >
         <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
           <NuxtIcon
-            v-if="imageUploadStatus === 'SUCCESS'"
+            v-show="imageUploadStatus === 'SUCCESS'"
             name="common/check-circle"
             class="mr-3 inline-block text-xl text-green-700"
             aria-hidden="true"
           />
           <NuxtIcon
-            v-else
+            v-show="imageUploadStatus === 'ERROR'"
             name="common/warning-triangle"
             class="mr-3 inline-block text-xl text-yellow-500"
             aria-hidden="true"
@@ -192,6 +265,7 @@
 </template>
 
 <script setup lang="ts">
+  import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
   const MEDIA_UPLOAD_STATUS = {
     NONE: 'NONE',
@@ -199,19 +273,41 @@
     DELETING: 'DELETING',
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR',
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
+  const MAX_UPLOADED_IMAGES = 6
 
   const props = defineProps({
     open: {
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
 
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
+  const pageStore = usePageStore()
 
   const imageUploader = ref<HTMLInputElement | null>(null)
+  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+  const imageUploadProgress = ref(0)
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    imageId: '', // for delete purposes
+  })
+  const exceedMaximumFiles = computed<boolean>(() => {
+    return uploadedImages.length >= MAX_UPLOADED_IMAGES
+  })
 
   function selectImage() {
     imageUploader.value?.click()
@@ -223,24 +319,33 @@
     }
   }
 
-  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
-  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
-  const imageUploadProgress = ref(0)
-  const confirmation = reactive({
-    title: '',
-    body: '',
-    imageId: '', // for delete purposes
-  })
-
-  function handleImageChange(event: Event) {
+  async function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
 
-    // TODO: add image validation
-    if (image) {
+    if (!image) {
+      return resetImageUploader()
+    }
+
+    try {
+      await validateImage(image, {
+        maxSize: 2097152, // 2MB
+        maxWidth: 1024, // 1024 pixel
+        maxHeight: 576, // 576 pixel
+      })
       uploadImage(image)
-    } else {
+    } catch (error) {
+      showValidationError()
+    } finally {
       resetImageUploader()
     }
+  }
+
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
   }
 
   /**
@@ -309,20 +414,6 @@
     })
   }
 
-  function removeUploadedImage(id: string) {
-    const imageIndex = uploadedImages.findIndex((image) => image.id === id)
-    uploadedImages.splice(imageIndex, 1)
-  }
-
-  function showDeleteConfirmation(imageId: string) {
-    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
-    setConfirmation({
-      title: 'Menghapus Gambar',
-      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
-      imageId,
-    })
-  }
-
   async function deleteUploadedImage(id: string) {
     const { status } = await $jSiteApi.media.deleteMedia(id, undefined, {
       server: false,
@@ -344,6 +435,24 @@
         body: 'Mohon maaf, gambar gagal dihapus. Silakan coba beberapa saat lagi',
       })
     }
+  }
+
+  /**
+   * Remove image by id from `uploadedImage` state
+   * @param id - id of images stored on `uploadedImages`
+   */
+  function removeUploadedImage(id: string) {
+    const imageIndex = uploadedImages.findIndex((image) => image.id === id)
+    uploadedImages.splice(imageIndex, 1)
+  }
+
+  function showDeleteConfirmation(imageId: string) {
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
+      imageId,
+    })
   }
 
   function setConfirmation({
@@ -369,16 +478,16 @@
     confirmation.imageId = ''
   }
 
+  function closeConfirmationModal() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
+  }
+
   function setModalStatus(value: string) {
     imageUploadStatus.value = value
   }
 
   function setUploadProgress(value: number) {
     imageUploadProgress.value = value
-  }
-
-  function closeConfirmationModal() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
   }
 
   /**
@@ -392,5 +501,27 @@
     }
   })
 
-  defineEmits(['close'])
+  /**
+   * Mutate `page` store evey time `uploadedImages` changes
+   */
+  watch(
+    uploadedImages,
+    async () => {
+      await nextTick()
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: {
+          images: uploadedImages,
+        },
+      })
+    },
+    { immediate: true },
+  )
+
+  watch(uploadedImages, (value) => {
+    emit('set-active-content', value.length)
+  })
+
+  const emit = defineEmits(['close', 'set-active-content'])
 </script>

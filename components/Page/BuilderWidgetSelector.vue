@@ -7,6 +7,14 @@
           color="white"
           trailing-icon="i-heroicons-chevron-down-20-solid"
         >
+          <template #leading>
+            <NuxtIcon
+              :name="widgetIcon"
+              class="text-2xl"
+              aria-hidden="true"
+              filled
+            />
+          </template>
           {{ props.widgetName }}
         </UButton>
         <template #panel>
@@ -34,14 +42,32 @@
           />
         </template>
         Setup Konten
+        <template v-if="activeContent !== 0" #trailing>
+          <div
+            class="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full bg-red-600"
+          >
+            <span class="font-roboto text-xs font-medium leading-none">
+              {{ activeContent }}
+            </span>
+          </div>
+        </template>
       </UButton>
     </div>
   </div>
 
-  <component :is="widgetConfig" :open="isConfigOpen" @close="toggleConfig" />
+  <component
+    :is="widgetConfig"
+    :open="isConfigOpen"
+    :section-index="props.sectionIndex"
+    :widget-index="props.widgetIndex"
+    @close="toggleConfig"
+    @set-active-content="activeContent = $event"
+  />
 </template>
 
 <script setup lang="ts">
+  import { WIDGET_ICON_MAP } from '~/common/constant/widget'
+
   const props = defineProps({
     widget: {
       type: String,
@@ -69,6 +95,7 @@
   // add another widget here...
 
   const isConfigOpen = ref(false)
+  const activeContent = ref(0)
 
   function toggleConfig() {
     isConfigOpen.value = !isConfigOpen.value
@@ -88,5 +115,13 @@
       default:
         break
     }
+  })
+
+  /**
+   * get widget icon dynamically from WIDGET_ICON_MAP constant
+   * @returns {string} - widget icon name
+   */
+  const widgetIcon = computed<string>(() => {
+    return WIDGET_ICON_MAP[props.widget] ?? ''
   })
 </script>
