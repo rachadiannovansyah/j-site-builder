@@ -3,6 +3,14 @@
     <!-- @todo: add widget selection menu and grid selector for specific widget -->
     <UPopover class="mb-3">
       <UButton color="white" trailing-icon="i-heroicons-chevron-down-20-solid">
+        <template #leading>
+          <NuxtIcon
+            :name="widgetIcon"
+            class="text-2xl"
+            aria-hidden="true"
+            filled
+          />
+        </template>
         {{ props.widgetName }}
       </UButton>
       <template #panel>
@@ -48,6 +56,8 @@
 </template>
 
 <script setup lang="ts">
+  import { WIDGET_ICON_MAP } from '~/common/constant/widget'
+
   const props = defineProps({
     widget: {
       type: String,
@@ -95,5 +105,16 @@
       default:
         break
     }
+  })
+
+  /**
+   * get widget icon dynamically from WIDGET_ICON_MAP constant
+   * @returns {string} - widget icon name
+   */
+  const widgetIcon = computed<string>(() => {
+    type IWidgetKey = keyof typeof WIDGET_ICON_MAP
+
+    const widgetKey = props.widget as IWidgetKey
+    return WIDGET_ICON_MAP[widgetKey] ?? ''
   })
 </script>
