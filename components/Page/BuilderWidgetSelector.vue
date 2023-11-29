@@ -1,16 +1,26 @@
 <template>
   <div class="flex flex-col items-center justify-center">
-    <!-- @todo: add widget selection menu and grid selector for specific widget -->
-    <UPopover class="mb-3">
-      <UButton color="white" trailing-icon="i-heroicons-chevron-down-20-solid">
-        {{ props.widgetName }}
-      </UButton>
-      <template #panel>
-        <div class="p-4">
-          <div class="h-[400px] w-[600px] bg-gray-200" />
-        </div>
-      </template>
-    </UPopover>
+    <div class="flex gap-[10px]">
+      <!-- Popup Change Widget -->
+      <UPopover class="mb-3">
+        <UButton
+          color="white"
+          trailing-icon="i-heroicons-chevron-down-20-solid"
+        >
+          {{ props.widgetName }}
+        </UButton>
+        <template #panel>
+          <div class="p-4">
+            <div class="h-[400px] w-[600px] bg-gray-200" />
+          </div>
+        </template>
+      </UPopover>
+
+      <!-- Popup Setup Layout (Grid/Row) -->
+      <PageBuilderWidgetSelectorLayout
+        v-if="props.widgetName === 'Showcase' || props.widgetName === 'Gallery'"
+      />
+    </div>
     <p class="mb-8 text-center font-lato text-sm leading-6 text-gray-500">
       Setup element sesuai dengan kebutuhan kamu
     </p>
