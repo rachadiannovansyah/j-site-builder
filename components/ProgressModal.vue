@@ -42,11 +42,11 @@
     width: 100%;
   }
   progress::-webkit-progress-bar {
-    background-color: #f5f5f5;
+    background-color: #069550;
     border-radius: 4px;
   }
   progress::-moz-progress-bar {
-    background-color: #f5f5f5;
+    background-color: #069550;
     border-radius: 4px;
   }
   progress::-webkit-progress-value {
