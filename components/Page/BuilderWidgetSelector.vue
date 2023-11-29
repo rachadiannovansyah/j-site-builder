@@ -7,6 +7,12 @@
           color="white"
           trailing-icon="i-heroicons-chevron-down-20-solid"
         >
+          <NuxtIcon
+            :name="`widget/${props.widget}`"
+            class="text-2xl"
+            aria-hidden="true"
+            filled
+          />
           {{ props.widgetName }}
         </UButton>
         <template #panel>
@@ -18,7 +24,7 @@
 
       <!-- Popup Setup Layout (Grid/Row) -->
       <PageBuilderWidgetSelectorLayout
-        v-if="props.widgetName === 'Showcase' || props.widgetName === 'Gallery'"
+        v-if="props.widget === 'Showcase' || props.widget === 'Gallery'"
       />
     </div>
     <p class="mb-8 text-center font-lato text-sm leading-6 text-gray-500">
