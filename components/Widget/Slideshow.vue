@@ -35,26 +35,44 @@
           type="file"
           accept="image/jpeg, image/jpg, image/png, image/webp"
           hidden
-          :disabled="uploadedImages.length >= MAX_UPLOADED_IMAGES"
+          :disabled="exceedMaximumFiles"
           @change="handleImageChange"
         />
 
         <div v-show="uploadedImages.length !== 0" class="flex justify-end px-6">
-          <UButton
-            variant="outline"
-            :disabled="uploadedImages.length >= MAX_UPLOADED_IMAGES"
-            @click="selectImage"
+          <UTooltip
+            text="Konten yang anda pasang sudah mencapai batas maksimal. 
+            Silakan hapus terlebih dahulu media yang sedang aktif untuk melakukan upload."
+            :ui="{
+              background: 'bg-[#EEEEEE]',
+              base: exceedMaximumFiles
+                ? 'h-full px-3 py-2 whitespace-normal font-lato text-sm'
+                : 'hidden',
+              rounded: 'rounded-lg',
+              ring: 'ring-[#BDBDBD]',
+              color: 'text-[#616161]',
+            }"
+            :popper="{
+              placement: 'bottom-start',
+              offsetDistance: 8,
+            }"
           >
-            <template #leading>
-              <NuxtIcon
-                name="common/image-bubble"
-                class="text-lg"
-                aria-hidden="true"
-                filled
-              />
-            </template>
-            Upload Gambar
-          </UButton>
+            <UButton
+              variant="outline"
+              :disabled="exceedMaximumFiles"
+              @click="selectImage"
+            >
+              <template #leading>
+                <NuxtIcon
+                  name="common/image-bubble"
+                  class="text-lg"
+                  aria-hidden="true"
+                  filled
+                />
+              </template>
+              Upload Gambar
+            </UButton>
+          </UTooltip>
         </div>
 
         <div v-show="uploadedImages.length !== 0" class="px-6">
@@ -286,6 +304,9 @@
     title: '',
     body: '',
     imageId: '', // for delete purposes
+  })
+  const exceedMaximumFiles = computed<boolean>(() => {
+    return uploadedImages.length >= MAX_UPLOADED_IMAGES
   })
 
   function selectImage() {
