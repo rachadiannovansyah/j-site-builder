@@ -50,7 +50,9 @@
                 placeholder="Masukkan judul"
                 color="gray"
               />
-              <template #help> Tersisa 250 Karakter </template>
+              <template #help>
+                Tersisa {{ titleLengthRemaining }} Karakter
+              </template>
             </UFormGroup>
             <UFormGroup label="Deskripsi (Opsional)" name="description">
               <UTextarea
@@ -59,7 +61,9 @@
                 color="gray"
                 :rows="5"
               />
-              <template #help> Tersisa 500 Karakter </template>
+              <template #help>
+                Tersisa {{ descriptionLengthRemaining }} Karakter
+              </template>
             </UFormGroup>
           </div>
         </section>
@@ -100,6 +104,9 @@
   import { z } from 'zod'
 
   const pageStore = usePageStore()
+
+  const MAX_TITLE_LENGTH = 250
+  const MAX_DESCRIPTION_LENGTH = 500
 
   const props = defineProps({
     open: {
@@ -163,6 +170,13 @@
     form.description = ''
     emit('close')
   }
+
+  const titleLengthRemaining = computed(() => {
+    return MAX_TITLE_LENGTH - form.title.length
+  })
+  const descriptionLengthRemaining = computed(() => {
+    return MAX_DESCRIPTION_LENGTH - form.description.length
+  })
 
   const emit = defineEmits(['close'])
 </script>
