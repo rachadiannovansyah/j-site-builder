@@ -42,6 +42,9 @@
             :key="navigation.label"
             :to="navigation.link"
             class="sidebar__navigation-item mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white last-of-type:mb-0 hover:bg-green-700"
+            :data-cy="`j-site-sidebar__button-menu-${navigation.label
+              .toLowerCase()
+              .replaceAll(' ', '-')}`"
           >
             <NuxtIcon :name="navigation.icon" filled class="text-xl" />
             <span class="ml-3">{{ navigation.label }}</span>
@@ -55,6 +58,7 @@
           <NuxtLink
             :to="config.public.portalJabarCMSBaseURL"
             class="mb-2 flex min-h-[50px] w-full items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white hover:bg-green-700"
+            data-cy="j-site-sidebar__button-menu-cms-portal-jabar"
           >
             <NuxtIcon
               name="navigation/portal-cms-icon"

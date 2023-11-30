@@ -3,6 +3,7 @@
     <div class="relative">
       <ListboxButton
         class="relative grid w-[212px] cursor-default grid-cols-[20px,1fr,20px] items-center gap-x-3 rounded-md bg-[#35B472] px-4 py-3 text-left font-lato text-sm text-white"
+        data-cy="j-site-sidebar__button-site-select"
       >
         <NuxtIcon
           name="common/globe"
@@ -60,6 +61,7 @@
             <NuxtLink
               :to="`${config.public.portalJabarCMSBaseURL}/j-site`"
               class="inline-flex"
+              data-cy="j-site-sidebar__button-site-manage"
             >
               <NuxtIcon
                 name="navigation/account-settings-icon"
