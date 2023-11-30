@@ -177,6 +177,7 @@
         with-close-button
         header=""
         button-position="right"
+        @close="closeConfirmationModal"
       >
         <div class="flex items-start">
           <NuxtIcon
@@ -241,20 +242,19 @@
         :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
         :header="confirmation.title"
       >
-        <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
+        <p class="flex items-center">
           <NuxtIcon
-            v-show="imageUploadStatus === 'SUCCESS'"
-            name="common/check-circle"
-            class="mr-3 inline-block text-xl text-green-700"
+            :name="confirmation.icon"
+            :class="{
+              'mr-3 inline-block text-xl text-white': true,
+              '!text-green-500': imageUploadStatus === 'SUCCESS',
+              '!text-yellow-500': imageUploadStatus === 'ERROR',
+            }"
             aria-hidden="true"
           />
-          <NuxtIcon
-            v-show="imageUploadStatus === 'ERROR'"
-            name="common/warning-triangle"
-            class="mr-3 inline-block text-xl text-yellow-500"
-            aria-hidden="true"
-          />
-          {{ confirmation.body }}
+          <span class="font-lato text-sm leading-6 text-gray-800">
+            {{ confirmation.body }}
+          </span>
         </p>
         <template #footer>
           <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
@@ -303,6 +303,7 @@
   const confirmation = reactive({
     title: '',
     body: '',
+    icon: '',
     imageId: '', // for delete purposes
   })
   const exceedMaximumFiles = computed<boolean>(() => {
@@ -392,6 +393,7 @@
             setConfirmation({
               title: 'Berhasil!',
               body: 'Gambar yang Anda unggah berhasil ditambahkan.',
+              icon: 'common/check-circle',
             })
           }, 300)
         }, 300)
@@ -403,6 +405,7 @@
       setConfirmation({
         title: 'Oops, Upload Gambar Gagal!',
         body: 'Mohon maaf, upload gambar gagal. Silakan coba beberapa saat lagi.',
+        icon: 'common/warning-triangle',
       })
     }
   }
@@ -425,6 +428,7 @@
       setConfirmation({
         title: 'Berhasil!',
         body: 'Gambar berhasil dihapus dari daftar slideshow.',
+        icon: 'common/check-circle',
       })
     }
 
@@ -433,6 +437,7 @@
       setConfirmation({
         title: 'Oops, Gagal menghapus gambar!',
         body: 'Mohon maaf, gambar gagal dihapus. Silakan coba beberapa saat lagi',
+        icon: 'common/warning-triangle',
       })
     }
   }
@@ -455,17 +460,20 @@
     })
   }
 
-  function setConfirmation({
-    title,
-    body,
-    imageId,
-  }: {
+  interface ISetConfirmation {
     title: string
     body: string
+    icon?: string
     imageId?: string
-  }) {
+  }
+
+  function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
     confirmation.title = title
     confirmation.body = body
+
+    if (icon) {
+      confirmation.icon = icon
+    }
 
     if (imageId) {
       confirmation.imageId = imageId
@@ -475,6 +483,7 @@
   function resetConfirmation() {
     confirmation.title = ''
     confirmation.body = ''
+    confirmation.icon = ''
     confirmation.imageId = ''
   }
 
@@ -496,8 +505,11 @@
    */
   watch(imageUploadStatus, (newValue) => {
     if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
-      setUploadProgress(0)
-      resetConfirmation()
+      // wait modal to closed all the way before reset confirmation
+      setTimeout(() => {
+        setUploadProgress(0)
+        resetConfirmation()
+      }, 300)
     }
   })
 
