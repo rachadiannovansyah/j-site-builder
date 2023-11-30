@@ -71,7 +71,7 @@
             <template #title>
               <span class="font-lato text-sm text-gray-900">
                Rekomendasi resolusi gambar <strong>1024 x 576 pixel</strong> dengan <strong>ukuran maksimal 2 MB .</strong> 
-               List media dibawah ini merupakan media yang sudah aktif dengan batas maksimal <strong>6 media yang bisa diaktifkan .</strong>
+               List media dibawah ini merupakan media yang sudah aktif.
               </span>
             </template>
           </UAlert>
@@ -239,10 +239,39 @@
           <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
         </template>
       </BaseModal>
+
+       <!-- Validation Error -->
+      <BaseModal
+        :open="imageUploadStatus === 'VALIDATION_ERROR'"
+        with-close-button
+        button-position="center"
+        @close="closeConfirmationModal"
+      >
+        <div class="flex items-start">
+          <NuxtIcon
+            name="common/warning-circle"
+            class="mr-4 inline-block flex-shrink-0 text-5xl"
+            aria-hidden="true"
+            filled
+          />
+          <div>
+            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+              {{ confirmation.title }}
+            </h3>
+            <p class="font-lato text-sm leading-6 text-gray-600">
+              {{ confirmation.body }}
+            </p>
+          </div>
+        </div>
+        <template #footer>
+          <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+        </template>
+      </BaseModal>
   </UModal>
 </template>
 
 <script setup lang="ts">
+  import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
   const MEDIA_UPLOAD_STATUS = {
     NONE: 'NONE',
@@ -250,15 +279,25 @@
     DELETING: 'DELETING',
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR',
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
   const props = defineProps({
     open: {
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
+  const pageStore = usePageStore()
 
   const imageUploader = ref<HTMLInputElement | null>(null)
 
@@ -283,15 +322,33 @@
     }
   }
 
-  function handleImageChange(event: Event) {
+  async function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
 
-    // TODO: add image validation
-    if (image) {
+    if (!image) {
+      return resetImageUploader()
+    }
+
+    try {
+      await validateImage(image, {
+        maxSize: 2097152, // 2MB
+        maxWidth: 1024, // 1024 pixel
+        maxHeight: 576, // 576 pixel
+      })
       uploadImage(image)
-    } else {
+    } catch (error) {
+      showValidationError()
+    } finally {
       resetImageUploader()
     }
+  }
+  
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
   }
   
     /**
@@ -433,7 +490,7 @@
     imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
   }
 
-    /**
+  /**
    * Reset confirmation data and upload progress
    * when confirmation modal is closed
    */
@@ -443,5 +500,24 @@
       resetConfirmation()
     }
   })
+
+  /**
+   * Mutate `page` store evey time `uploadedImages` changes
+   */
+  watch(
+    uploadedImages,
+    async () => {
+      await nextTick()
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: {
+          images: uploadedImages,
+        },
+      })
+    },
+    { immediate: true },
+  )
+
   defineEmits(['close'])
 </script>
