@@ -3,7 +3,6 @@ export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
   ui: {
-    global: true,
     safelistColors: ['blue', 'gray', 'red'],
   },
   colorMode: {

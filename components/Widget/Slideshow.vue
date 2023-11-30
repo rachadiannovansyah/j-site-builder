@@ -519,5 +519,9 @@
     { immediate: true },
   )
 
-  defineEmits(['close'])
+  watch(uploadedImages, (value) => {
+    emit('set-active-content', value.length)
+  })
+
+  const emit = defineEmits(['close', 'set-active-content'])
 </script>

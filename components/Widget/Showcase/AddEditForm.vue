@@ -69,7 +69,7 @@
             </button>
           </div>
           <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
-            Ukuran Maksimal file upload 5 Mb dengan ratio 16:9.(.jpg dan.png )
+            Ukuran Maksimal file upload 2 MB dengan ratio 1:1. (.jpg dan .png )
           </p>
         </div>
         <UFormGroup label="Judul">

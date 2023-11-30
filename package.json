@@ -27,7 +27,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vue": "^9.17.0",
     "husky": "^8.0.0",
-    "nuxt": "^3.7.4",
+    "nuxt": "^3.8.2",
     "nuxt-icons": "^3.2.1",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.5",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@nuxt/image": "^1.1.0",
-    "@nuxt/ui": "^2.10.0",
+    "@nuxt/ui": "^2.11.0",
     "@types/js-cookie": "^3.0.5",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",

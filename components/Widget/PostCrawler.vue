@@ -93,7 +93,7 @@
                   'cursor-pointer ring-2 ring-green-700': checked,
                 }"
               >
-                <NuxtImg
+                <img
                   :src="format.icon"
                   width="186"
                   height="100"
@@ -121,7 +121,7 @@
         >
           <template v-if="selectedPostFormat">
             <div class="flex max-h-[294px] w-full overflow-y-auto pt-4">
-              <NuxtImg
+              <img
                 :src="selectedPostPreview"
                 width="220"
                 height="220"
@@ -135,7 +135,7 @@
             <div
               class="flex w-full flex-col items-center justify-center gap-[10px]"
             >
-              <NuxtImg
+              <img
                 src="/images/post/no-format-display-selected.svg"
                 width="220"
                 height="220"

@@ -10,7 +10,7 @@ export interface ITemplateWidget {
   grid_span: number
   name: string
   widget?: string
-  payload?: object
+  payload?: { [key: string]: string | number }
 }
 export interface ITemplateSection {
   grid_column: number

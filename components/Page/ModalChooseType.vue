@@ -25,6 +25,7 @@
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
+            data-cy="j-site-page-type__button-close"
             @click="$emit('close')"
           />
         </div>
@@ -45,6 +46,9 @@
                 as="template"
                 :value="type"
                 :disabled="true"
+                :data-cy="`j-site-page-type__option-${type
+                  .toLowerCase()
+                  .replaceAll(' ', '-')}`"
               >
                 <div
                   :class="[
@@ -90,8 +94,17 @@
       </section>
       <template #footer>
         <section class="flex justify-end gap-x-4">
-          <UButton variant="outline" @click="$emit('close')"> Batal </UButton>
-          <UButton @click="$emit('next')">
+          <UButton
+            variant="outline"
+            data-cy="j-site-page-type__button-cancel"
+            @click="$emit('close')"
+          >
+            Batal
+          </UButton>
+          <UButton
+            data-cy="j-site-page-type__button-next"
+            @click="$emit('next')"
+          >
             Selanjutnya
             <template #trailing>
               <NuxtIcon
