@@ -20,7 +20,10 @@
     >
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-roboto text-xl font-medium leading-8 text-green-800">
+          <h3
+            class="font-roboto text-xl font-medium leading-8 text-green-800"
+            data-cy="j-site-page-template__header"
+          >
             Pilih Templat Halaman
           </h3>
           <UButton
@@ -28,6 +31,7 @@
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
+            data-cy="j-site-page-template__button-close"
             @click="$emit('close')"
           />
         </div>
@@ -57,6 +61,7 @@
                     :src="template.thumbnail"
                     :alt="template.name"
                     class="h-full w-full object-cover"
+                    data-cy="j-site-page-template__image-thumbnail"
                   />
                 </div>
               </div>
@@ -64,6 +69,7 @@
                 :to="template.preview"
                 target="_blank"
                 class="absolute right-2 top-2 rounded-md border border-gray-500"
+                data-cy="j-site-page-template__button-preview"
               >
                 <NuxtIcon
                   name="common/eye"
@@ -76,12 +82,14 @@
                   <RadioGroupLabel
                     as="p"
                     class="font-lato text-sm font-bold capitalize text-gray-800"
+                    data-cy="j-site-page-template__label"
                   >
                     {{ template.name }}
                   </RadioGroupLabel>
                   <RadioGroupDescription
                     as="span"
                     class="font-lato text-[11px] text-gray-700"
+                    data-cy="j-site-page-template__description"
                   >
                     {{ countWidget(template.sections) }}
                     konten tersedia di templat ini
@@ -93,6 +101,7 @@
                     :variant="checked ? 'solid' : 'outline'"
                     :color="checked ? 'primary' : 'gray'"
                     :ui="{ font: 'font-normal' }"
+                    data-cy="j-site-page-template__button-select"
                   >
                     <template v-if="checked" #leading>
                       <NuxtIcon
@@ -113,8 +122,18 @@
 
       <template #footer>
         <section class="flex justify-end gap-x-4">
-          <UButton variant="outline" @click="$emit('back')"> Kembali </UButton>
-          <UButton :disabled="!selected" @click="$emit('next')">
+          <UButton
+            variant="outline"
+            data-cy="j-site-page-template__button-cancel"
+            @click="$emit('back')"
+          >
+            Kembali
+          </UButton>
+          <UButton
+            :disabled="!selected"
+            data-cy="j-site-page-template__button-submit"
+            @click="$emit('next')"
+          >
             Mulai Buat Halaman
           </UButton>
         </section>
@@ -127,7 +146,11 @@
         <p>Terjadi Kesalahan</p>
       </ModalBody>
       <ModalFooter position="center">
-        <BaseButton variant="secondary" @click="$emit('close')">
+        <BaseButton
+          variant="secondary"
+          data-cy="j-site-page-template__button-close-modal"
+          @click="$emit('close')"
+        >
           Tutup
         </BaseButton>
       </ModalFooter>
