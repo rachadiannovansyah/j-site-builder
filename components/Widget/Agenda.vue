@@ -97,7 +97,7 @@
               variant="ghost"
               color="gray"
               type="button"
-              @click="$emit('close')"
+              @click="onCancel"
             >
               Batalkan
             </UButton>
@@ -115,6 +115,8 @@
 
   const MAX_TITLE_LENGTH = 50
   const MAX_DESCRIPTION_LENGTH = 100
+
+  const pageStore = usePageStore()
 
   const props = defineProps({
     open: {
@@ -160,9 +162,38 @@
   })
 
   function onSave(event: FormSubmitEvent<Schema>) {
-    // TODO: handle submit event
-    console.log(event.data)
+    const { title, description, isActive } = event.data
+
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        title,
+        description,
+        is_active: isActive ? 1 : 0,
+      },
+    })
+
+    emit('close')
   }
 
-  defineEmits(['close'])
+  /**
+   * Sync form data with `pageStore` data if `batalkan` button clicked.
+   * This is to avoid unmatch data between local state and pageStore state.
+   */
+  function onCancel() {
+    const { sectionIndex, widgetIndex } = props
+    const { payload } =
+      pageStore.builderConfig.sections[sectionIndex].widgets[widgetIndex]
+
+    if (payload) {
+      form.title = payload.title.toString()
+      form.description = payload.description.toString()
+      form.isActive = payload.is_active === 1
+    }
+
+    emit('close')
+  }
+
+  const emit = defineEmits(['close'])
 </script>
