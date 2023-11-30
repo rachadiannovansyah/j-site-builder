@@ -7,7 +7,11 @@
         <SearchBar placeholder="Cari Halaman" />
         <FilterBar />
       </div>
-      <UButton v-if="!isPagesDataEmpty" @click="createPageFirstStep">
+      <UButton
+        v-if="!isPagesDataEmpty"
+        data-cy="j-site-page__button-create-page"
+        @click="createPageFirstStep"
+      >
         <template #leading>
           <NuxtIcon
             name="common/plus"
@@ -24,7 +28,11 @@
         description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
       halaman yang menakjubkan!"
       >
-        <UButton v-if="isPagesDataEmpty" @click="createPageFirstStep">
+        <UButton
+          v-if="isPagesDataEmpty"
+          data-cy="j-site-page__button-create-new-page"
+          @click="createPageFirstStep"
+        >
           <template #leading>
             <NuxtIcon
               name="common/plus"
