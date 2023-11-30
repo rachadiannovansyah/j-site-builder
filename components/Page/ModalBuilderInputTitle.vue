@@ -30,7 +30,7 @@
               variant="ghost"
               icon="i-heroicons-x-mark-20-solid"
               class="-my-1"
-              @click="$emit('close')"
+              @click="onCancel"
             />
           </div>
         </template>
@@ -70,7 +70,7 @@
               type="button"
               variant="ghost"
               color="gray"
-              @click="$emit('close')"
+              @click="onCancel"
             >
               Batalkan
             </UButton>
@@ -80,7 +80,7 @@
                 color="red"
                 variant="outline"
                 :disabled="isFormInputEmpty"
-                @click="onClearInput"
+                @click="onRemove"
               >
                 <template #leading>
                   <NuxtIcon name="common/trash" size="50" aria-hidden="true" />
@@ -153,5 +153,16 @@
       description: '',
     })
   }
+
+  function onRemove() {
+    onClearInput()
+  }
+
+  function onCancel() {
+    form.title = ''
+    form.description = ''
+    emit('close')
+  }
+
   const emit = defineEmits(['close'])
 </script>
