@@ -1,14 +1,14 @@
 <template>
   <div
     ref="search-bar"
-    class="flex h-[38px] items-center gap-3 rounded-lg border border-gray-200 px-3 py-2"
+    class="flex h-[38px] w-full items-center gap-3 rounded-lg border border-gray-200 px-3 py-2"
   >
     <NuxtIcon
       name="common/magnifier"
-      class="text-base text-blue-gray-300"
+      class="flex-none text-base text-blue-gray-300"
       aria-hidden="true"
     />
-    <form @submit.prevent="onSubmit">
+    <form class="grow" @submit.prevent="onSubmit">
       <input
         ref="search-bar-input"
         v-model.trim="state.value"
@@ -19,10 +19,10 @@
             ? `search-bar__input__${dataCySuffix}`
             : 'search-bar__input'
         "
-        class="h-full w-[150px] font-lato text-sm text-blue-gray-800 placeholder:text-blue-gray-200 focus:outline-none"
+        class="h-full w-full font-lato text-sm text-blue-gray-800 placeholder:text-blue-gray-200 focus:outline-none"
       />
     </form>
-    <div class="flex w-3 items-center">
+    <div class="w-3 flex-none items-center">
       <button
         v-show="hasValue"
         ref="search-bar-clear-button"
