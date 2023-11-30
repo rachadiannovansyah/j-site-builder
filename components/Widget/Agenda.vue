@@ -68,24 +68,13 @@
           </UFormGroup>
 
           <UFormGroup label="Aktifkan Agenda">
-            <div class="flex justify-between gap-16">
+            <div class="flex items-center justify-between">
               <span class="font-lato text-sm text-gray-600">
                 Data Agenda akan diambil dari agenda portal jabar yang sudah
                 disesuaikan dengan OPD
               </span>
-              <div class="flex flex-shrink-0 items-center gap-1.5">
+              <div class="ml-4">
                 <UToggle v-model="form.isActive" class="flex-shrink-0" />
-                <!-- TODO: change tooltip message -->
-                <UTooltip text="lorem ipsum">
-                  <UButton variant="ghost" color="gray" :padded="false">
-                    <NuxtIcon
-                      name="common/question-mark-circle"
-                      class="text-xl"
-                      aria-hidden="true"
-                      filled
-                    />
-                  </UButton>
-                </UTooltip>
               </div>
             </div>
           </UFormGroup>
