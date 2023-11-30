@@ -15,6 +15,8 @@ export interface ITemplateWidget {
 export interface ITemplateSection {
   grid_column: number
   widgets: ITemplateWidget[]
+  title?: string
+  description?: string
 }
 
 export interface ITemplateData {
