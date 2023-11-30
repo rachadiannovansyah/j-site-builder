@@ -63,7 +63,7 @@ export default defineAppConfig({
     },
     formGroup: {
       label: {
-        base: 'block font-medium font-lato text-[0.9375rem] leading-6 text-gray-800',
+        base: 'block font-medium font-lato text-[0.9375rem] leading-6 text-blue-gray-800',
       },
       description: 'text-gray-700 font-lato text-[0.8125rem] leading-6',
       error: 'mt-1 font-lato text-red-700 text-[0.8125rem] leading-6',
@@ -129,6 +129,11 @@ export default defineAppConfig({
       },
       variant: {
         subtle: 'bg-{color}-50 text-{color}-800 ring-{color}-800',
+      },
+    },
+    toggle: {
+      default: {
+        size: 'lg',
       },
     },
   },
