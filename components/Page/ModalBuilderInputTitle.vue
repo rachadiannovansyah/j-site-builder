@@ -14,7 +14,7 @@
         },
         footer: {
           padding: 'sm:py-4 sm:px-6',
-        }
+        },
       }"
     >
       <template #header>
@@ -33,24 +33,19 @@
       </template>
 
       <section class="grid grid-cols-1 gap-y-4">
-        <NuxtImg
+        <img
           src="/images/illustration-title-input.svg"
           width="548"
           height="345"
           class="justify-self-center"
           alt="Ilustrasi gambar faq"
         />
-        <div class="mx-6 px-4 py-[14px] gap-y-[10px]">
+        <div class="mx-6 gap-y-[10px] px-4 py-[14px]">
           <UFormGroup label="Judul (Opsional)">
             <template #default>
-              <UInput
-                placeholder="Masukkan judul"
-                color="gray"
-              />
+              <UInput placeholder="Masukkan judul" color="gray" />
             </template>
-            <template #help>
-              Tersisa 250 Karakter
-            </template>
+            <template #help> Tersisa 250 Karakter </template>
           </UFormGroup>
           <UFormGroup label="Deskripsi (Opsional)">
             <template #default>
@@ -60,9 +55,7 @@
                 :rows="5"
               />
             </template>
-            <template #help>
-              Tersisa 500 Karakter
-            </template>
+            <template #help> Tersisa 500 Karakter </template>
           </UFormGroup>
         </div>
       </section>
@@ -88,7 +81,6 @@
 </template>
 
 <script setup lang="ts">
-
   const props = defineProps({
     open: {
       type: Boolean,
