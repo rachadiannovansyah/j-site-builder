@@ -136,5 +136,10 @@ export default defineAppConfig({
         size: 'lg',
       },
     },
+    progress: {
+      default: {
+        size: 'lg',
+      },
+    },
   },
 })
