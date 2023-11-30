@@ -36,7 +36,7 @@
         </template>
 
         <section class="grid grid-cols-1 gap-y-4">
-          <NuxtImg
+          <img
             src="/images/illustration-title-input.svg"
             width="548"
             height="345"
