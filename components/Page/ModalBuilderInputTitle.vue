@@ -102,8 +102,14 @@
 
 <script setup lang="ts">
   import { z } from 'zod'
+  import { storeToRefs } from 'pinia'
 
   const pageStore = usePageStore()
+  const {
+    builderConfig: {
+      value: { sections },
+    },
+  } = storeToRefs(pageStore)
 
   const MAX_TITLE_LENGTH = 250
   const MAX_DESCRIPTION_LENGTH = 500
@@ -120,8 +126,8 @@
   })
 
   const form = reactive({
-    title: '',
-    description: '',
+    title: toRaw(sections[props.sectionIndex].title ?? ''),
+    description: toRaw(sections[props.sectionIndex].description ?? ''),
   })
 
   const isFormInputEmpty = computed(() => {
@@ -165,9 +171,14 @@
     onClearInput()
   }
 
+  function syncFormData() {
+    const { sectionIndex } = props
+    form.title = toRaw(sections[sectionIndex].title ?? '')
+    form.description = toRaw(sections[sectionIndex].description ?? '')
+  }
+
   function onCancel() {
-    form.title = ''
-    form.description = ''
+    syncFormData()
     emit('close')
   }
 
