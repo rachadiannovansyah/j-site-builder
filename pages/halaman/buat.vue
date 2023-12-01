@@ -62,7 +62,7 @@
       <UButton
         v-if="modal.status === MODAL_STATE.CANCEL_CONFIRMATION"
         variant="outline"
-        @click="onCancel"
+        @click="actionDraftPage"
       >
         Kembali dan simpan draft
       </UButton>
