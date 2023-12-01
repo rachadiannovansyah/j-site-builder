@@ -120,7 +120,9 @@
           }"
         >
           <template v-if="selectedPostFormat">
-            <div class="flex max-h-[294px] w-full overflow-y-auto pt-4">
+            <div
+              class="widget-post-crawler__preview flex max-h-[294px] w-full overflow-y-auto pt-4"
+            >
               <img
                 :src="selectedPostPreview"
                 width="220"
@@ -234,3 +236,20 @@
     selectedPostPreview.value = value
   }
 </script>
+
+<style scoped>
+  .widget-post-crawler__preview::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .widget-post-crawler__preview::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .widget-post-crawler__preview::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+</style>
