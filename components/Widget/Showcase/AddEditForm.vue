@@ -56,7 +56,10 @@
                 Upload Gambar
               </p>
             </button>
-            <button class="flex flex-col items-center justify-center gap-3">
+            <button
+              class="flex flex-col items-center justify-center gap-3"
+              @click="isOpenModalSelectLogo = true"
+            >
               <img
                 src="~/assets/icons/common/select-logo.svg"
                 alt="Ikon Pilih Logo"
@@ -113,6 +116,12 @@
         </section>
       </template>
     </UCard>
+
+    <!-- Child Modal: Select Logo -->
+    <WidgetShowcaseModalSelectLogo
+      :open="isOpenModalSelectLogo"
+      @close="isOpenModalSelectLogo = false"
+    />
   </UModal>
 </template>
 
@@ -138,6 +147,7 @@
     link: '',
   })
   const isActiveLink = ref(false)
+  const isOpenModalSelectLogo = ref(false)
 
   defineEmits(['close'])
 </script>
