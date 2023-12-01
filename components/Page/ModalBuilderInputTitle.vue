@@ -105,6 +105,7 @@
   import { storeToRefs } from 'pinia'
 
   const pageStore = usePageStore()
+  // Destructer section from store
   const {
     builderConfig: {
       value: { sections },
