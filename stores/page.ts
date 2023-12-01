@@ -60,5 +60,23 @@ export const usePageStore = defineStore('page', {
         ...payload,
       }
     },
+    setSectionTitle({
+      sectionIndex,
+      title,
+    }: {
+      sectionIndex: number
+      title: string
+    }) {
+      this.builderConfig.sections[sectionIndex].title = title
+    },
+    setSectionDescription({
+      sectionIndex,
+      description,
+    }: {
+      sectionIndex: number
+      description: string
+    }) {
+      this.builderConfig.sections[sectionIndex].description = description
+    },
   },
 })

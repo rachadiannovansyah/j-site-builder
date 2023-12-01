@@ -4,12 +4,33 @@
       class="flex items-center justify-between pb-4 font-lato text-xs font-medium"
     >
       <div class="flex items-center justify-center gap-2.5">
-        <UButton size="xs" color="blue" @click="isInputModalOpen = true">
+        <UButton
+          v-if="hasTitle"
+          size="xs"
+          color="blue"
+          @click="isInputModalOpen = true"
+        >
           <template #leading>
             <NuxtIcon name="common/icon-input-text" aria-hidden="true" />
           </template>
           Input Judul
         </UButton>
+        <div
+          v-else
+          class="flex flex-row gap-[2px] rounded-[6px] bg-blue-50 px-2.5 py-1"
+        >
+          <span
+            class="line-clamp-1 max-w-[150px] self-center font-lato text-[12px] font-medium leading-[23px] text-gray-900"
+          >
+            {{ sectionTitle }}
+          </span>
+          <UButton size="xs" color="blue" @click="isInputModalOpen = true">
+            <template #leading>
+              <NuxtIcon name="common/icon-input-text" aria-hidden="true" />
+            </template>
+            Edit Judul
+          </UButton>
+        </div>
       </div>
       <div class="flex items-center justify-center gap-2.5">
         <UButton size="xs" color="white">
@@ -61,8 +82,11 @@
   </section>
 
   <!-- @todo: Add popup for input Title and Description -->
-  <PageModalBuilderInputTitle :open="isInputModalOpen" @close="isInputModalOpen = false" />
-
+  <PageModalBuilderInputTitle
+    :open="isInputModalOpen"
+    :section-index="sectionIndex"
+    @close="isInputModalOpen = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -80,6 +104,16 @@
   })
 
   const isInputModalOpen = ref(false)
+  const pageStore = usePageStore()
+
+  const sectionTitle = computed(() => {
+    return pageStore.builderConfig.sections[props.sectionIndex]?.title
+  })
+
+  const hasTitle = computed(() => {
+    const title = pageStore.builderConfig.sections[props.sectionIndex]?.title
+    return !(title !== null && title !== undefined && title.length > 0)
+  })
 </script>
 
 <style scoped>
