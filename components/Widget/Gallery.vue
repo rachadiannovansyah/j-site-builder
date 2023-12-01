@@ -122,7 +122,7 @@
         </div>
 
         <div
-          class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
+          class="content__images--scrollbar mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
         >
           <template v-if="uploadedImages.length !== 0">
             <div
@@ -536,3 +536,29 @@
 
   const emit = defineEmits(['close', 'set-active-content'])
 </script>
+
+<style scoped>
+  .content__images--scrollbar {
+    /* Scroll bar stylings */
+    scrollbar-color: #e0e0e0 white;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 20px;
+      height: 20px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #e0e0e0;
+      height: 35px;
+      border: 6px solid transparent;
+      border-radius: 10px;
+      background-clip: content-box;
+    }
+    /* End of scroll bar stylings */
+  }
+</style>
