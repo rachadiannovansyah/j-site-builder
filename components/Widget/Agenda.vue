@@ -151,7 +151,7 @@
       payload: {
         title,
         description,
-        is_active: isActive ? 1 : 0,
+        is_active: isActive,
       },
     })
 
@@ -172,7 +172,7 @@
   function syncFormData() {
     form.title = currentStorePayload.value?.title.toString() ?? ''
     form.description = currentStorePayload.value?.description.toString() ?? ''
-    form.isActive = currentStorePayload.value?.is_active === 1
+    form.isActive = !!currentStorePayload.value?.is_active
   }
 
   const isOpen = computed(() => {
