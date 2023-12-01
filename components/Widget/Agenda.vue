@@ -86,7 +86,7 @@
               variant="ghost"
               color="gray"
               type="button"
-              @click="onCancel"
+              @click="$emit('close')"
             >
               Batalkan
             </UButton>
@@ -104,8 +104,6 @@
 
   const MAX_TITLE_LENGTH = 50
   const MAX_DESCRIPTION_LENGTH = 100
-
-  const pageStore = usePageStore()
 
   const props = defineProps({
     open: {
@@ -142,13 +140,7 @@
 
   type Schema = z.output<typeof formSchema>
 
-  const titleLengthRemaining = computed(() => {
-    return MAX_TITLE_LENGTH - form.title.length
-  })
-
-  const descriptionLengthRemaining = computed(() => {
-    return MAX_DESCRIPTION_LENGTH - form.description.length
-  })
+  const pageStore = usePageStore()
 
   function onSave(event: FormSubmitEvent<Schema>) {
     const { title, description, isActive } = event.data
@@ -166,23 +158,43 @@
     emit('close')
   }
 
+  const currentStorePayload = computed(() => {
+    return pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+  })
+
   /**
-   * Sync form data with `pageStore` data if `batalkan` button clicked.
+   * Sync local state `form` with `pageStore` payload.
    * This is to avoid unmatch data between local state and pageStore state.
    */
-  function onCancel() {
-    const { sectionIndex, widgetIndex } = props
-    const { payload } =
-      pageStore.builderConfig.sections[sectionIndex].widgets[widgetIndex]
-
-    if (payload) {
-      form.title = payload.title.toString()
-      form.description = payload.description.toString()
-      form.isActive = payload.is_active === 1
-    }
-
-    emit('close')
+  function syncFormData() {
+    form.title = currentStorePayload.value?.title.toString() ?? ''
+    form.description = currentStorePayload.value?.description.toString() ?? ''
+    form.isActive = currentStorePayload.value?.is_active === 1
   }
+
+  const isOpen = computed(() => {
+    return props.open
+  })
+
+  watch(isOpen, function (open) {
+    if (!open) {
+      // wait for modal transition to finish
+      setTimeout(() => {
+        syncFormData()
+      }, 300)
+    }
+  })
+
+  const titleLengthRemaining = computed(() => {
+    return MAX_TITLE_LENGTH - form.title.length
+  })
+
+  const descriptionLengthRemaining = computed(() => {
+    return MAX_DESCRIPTION_LENGTH - form.description.length
+  })
 
   const emit = defineEmits(['close'])
 </script>

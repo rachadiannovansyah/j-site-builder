@@ -13,7 +13,18 @@ export const usePageStore = defineStore('page', {
       sections: [] as ITemplateSection[],
     },
   }),
-  getters: {},
+  getters: {
+    getWidgetPayload(state) {
+      return ({
+        sectionIndex,
+        widgetIndex,
+      }: {
+        sectionIndex: number
+        widgetIndex: number
+      }) =>
+        state.builderConfig.sections[sectionIndex].widgets[widgetIndex].payload
+    },
+  },
   actions: {
     setPageType(value: string) {
       this.builderConfig.type = value
