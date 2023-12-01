@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface IMetaData {
   page: number
   last_page: number
@@ -10,7 +11,7 @@ export interface ITemplateWidget {
   grid_span: number
   name: string
   widget?: string
-  payload?: { [key: string]: string | number }
+  payload?: { [key: string]: any }
 }
 export interface ITemplateSection {
   grid_column: number
