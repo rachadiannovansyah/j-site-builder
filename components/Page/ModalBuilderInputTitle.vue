@@ -158,14 +158,6 @@
   function onClearInput() {
     form.title = ''
     form.description = ''
-    pageStore.setSectionTitle({
-      sectionIndex: props.sectionIndex,
-      title: '',
-    })
-    pageStore.setSectionDescription({
-      sectionIndex: props.sectionIndex,
-      description: '',
-    })
   }
 
   function onRemove() {
