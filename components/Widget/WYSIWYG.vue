@@ -66,7 +66,7 @@
       placeholder: 'Tulis isi post di sini',
       language_url: '/tinymce/langs/id.js',
       language: 'id',
-      skin_url: '/tinymce/skins/ui',
+      skin_url: '/tinymce/skins',
       menubar: 'false',
       plugins: 'lists link image media',
       toolbar: `
