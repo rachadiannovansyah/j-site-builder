@@ -41,6 +41,7 @@
         <div
           class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
         >
+          <!-- TODO: refactor this section below into dropzone component -->
           <div class="flex h-full w-full flex-col items-center justify-center">
             <p class="font-lato text-sm font-medium text-blue-gray-800">
               drag and drop berkas disini atau
