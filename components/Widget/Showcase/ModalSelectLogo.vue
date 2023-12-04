@@ -41,39 +41,39 @@
 
       <section class="flex max-h-[458px] w-full flex-col gap-6">
         <SearchBar placeholder="Cari Logo" />
-        <RadioGroup
-          v-model="selectedLogo"
-          class="flex max-h-[296px] w-full items-center justify-center gap-4 overflow-y-auto rounded-[10px] border border-gray-100 bg-[#F9F9F9] p-[10px] sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-        >
-          <RadioGroupOption
-            v-for="(logo, index) in logos.data"
-            :key="index"
-            v-slot="{ checked }"
-            as="template"
-            :value="logo"
+        <RadioGroup v-model="selectedLogo">
+          <div
+            class="widget-showcase__list-logo flex max-h-[296px] w-full items-center justify-center gap-4 overflow-y-auto rounded-[10px] border border-gray-100 bg-[#F9F9F9] p-[10px] sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
           >
-            <button
-              :class="{
-                'flex h-[130px] w-[130px] items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white': true,
-                'ring-1 ring-green-400': checked,
-              }"
-              @click="$emit('select-logo', logo)"
+            <RadioGroupOption
+              v-for="(logo, index) in logos.data"
+              :key="index"
+              v-slot="{ checked }"
+              as="template"
+              :value="logo"
             >
-              <div class="flex h-[72px] w-[78px] items-center justify-center">
-                <NuxtImg
-                  :src="logo.file.uri"
-                  alt="Portal Jabar Logo"
-                  width="72"
-                  height="78"
-                />
-              </div>
-            </button>
-          </RadioGroupOption>
+              <button
+                :class="{
+                  'flex h-[130px] w-auto items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white': true,
+                  'ring-1 ring-green-400': checked,
+                }"
+              >
+                <div class="flex h-[72px] w-[78px] items-center justify-center">
+                  <NuxtImg
+                    :src="logo.file.uri"
+                    alt="Portal Jabar Logo"
+                    width="72"
+                    height="78"
+                  />
+                </div>
+              </button>
+            </RadioGroupOption>
+          </div>
         </RadioGroup>
         <BasePagination
-          limit="8"
+          :limit="params.limit"
           :total-rows="logos.meta?.total"
-          :limit-options="['5', '10', '15', '20']"
+          :limit-options="['10', '15', '20']"
           :current-page="logos.meta?.page"
           :total-page="logos.meta?.last_page"
           @change-page="setParamsPage"
@@ -84,7 +84,10 @@
       </section>
       <template #footer>
         <section class="flex justify-end">
-          <UButton :disabled="Object.keys(selectedLogo).length === 0">
+          <UButton
+            :disabled="Object.keys(selectedLogo).length === 0"
+            @click="onSelectedLogo"
+          >
             Pilih Logo
           </UButton>
         </section>
@@ -104,7 +107,7 @@
     },
   })
 
-  defineEmits(['close', 'select-logo'])
+  const emit = defineEmits(['close', 'select-logo'])
 
   const selectedLogo = ref({})
 
@@ -119,27 +122,60 @@
   })
 
   const { $jSiteApi } = useNuxtApp()
-  const { data: templatesList } = await $jSiteApi.logo.getLogos(
-    { query: params },
-    { server: false },
-  )
 
-  logos.data = toRaw(templatesList.value?.data) ?? null
-  logos.meta = toRaw(templatesList.value?.meta) ?? null
+  async function fetchDataLogos() {
+    const { data } = await $jSiteApi.logo.getLogos(
+      { query: params },
+      { server: false },
+    )
+    logos.data = toRaw(data.value?.data) ?? null
+    logos.meta = toRaw(data.value?.meta) ?? null
+  }
+
+  onMounted(() => {
+    fetchDataLogos()
+  })
 
   function setParamsLimit(limit: string | number) {
     params.limit = limit
+    fetchDataLogos()
   }
 
   function setParamsPage(page: string | number) {
     params.page = page
+    fetchDataLogos()
   }
 
-  function onPreviousPage(page: string | number) {
-    params.page = Number(params.page) - Number(page)
+  function onPreviousPage() {
+    params.page = Number(params.page) - 1
+    fetchDataLogos()
   }
 
-  function onNextPage(page: string | number) {
-    params.page = Number(params.page) + Number(page)
+  function onNextPage() {
+    params.page = Number(params.page) + 1
+    fetchDataLogos()
+  }
+
+  function onSelectedLogo() {
+    const data = toRaw(selectedLogo)
+    emit('select-logo', toRaw(data.value))
+    emit('close')
   }
 </script>
+
+<style scoped>
+  .widget-showcase__list-logo::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .widget-showcase__list-logo::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .widget-showcase__list-logo::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+</style>

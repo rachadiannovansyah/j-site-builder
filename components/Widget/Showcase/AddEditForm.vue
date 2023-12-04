@@ -39,41 +39,43 @@
         class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
         <div
-          class="custom-border-dash mb-2 flex h-[206px] w-[719px] flex-col items-center justify-center gap-3 bg-gray-50"
+          class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
         >
-          <p class="font-lato text-sm font-medium text-blue-gray-800">
-            drag and drop berkas disini atau
-          </p>
-          <div class="flex gap-[15px]">
-            <button class="flex flex-col items-center justify-center gap-3">
-              <img
-                src="~/assets/icons/common/upload-picture.svg"
-                alt="Ikon Upload Gambar"
-                width="45"
-                height="45"
-              />
-              <p class="font-lato text-sm font-normal text-pink-600">
-                Upload Gambar
-              </p>
-            </button>
-            <button
-              class="flex flex-col items-center justify-center gap-3"
-              @click="onOpenModalSelectLogo"
-            >
-              <img
-                src="~/assets/icons/common/select-logo.svg"
-                alt="Ikon Pilih Logo"
-                width="45"
-                height="45"
-              />
-              <p class="font-lato text-sm font-normal text-green-500">
-                Pilih Logo
-              </p>
-            </button>
+          <div class="flex h-full w-full flex-col items-center justify-center">
+            <p class="font-lato text-sm font-medium text-blue-gray-800">
+              drag and drop berkas disini atau
+            </p>
+            <div class="flex gap-[15px]">
+              <button class="flex flex-col items-center justify-center gap-3">
+                <img
+                  src="~/assets/icons/common/upload-picture.svg"
+                  alt="Ikon Upload Gambar"
+                  width="45"
+                  height="45"
+                />
+                <p class="font-lato text-sm font-normal text-pink-600">
+                  Upload Gambar
+                </p>
+              </button>
+              <button
+                class="flex flex-col items-center justify-center gap-3"
+                @click="onOpenModalSelectLogo"
+              >
+                <img
+                  src="~/assets/icons/common/select-logo.svg"
+                  alt="Ikon Pilih Logo"
+                  width="45"
+                  height="45"
+                />
+                <p class="font-lato text-sm font-normal text-green-500">
+                  Pilih Logo
+                </p>
+              </button>
+            </div>
+            <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
+              Ukuran Maksimal file upload 2 MB dengan ratio 1:1.(.jpg dan .png)
+            </p>
           </div>
-          <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
-            Ukuran Maksimal file upload 2 MB dengan ratio 1:1. (.jpg dan .png )
-          </p>
         </div>
         <UFormGroup label="Judul">
           <UInput
