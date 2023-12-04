@@ -32,7 +32,10 @@
       <section class="grid grid-cols-1 gap-y-4">
         <div class="flex justify-end px-6">
           <!-- hide feature, show if the feature is ready -->
-          <div v-if="isSelectedAllFeatureReady" class="flex flex-row gap-x-2 items-center">
+          <div
+            v-if="isSelectedAllFeatureReady"
+            class="flex flex-row items-center gap-x-2"
+          >
             <UCheckbox label="Select all" />
             <UButton color="red" variant="ghost">
               <template #leading>
@@ -46,8 +49,12 @@
               Hapus Konten
             </UButton>
           </div>
-      
-          <UButton v-if="uploadedImages.length !== 0" variant="outline" @click="selectImage">
+
+          <UButton
+            v-if="uploadedImages.length !== 0"
+            variant="outline"
+            @click="selectImage"
+          >
             <template #leading>
               <NuxtIcon
                 name="common/image-bubble"
@@ -62,7 +69,7 @@
             ref="imageUploader"
             type="file"
             hidden
-            @change="handleImageChange" 
+            @change="handleImageChange"
           />
         </div>
 
@@ -70,48 +77,53 @@
           <UAlert title="">
             <template #title>
               <span class="font-lato text-sm text-gray-900">
-               Rekomendasi resolusi gambar <strong>1024 x 576 pixel</strong> dengan <strong>ukuran maksimal 2 MB .</strong> 
-               List media dibawah ini merupakan media yang sudah aktif.
+                Rekomendasi resolusi gambar
+                <strong>1024 x 576 pixel</strong> dengan
+                <strong>ukuran maksimal 2 MB .</strong>
+                List media dibawah ini merupakan media yang sudah aktif.
               </span>
             </template>
           </UAlert>
         </div>
 
         <div class="flex flex-row justify-end gap-x-2.5 px-6">
-          
           <!-- @todo: Hide feature, show it if the feature is ready -->
           <UFormGroup v-if="isInputSearchFeature" class="w-full">
-              <UInput placeholder="Cari Media" icon="i-heroicons-magnifying-glass" />
+            <UInput
+              placeholder="Cari Media"
+              icon="i-heroicons-magnifying-glass"
+            />
           </UFormGroup>
-        
+
           <UDivider
             v-if="isInputSearchFeature"
             class="h-[38px] w-fit"
             color="gray"
             orientation="vertical"
           />
-          
+
           <UBadge
-            v-if="uploadedImages.length !== 0" 
+            v-if="uploadedImages.length !== 0"
             class="min-w-max self-center"
             color="blue"
             size="lg"
             variant="subtle"
           >
             <div class="flex items-center gap-x-1.5">
-                <span
-                  class="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-blue-600"
-                />
-                <span class="font-lato text-sm text-gray-800">
-                  Media Aktif
-                  <strong>{{ uploadedImages.length }}</strong>
-                </span>
+              <span
+                class="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-blue-600"
+              />
+              <span class="font-lato text-sm text-gray-800">
+                Media Aktif
+                <strong>{{ uploadedImages.length }}</strong>
+              </span>
             </div>
           </UBadge>
-
         </div>
 
-        <div class="mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6">
+        <div
+          class="content__images--scrollbar mb-4 grid max-h-[370px] w-full min-w-0 grid-cols-3 gap-6 overflow-y-auto px-6"
+        >
           <template v-if="uploadedImages.length !== 0">
             <div
               v-for="(image, index) in uploadedImages"
@@ -122,7 +134,7 @@
                 :src="image.uri"
                 width="216"
                 height="173"
-                class="rounded-lg h-[173px] w-[216px] object-cover object-center"
+                class="h-[173px] w-[216px] rounded-lg object-cover object-center"
               />
               <div class="absolute inset-0 h-full w-full p-2.5">
                 <UButton
@@ -141,7 +153,7 @@
               </div>
             </div>
           </template>
-          
+
           <NoData
             v-else
             class="col-span-4"
@@ -163,110 +175,99 @@
               ref="imageUploader"
               type="file"
               hidden
-              @change="handleImageChange" 
+              @change="handleImageChange"
             />
           </NoData>
         </div>
-
       </section>
     </UCard>
 
     <!-- Upload Progress -->
-      <ProgressModal
-        :open="imageUploadStatus === 'UPLOADING'"
-        :value="imageUploadProgress"
-        title="Mengunggah Gambar"
-        message="Mohon tunggu, pengunggahan gambar sedang diproses."
-      />
+    <ProgressModal
+      :open="imageUploadStatus === 'UPLOADING'"
+      :value="imageUploadProgress"
+      title="Mengunggah Gambar"
+      message="Mohon tunggu, pengunggahan gambar sedang diproses."
+    />
 
-      <!-- Delete Confirmation -->
-      <BaseModal
-        :open="imageUploadStatus === 'DELETING'"
-        with-close-button
-        button-position="right"
-      >
-        <div class="flex items-start">
-          <NuxtIcon
-            name="common/trash-circle"
-            class="mr-4 inline-block flex-shrink-0 text-5xl"
-            aria-hidden="true"
-            filled
-          />
-          <div>
-            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
-              {{ confirmation.title }}
-            </h3>
-            <p class="font-lato text-sm leading-6 text-gray-600">
-              {{ confirmation.body }}
-            </p>
-          </div>
+    <!-- Delete Confirmation -->
+    <BaseModal
+      :open="imageUploadStatus === 'DELETING'"
+      with-close-button
+      button-position="right"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-start">
+        <NuxtIcon
+          name="common/trash-circle"
+          class="mr-4 inline-block flex-shrink-0 text-5xl"
+          aria-hidden="true"
+          filled
+        />
+        <div>
+          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+            {{ confirmation.title }}
+          </h3>
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ confirmation.body }}
+          </p>
         </div>
-        <template #footer>
-          <UButton
-            variant="outline"
-            color="gray"
-            @click="closeConfirmationModal"
-          >
-            Batalkan
-          </UButton>
-          <UButton @click="deleteUploadedImage(confirmation.imageId)">
-            Ya, saya yakin
-          </UButton>
-        </template>
-      </BaseModal>
+      </div>
+      <template #footer>
+        <UButton variant="outline" color="gray" @click="closeConfirmationModal">
+          Batalkan
+        </UButton>
+        <UButton @click="deleteUploadedImage(confirmation.imageId)">
+          Ya, saya yakin
+        </UButton>
+      </template>
+    </BaseModal>
 
-      <!-- Upload/Delete Status -->
-      <BaseModal
-        :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
-        :header="confirmation.title"
-      >
-        <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
-          <NuxtIcon
-            v-if="imageUploadStatus === 'SUCCESS'"
-            name="common/check-circle"
-            class="mr-3 inline-block text-xl text-green-700"
-            aria-hidden="true"
-          />
-          <NuxtIcon
-            v-else
-            name="common/warning-triangle"
-            class="mr-3 inline-block text-xl text-yellow-500"
-            aria-hidden="true"
-          />
-          {{ confirmation.body }}
-        </p>
-        <template #footer>
-          <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
-        </template>
-      </BaseModal>
+    <!-- Upload/Delete Status -->
+    <BaseModal
+      :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
+      :header="confirmation.title"
+    >
+      <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
+        <NuxtIcon
+          :name="confirmation.icon"
+          class="mr-3 inline-block text-xl text-green-700"
+          aria-hidden="true"
+        />
+        {{ confirmation.body }}
+      </p>
+      <template #footer>
+        <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
+      </template>
+    </BaseModal>
 
-       <!-- Validation Error -->
-      <BaseModal
-        :open="imageUploadStatus === 'VALIDATION_ERROR'"
-        with-close-button
-        button-position="center"
-        @close="closeConfirmationModal"
-      >
-        <div class="flex items-start">
-          <NuxtIcon
-            name="common/warning-circle"
-            class="mr-4 inline-block flex-shrink-0 text-5xl"
-            aria-hidden="true"
-            filled
-          />
-          <div>
-            <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
-              {{ confirmation.title }}
-            </h3>
-            <p class="font-lato text-sm leading-6 text-gray-600">
-              {{ confirmation.body }}
-            </p>
-          </div>
+    <!-- Validation Error -->
+    <BaseModal
+      :open="imageUploadStatus === 'VALIDATION_ERROR'"
+      with-close-button
+      button-position="center"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-start">
+        <NuxtIcon
+          name="common/warning-circle"
+          class="mr-4 inline-block flex-shrink-0 text-5xl"
+          aria-hidden="true"
+          filled
+        />
+        <div>
+          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+            {{ confirmation.title }}
+          </h3>
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ confirmation.body }}
+          </p>
         </div>
-        <template #footer>
-          <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
-        </template>
-      </BaseModal>
+      </div>
+      <template #footer>
+        <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+      </template>
+    </BaseModal>
   </UModal>
 </template>
 
@@ -313,6 +314,7 @@
   const confirmation = reactive({
     title: '',
     body: '',
+    icon: '',
     imageId: '', // for delete purposes
   })
 
@@ -342,7 +344,7 @@
       resetImageUploader()
     }
   }
-  
+
   function showValidationError() {
     imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
     setConfirmation({
@@ -350,8 +352,8 @@
       body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
     })
   }
-  
-    /**
+
+  /**
    * NOTE: when this code is written, the `ofetch` library does not offer a way
    * to handle upload progress, so we have to do it manually
    *
@@ -395,6 +397,7 @@
             setConfirmation({
               title: 'Berhasil!',
               body: 'Gambar yang Anda unggah berhasil ditambahkan.',
+              icon: 'common/check-circle',
             })
           }, 300)
         }, 300)
@@ -406,6 +409,7 @@
       setConfirmation({
         title: 'Oops, Upload Gambar Gagal!',
         body: 'Mohon maaf, upload gambar gagal. Silakan coba beberapa saat lagi.',
+        icon: 'common/warning-triangle',
       })
     }
   }
@@ -435,13 +439,13 @@
     const { status } = await $jSiteApi.media.deleteMedia(id, undefined, {
       server: false,
     })
-    console.log(status);
     if (status.value === 'success') {
       removeUploadedImage(id)
       setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
       setConfirmation({
         title: 'Berhasil!',
         body: 'Gambar berhasil dihapus dari daftar gallery.',
+        icon: 'common/check-circle',
       })
     }
 
@@ -450,31 +454,35 @@
       setConfirmation({
         title: 'Oops, Gagal menghapus gambar!',
         body: 'Mohon maaf, gambar gagal dihapus. Silakan coba beberapa saat lagi',
+        icon: 'common/warning-triangle',
       })
     }
   }
 
-  
-  function setConfirmation({
-    title,
-    body,
-    imageId,
-  }: {
+  interface ISetConfirmation {
     title: string
     body: string
+    icon?: string
     imageId?: string
-  }) {
+  }
+
+  function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
     confirmation.title = title
     confirmation.body = body
 
     if (imageId) {
       confirmation.imageId = imageId
     }
+
+    if (icon) {
+      confirmation.icon = icon
+    }
   }
 
   function resetConfirmation() {
     confirmation.title = ''
     confirmation.body = ''
+    confirmation.icon = ''
     confirmation.imageId = ''
   }
 
@@ -496,8 +504,11 @@
    */
   watch(imageUploadStatus, (newValue) => {
     if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
-      setUploadProgress(0)
-      resetConfirmation()
+      // wait modal to closed all the way before reset confirmation
+      setTimeout(() => {
+        setUploadProgress(0)
+        resetConfirmation()
+      }, 300)
     }
   })
 
@@ -519,5 +530,35 @@
     { immediate: true },
   )
 
-  defineEmits(['close'])
+  watch(uploadedImages, (value) => {
+    emit('set-active-content', value.length)
+  })
+
+  const emit = defineEmits(['close', 'set-active-content'])
 </script>
+
+<style scoped>
+  .content__images--scrollbar {
+    /* Scroll bar stylings */
+    scrollbar-color: #e0e0e0 white;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 20px;
+      height: 20px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #e0e0e0;
+      height: 35px;
+      border: 6px solid transparent;
+      border-radius: 10px;
+      background-clip: content-box;
+    }
+    /* End of scroll bar stylings */
+  }
+</style>
