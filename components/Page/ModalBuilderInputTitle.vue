@@ -138,8 +138,11 @@
   })
 
   const formSchema = z.object({
-    title: z.string().max(250, '').optional(),
-    description: z.string().max(500, '').optional(),
+    title: z.string().max(250, 'Judul maksimal 250 Karakter').optional(),
+    description: z
+      .string()
+      .max(500, 'Deskripsi maksimal 250 Karakter')
+      .optional(),
   })
 
   function onSave() {
