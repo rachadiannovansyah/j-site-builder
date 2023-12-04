@@ -93,6 +93,7 @@
   const WidgetShowcase = resolveComponent('WidgetShowcase')
   const WidgetPostCrawler = resolveComponent('WidgetPostCrawler')
   const WidgetAgenda = resolveComponent('WidgetAgenda')
+  const WidgetWYSIWYG = resolveComponent('WidgetWYSIWYG')
   // add another widget here...
 
   const isConfigOpen = ref(false)
@@ -114,6 +115,8 @@
         return WidgetPostCrawler
       case 'Agenda':
         return WidgetAgenda
+      case 'WYSIWYG':
+        return WidgetWYSIWYG
       // add another case here
       default:
         break
