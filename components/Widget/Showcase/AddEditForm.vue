@@ -114,7 +114,7 @@
           <UButton variant="ghost" color="gray" @click="$emit('close')">
             Batalkan
           </UButton>
-          <UButton> Submit </UButton>
+          <UButton @click="onSubmitShowcase"> Submit </UButton>
         </section>
       </template>
     </UCard>
@@ -153,7 +153,7 @@
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
 
-  defineEmits(['close'])
+  const emit = defineEmits(['close', 'push-data'])
 
   function toggleModalSelectLogo(val: boolean) {
     isOpenModalSelectLogo.value = val
@@ -164,10 +164,30 @@
   }
 
   function onSelectLogo(logo: ILogosData) {
-    // todo: move store state
     state.title = logo.title || ''
+    state.file.id = logo.file.id || ''
     state.file.uri = logo.file.uri || ''
   }
+
+  function resetForm() {
+    state.file.uri = ''
+    state.file.id = ''
+    state.title = ''
+    state.description = ''
+    state.link = ''
+  }
+
+  function onSubmitShowcase() {
+    emit('push-data', toRaw(state))
+    resetForm()
+    emit('close')
+  }
+
+  watch(isActiveLink, (value) => {
+    if (!value) {
+      state.link = ''
+    }
+  })
 </script>
 
 <style scoped>

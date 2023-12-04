@@ -8,13 +8,16 @@ export interface IMetaData {
 }
 
 export interface ILogosFileData {
-  path: string
-  uri: string
+  path?: string
+  uri?: string
+  id?: string
 }
 
 export interface ILogosData {
   title: string
   file: ILogosFileData
+  description?: string
+  link?: string
 }
 
 export type ILogosResponse = {
