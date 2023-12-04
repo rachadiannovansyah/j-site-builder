@@ -41,24 +41,35 @@
 
       <section class="flex max-h-[458px] w-full flex-col gap-6">
         <SearchBar placeholder="Cari Logo" />
-        <div
+        <RadioGroup
+          v-model="selectedLogo"
           class="flex max-h-[296px] w-full items-center justify-center gap-4 overflow-y-auto rounded-[10px] border border-gray-100 bg-[#F9F9F9] p-[10px] sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
-          <div
+          <RadioGroupOption
             v-for="(logo, index) in logos.data"
             :key="index"
-            class="flex h-[130px] w-[130px] items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white"
+            v-slot="{ checked }"
+            as="template"
+            :value="logo"
           >
-            <div class="flex h-[72px] w-[78px] items-center justify-center">
-              <NuxtImg
-                :src="logo.file.uri"
-                alt="Portal Jabar Logo"
-                width="72"
-                height="78"
-              />
-            </div>
-          </div>
-        </div>
+            <button
+              :class="{
+                'flex h-[130px] w-[130px] items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white': true,
+                'ring-1 ring-green-400': checked,
+              }"
+              @click="$emit('select-logo', logo)"
+            >
+              <div class="flex h-[72px] w-[78px] items-center justify-center">
+                <NuxtImg
+                  :src="logo.file.uri"
+                  alt="Portal Jabar Logo"
+                  width="72"
+                  height="78"
+                />
+              </div>
+            </button>
+          </RadioGroupOption>
+        </RadioGroup>
         <BasePagination
           limit="8"
           :total-rows="logos.meta?.total"
@@ -73,7 +84,9 @@
       </section>
       <template #footer>
         <section class="flex justify-end">
-          <UButton disabled> Pilih Logo </UButton>
+          <UButton :disabled="Object.keys(selectedLogo).length === 0">
+            Pilih Logo
+          </UButton>
         </section>
       </template>
     </UCard>
@@ -81,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+  import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
   import { IMetaData, ILogosData } from '~/repository/j-site/types/logo'
 
   const props = defineProps({
@@ -90,7 +104,9 @@
     },
   })
 
-  defineEmits(['close'])
+  defineEmits(['close', 'select-logo'])
+
+  const selectedLogo = ref({})
 
   const logos = reactive({
     data: null as null | ILogosData[],

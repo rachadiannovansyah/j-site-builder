@@ -121,11 +121,13 @@
     <WidgetShowcaseModalSelectLogo
       :open="isOpenModalSelectLogo"
       @close="toggleModalSelectLogo(false)"
+      @select-logo="onSelectLogo"
     />
   </UModal>
 </template>
 
 <script setup lang="ts">
+  import { ILogosData } from '~/repository/j-site/types/logo'
   const props = defineProps({
     open: {
       type: Boolean,
@@ -149,7 +151,7 @@
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
 
-  defineEmits(['close', 'select-logo'])
+  defineEmits(['close'])
 
   function toggleModalSelectLogo(val: boolean) {
     isOpenModalSelectLogo.value = val
@@ -157,6 +159,12 @@
 
   function onOpenModalSelectLogo() {
     toggleModalSelectLogo(true)
+  }
+
+  function onSelectLogo(logo: ILogosData) {
+    // todo: move store state
+    state.title = logo.title || ''
+    state.file.uri = logo.file.uri || ''
   }
 </script>
 

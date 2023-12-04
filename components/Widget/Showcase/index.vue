@@ -85,7 +85,6 @@
       :open="isOpenAddEditShowcase"
       :is-edit-mode="isEditShowcase"
       @close="isOpenAddEditShowcase = false"
-      @select-logo="onSelectLogo"
     />
   </UModal>
 </template>
@@ -102,8 +101,4 @@
   const isOpenAddEditShowcase = ref(false)
 
   defineEmits(['close'])
-
-  function onSelectLogo() {
-    // TODO: add action
-  }
 </script>
