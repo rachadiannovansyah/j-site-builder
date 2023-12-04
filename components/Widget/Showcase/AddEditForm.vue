@@ -58,7 +58,7 @@
             </button>
             <button
               class="flex flex-col items-center justify-center gap-3"
-              @click="isOpenModalSelectLogo = true"
+              @click="onOpenModalSelectLogo"
             >
               <img
                 src="~/assets/icons/common/select-logo.svg"
@@ -120,7 +120,7 @@
     <!-- Child Modal: Select Logo -->
     <WidgetShowcaseModalSelectLogo
       :open="isOpenModalSelectLogo"
-      @close="isOpenModalSelectLogo = false"
+      @close="toggleModalSelectLogo(false)"
     />
   </UModal>
 </template>
@@ -149,7 +149,15 @@
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
 
-  defineEmits(['close'])
+  defineEmits(['close', 'select-logo'])
+
+  function toggleModalSelectLogo(val: boolean) {
+    isOpenModalSelectLogo.value = val
+  }
+
+  function onOpenModalSelectLogo() {
+    toggleModalSelectLogo(true)
+  }
 </script>
 
 <style scoped>

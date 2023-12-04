@@ -2,7 +2,7 @@
   <UModal
     :model-value="props.open"
     prevent-close
-    :ui="{ width: 'md:max-w-[661px]', height: 'md:max-h-608px' }"
+    :ui="{ width: 'md:max-w-[682px]', height: 'md:max-h-608px' }"
     :overlay="false"
     as="div"
   >
@@ -37,7 +37,35 @@
 
       <section class="flex max-h-[458px] w-full flex-col gap-6">
         <SearchBar placeholder="Cari Logo" />
-        <div>List Logo</div>
+        <div
+          class="flex max-h-[296px] w-full items-center justify-center gap-4 overflow-y-auto rounded-[10px] border border-gray-100 bg-[#F9F9F9] p-[10px] sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+        >
+          <div
+            v-for="(logo, index) in logos.data"
+            :key="index"
+            class="flex h-[130px] w-[130px] items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white"
+          >
+            <div class="flex h-[72px] w-[78px] items-center justify-center">
+              <NuxtImg
+                :src="logo.file.uri"
+                alt="Portal Jabar Logo"
+                width="72"
+                height="78"
+              />
+            </div>
+          </div>
+        </div>
+        <BasePagination
+          limit="8"
+          :total-rows="logos.meta?.total"
+          :limit-options="['5', '10', '15', '20']"
+          :current-page="logos.meta?.page"
+          :total-page="logos.meta?.last_page"
+          @change-page="setParamsPage"
+          @change-limit="setParamsLimit"
+          @previous-page="onPreviousPage"
+          @next-page="onNextPage"
+        />
       </section>
       <template #footer>
         <section class="flex justify-end">
@@ -49,6 +77,8 @@
 </template>
 
 <script setup lang="ts">
+  import { IMetaData, ILogosData } from '~/repository/j-site/types/logo'
+
   const props = defineProps({
     open: {
       type: Boolean,
@@ -57,4 +87,39 @@
   })
 
   defineEmits(['close'])
+
+  const logos = reactive({
+    data: null as null | ILogosData[],
+    meta: null as null | IMetaData,
+  })
+
+  const params = reactive({
+    page: 1 as string | number,
+    limit: 8 as string | number,
+  })
+
+  const { $jSiteApi } = useNuxtApp()
+  const { data: templatesList } = await $jSiteApi.logo.getLogos(
+    { query: params },
+    { server: false },
+  )
+
+  logos.data = toRaw(templatesList.value?.data) ?? null
+  logos.meta = toRaw(templatesList.value?.meta) ?? null
+
+  function setParamsLimit(limit: string | number) {
+    params.limit = limit
+  }
+
+  function setParamsPage(page: string | number) {
+    params.page = page
+  }
+
+  function onPreviousPage(page: string | number) {
+    params.page = Number(params.page) - Number(page)
+  }
+
+  function onNextPage(page: string | number) {
+    params.page = Number(params.page) + Number(page)
+  }
 </script>
