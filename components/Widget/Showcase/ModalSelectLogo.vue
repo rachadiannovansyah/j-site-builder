@@ -2,7 +2,11 @@
   <UModal
     :model-value="props.open"
     prevent-close
-    :ui="{ width: 'md:max-w-[682px]', height: 'md:max-h-608px' }"
+    :ui="{
+      width: 'md:max-w-[682px]',
+      height: 'md:max-h-608px',
+      base: 'ring-gray-200 ring-1',
+    }"
     :overlay="false"
     as="div"
   >
