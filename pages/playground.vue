@@ -82,13 +82,13 @@
     </div>
 
     <h1>Select</h1>
-    <div class="mb-8 w-full flex flex-col gap-4">
+    <div class="mb-8 flex w-full flex-col gap-4">
       <BaseSelect
         v-model="selected"
         label="Select Item"
         helper="Pilih satu"
         placeholder="Item yang tersedia"
-        :options="names" 
+        :options="names"
       />
       <BaseSelect
         v-model="selected"
@@ -96,7 +96,7 @@
         helper="Pilih satu"
         placeholder="Item yang tersedia"
         :errors="['Wajib diisi!']"
-        :options="names" 
+        :options="names"
       />
       <BaseSelect
         v-model="selected"
@@ -113,15 +113,15 @@
         placeholder="Item yang tersedia"
         :options="names"
         searchable
-      > 
+      >
         <template #option-empty="{ query }">
-         "{{ query }}" tidak ditemukan
+          "{{ query }}" tidak ditemukan
         </template>
       </BaseSelect>
     </div>
 
     <h1>Textarea</h1>
-    <div class="mb-8 w-full flex flex-col gap-4">
+    <div class="mb-8 flex w-full flex-col gap-4">
       <BaseTextarea
         v-model="inputTextarea"
         helper="Teks Helper"
@@ -153,19 +153,102 @@
         :max-length="100"
       />
     </div>
+
+    <h1>Drag & Drop Dropzone</h1>
+    <div class="mb-8 flex w-full flex-col gap-4">
+      <h3>
+        Ukuran maksimal file adalah 1 MB dengan resolusi 1080 x 720 . File yang
+        didukung adalah .jpg dan .png
+      </h3>
+      <div class="dropzone disabled" v-bind="getRootProps()">
+        <div
+          :class="{
+            'flex h-full w-full cursor-pointer items-center justify-center rounded-md border border-dashed border-gray-300 px-2 pb-[23px] pt-2': true,
+            isDragActive,
+          }"
+        >
+          <input v-bind="getInputProps()" />
+          <span v-if="isDragActive"> Drop here .... </span>
+          <div v-else class="flex flex-col items-center justify-center gap-y-4">
+            <img
+              width="30"
+              height="30"
+              src="@/assets/icons/common/plus-circle.svg"
+              alt="icon tambah dengan lingkaran"
+            />
+            <p class="text-center">
+              Seret dan lepaskan file disini, <br />
+              atau
+              <u class="text-blue-500">klik untuk upload</u>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="state.files.length > 0" class="fils">
+        <div
+          v-for="(file, index) in state.files"
+          :key="index"
+          class="file-item flex max-w-[440px] flex-row items-center justify-between rounded-lg border p-2"
+        >
+          <span>{{ file.name }}</span>
+          <NuxtIcon size="30" name="common/eye" />
+          <button
+            class="delete-file inline"
+            @click="handleClickDeleteFile(index)"
+          >
+            <NuxtIcon name="common/close" />
+          </button>
+        </div>
+      </div>
+      <p v-else>Belum ada file terpilih</p>
+    </div>
   </main>
 </template>
 
 <script setup lang="ts">
+  import { useDropzone } from 'vue3-dropzone'
+
   definePageMeta({
     layout: 'public',
   })
 
+  const state = reactive({
+    files: [],
+  })
+  const { getRootProps, getInputProps, isDragActive, ...rest } = useDropzone({
+    onDrop,
+  })
+
+  watch(isDragActive, () => {
+    console.log('isDragActive', isDragActive.value, rest)
+  })
+
+  function onDrop(acceptFiles: File[], rejectReasons: unknown) {
+    console.log(acceptFiles)
+    console.log(rejectReasons)
+    state.files = acceptFiles as never[]
+  }
+
+  function handleClickDeleteFile(index: number) {
+    state.files.splice(index, 1)
+  }
   const search = ref('')
   const input = ref('')
   const inputTextarea = ref('')
-  
-  const names = ['Wade Cooper', 'Arlene Mccoy', 'Devon Webb', 'Tom Cook', 'Tanya Fox', 'Hellen Schmidt', 'Caroline Schultz', 'Mason Heaney', 'Claudie Smitham', 'Emil Schaefer']
+
+  const names = [
+    'Wade Cooper',
+    'Arlene Mccoy',
+    'Devon Webb',
+    'Tom Cook',
+    'Tanya Fox',
+    'Hellen Schmidt',
+    'Caroline Schultz',
+    'Mason Heaney',
+    'Claudie Smitham',
+    'Emil Schaefer',
+  ]
   const selected = ref('')
 
   const columns = [
