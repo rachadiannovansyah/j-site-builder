@@ -42,42 +42,57 @@
         </div>
       </template>
 
-      <section
-        class="flex h-[385px] w-full flex-col items-center justify-center gap-x-3 gap-y-4 overflow-y-auto bg-[#F9F9F9] px-6 py-4 md:grid md:grid-cols-2 lg:grid-cols-3"
-      >
-        <!-- @todo: update list showcase -->
-        <div
-          v-for="item in 9"
-          :key="item"
-          class="relative flex h-[213px] w-[216px] flex-col items-center justify-center gap-4"
+      <template v-if="dataShowcase.length !== 0">
+        <section
+          class="flex h-[385px] w-full flex-col items-center justify-center gap-x-3 gap-y-4 overflow-y-auto bg-[#F9F9F9] px-6 py-4 md:grid md:grid-cols-2 lg:grid-cols-3"
         >
           <div
-            class="flex h-[173px] w-[216px] items-center justify-center rounded-lg bg-white"
+            v-for="(item, index) in dataShowcase"
+            :key="index"
+            class="relative flex h-[213px] w-[216px] flex-col items-center justify-center gap-4"
           >
-            <img
-              src="/logos/logo.svg"
-              alt="Portal Jabar Logo"
-              width="72"
-              height="78"
-            />
+            <div
+              class="flex h-[173px] w-[216px] items-center justify-center rounded-lg bg-white"
+            >
+              <NuxtImg
+                :src="item?.file?.uri || ''"
+                :alt="item?.title || ''"
+                width="72"
+                height="78"
+              />
+            </div>
+            <p class="font-roboto text-base font-medium text-gray-800">
+              {{ item.title }}
+            </p>
+            <button class="absolute left-3 top-3">
+              <NuxtIcon
+                name="common/trash"
+                aria-hidden="true"
+                class="text-base text-red-700"
+              />
+            </button>
+            <button class="absolute right-3 top-3">
+              <NuxtIcon
+                name="common/pencil"
+                aria-hidden="true"
+                class="text-base text-green-700"
+              />
+            </button>
           </div>
-          <p class="font-roboto text-base font-medium text-gray-800">Item</p>
-          <button class="absolute left-3 top-3">
-            <NuxtIcon
-              name="common/trash"
-              aria-hidden="true"
-              class="text-base text-red-700"
-            />
-          </button>
-          <button class="absolute right-3 top-3">
-            <NuxtIcon
-              name="common/pencil"
-              aria-hidden="true"
-              class="text-base text-green-700"
-            />
-          </button>
-        </div>
-      </section>
+        </section>
+      </template>
+
+      <template v-else>
+        <section class="flex h-[385px] w-full items-center justify-center">
+          <NoData
+            class="col-span-4"
+            title="Kamu belum memiliki showcase"
+            description="Kamu dapat menambahkan showcase melalui Upload Gambar atau Pilih Logo
+    melalui tombol Tambah diatas dengan rekomendasi ratio gambar adalah 1 x 1 (.jpg dan .png) 
+    dan ukuran maksimal 2MB."
+          />
+        </section>
+      </template>
     </UCard>
 
     <!-- Child Modal: Add/Edit Showcase -->
@@ -85,20 +100,68 @@
       :open="isOpenAddEditShowcase"
       :is-edit-mode="isEditShowcase"
       @close="isOpenAddEditShowcase = false"
+      @push-data="pushDataShowcase"
     />
   </UModal>
 </template>
 
 <script setup lang="ts">
+  import { ILogosData } from '~/repository/j-site/types/logo'
+
   const props = defineProps({
     open: {
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
 
-  const isOpenAddEditShowcase = ref(false)
   const isEditShowcase = ref(false)
+  const isOpenAddEditShowcase = ref(false)
 
-  defineEmits(['close'])
+  const pageStore = usePageStore()
+  const dataShowcase = reactive<ILogosData[]>([])
+
+  const emit = defineEmits(['close', 'set-active-content'])
+
+  function pushDataShowcase({ file, title, description, link }: ILogosData) {
+    dataShowcase.push({
+      file: {
+        uri: file.uri,
+        id: file.id,
+      },
+      title: title,
+      description: description,
+      link: link,
+    })
+  }
+
+  /**
+   * Mutate `page` store evey time `uploadedImages` changes
+   */
+  watch(
+    dataShowcase,
+    async () => {
+      await nextTick()
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: {
+          images: dataShowcase,
+        },
+      })
+    },
+    { immediate: true },
+  )
+
+  watch(dataShowcase, (value) => {
+    emit('set-active-content', value.length)
+  })
 </script>

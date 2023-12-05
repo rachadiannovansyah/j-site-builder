@@ -39,38 +39,44 @@
         class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
         <div
-          class="custom-border-dash mb-2 flex h-[206px] w-[719px] flex-col items-center justify-center gap-3 bg-gray-50"
+          class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
         >
-          <p class="font-lato text-sm font-medium text-blue-gray-800">
-            drag and drop berkas disini atau
-          </p>
-          <div class="flex gap-[15px]">
-            <button class="flex flex-col items-center justify-center gap-3">
-              <img
-                src="~/assets/icons/common/upload-picture.svg"
-                alt="Ikon Upload Gambar"
-                width="45"
-                height="45"
-              />
-              <p class="font-lato text-sm font-normal text-pink-600">
-                Upload Gambar
-              </p>
-            </button>
-            <button class="flex flex-col items-center justify-center gap-3">
-              <img
-                src="~/assets/icons/common/select-logo.svg"
-                alt="Ikon Pilih Logo"
-                width="45"
-                height="45"
-              />
-              <p class="font-lato text-sm font-normal text-green-500">
-                Pilih Logo
-              </p>
-            </button>
+          <!-- TODO: refactor this section below into dropzone component -->
+          <div class="flex h-full w-full flex-col items-center justify-center">
+            <p class="font-lato text-sm font-medium text-blue-gray-800">
+              drag and drop berkas disini atau
+            </p>
+            <div class="flex gap-[15px]">
+              <button class="flex flex-col items-center justify-center gap-3">
+                <img
+                  src="~/assets/icons/common/upload-picture.svg"
+                  alt="Ikon Upload Gambar"
+                  width="45"
+                  height="45"
+                />
+                <p class="font-lato text-sm font-normal text-pink-600">
+                  Upload Gambar
+                </p>
+              </button>
+              <button
+                class="flex flex-col items-center justify-center gap-3"
+                @click="onOpenModalSelectLogo"
+              >
+                <img
+                  src="~/assets/icons/common/select-logo.svg"
+                  alt="Ikon Pilih Logo"
+                  width="45"
+                  height="45"
+                />
+                <p class="font-lato text-sm font-normal text-green-500">
+                  Pilih Logo
+                </p>
+              </button>
+            </div>
+            <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
+              Ukuran Maksimal file upload 2 MB dengan ratio 1:1.(.jpg dan .png)
+            </p>
           </div>
-          <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
-            Ukuran Maksimal file upload 2 MB dengan ratio 1:1. (.jpg dan .png )
-          </p>
         </div>
         <UFormGroup label="Judul">
           <UInput
@@ -106,17 +112,25 @@
       </section>
       <template #footer>
         <section class="flex justify-between">
-          <UButton variant="ghost" color="gray" @click="$emit('close')">
+          <UButton variant="ghost" color="gray" @click="onCancelForm">
             Batalkan
           </UButton>
-          <UButton> Submit </UButton>
+          <UButton @click="onSubmitShowcase"> Submit </UButton>
         </section>
       </template>
     </UCard>
+
+    <!-- Child Modal: Select Logo -->
+    <WidgetShowcaseModalSelectLogo
+      :open="isOpenModalSelectLogo"
+      @close="toggleModalSelectLogo(false)"
+      @select-logo="onSelectLogo"
+    />
   </UModal>
 </template>
 
 <script setup lang="ts">
+  import { ILogosData } from '~/repository/j-site/types/logo'
   const props = defineProps({
     open: {
       type: Boolean,
@@ -138,8 +152,48 @@
     link: '',
   })
   const isActiveLink = ref(false)
+  const isOpenModalSelectLogo = ref(false)
 
-  defineEmits(['close'])
+  const emit = defineEmits(['close', 'push-data'])
+
+  function toggleModalSelectLogo(val: boolean) {
+    isOpenModalSelectLogo.value = val
+  }
+
+  function onOpenModalSelectLogo() {
+    toggleModalSelectLogo(true)
+  }
+
+  function onSelectLogo(logo: ILogosData) {
+    state.title = logo.title || ''
+    state.file.id = logo.file.id || ''
+    state.file.uri = logo.file.uri || ''
+  }
+
+  function resetForm() {
+    state.file.uri = ''
+    state.file.id = ''
+    state.title = ''
+    state.description = ''
+    state.link = ''
+  }
+
+  function onSubmitShowcase() {
+    emit('push-data', toRaw(state))
+    resetForm()
+    emit('close')
+  }
+
+  function onCancelForm() {
+    resetForm()
+    emit('close')
+  }
+
+  watch(isActiveLink, (value) => {
+    if (!value) {
+      state.link = ''
+    }
+  })
 </script>
 
 <style scoped>

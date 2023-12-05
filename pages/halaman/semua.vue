@@ -4,7 +4,7 @@
   >
     <div class="mb-8 flex items-start justify-between sm:flex-wrap">
       <div class="flex gap-8">
-        <SearchBar placeholder="Cari Halaman" />
+        <SearchBar placeholder="Cari Halaman" class="max-w-[181px]" />
         <FilterBar />
       </div>
       <UButton
