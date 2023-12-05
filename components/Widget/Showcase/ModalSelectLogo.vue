@@ -40,7 +40,7 @@
       </template>
 
       <section class="flex max-h-[458px] w-full flex-col gap-6">
-        <SearchBar placeholder="Cari Logo" />
+        <SearchBar placeholder="Cari Logo" @input="onSearch($event)" />
         <RadioGroup v-model="selectedLogo">
           <div
             class="widget-showcase__list-logo flex max-h-[296px] w-full items-center justify-center gap-4 overflow-y-auto rounded-[10px] border border-gray-100 bg-[#F9F9F9] p-[10px] sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
@@ -119,6 +119,7 @@
   const params = reactive({
     page: 1 as string | number,
     limit: 8 as string | number,
+    q: '' as string,
   })
 
   const { $jSiteApi } = useNuxtApp()
@@ -160,6 +161,11 @@
     const data = toRaw(selectedLogo)
     emit('select-logo', toRaw(data.value))
     emit('close')
+  }
+
+  function onSearch(query: string) {
+    params.q = query
+    fetchDataLogos()
   }
 </script>
 
