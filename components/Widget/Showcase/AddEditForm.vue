@@ -112,7 +112,7 @@
       </section>
       <template #footer>
         <section class="flex justify-between">
-          <UButton variant="ghost" color="gray" @click="$emit('close')">
+          <UButton variant="ghost" color="gray" @click="onCancelForm">
             Batalkan
           </UButton>
           <UButton @click="onSubmitShowcase"> Submit </UButton>
@@ -180,6 +180,11 @@
 
   function onSubmitShowcase() {
     emit('push-data', toRaw(state))
+    resetForm()
+    emit('close')
+  }
+
+  function onCancelForm() {
     resetForm()
     emit('close')
   }
