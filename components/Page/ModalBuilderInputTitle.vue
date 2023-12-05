@@ -49,6 +49,7 @@
                 v-model="form.title"
                 placeholder="Masukkan judul"
                 color="gray"
+                maxlength="250"
               />
               <template #help>
                 Tersisa {{ titleLengthRemaining }} Karakter
@@ -60,6 +61,7 @@
                 placeholder="Masukkan deskripsi"
                 color="gray"
                 :rows="5"
+                maxlength="500"
               />
               <template #help>
                 Tersisa {{ descriptionLengthRemaining }} Karakter
