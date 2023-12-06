@@ -87,8 +87,8 @@
           <NoData
             class="col-span-4"
             title="Kamu belum memiliki showcase"
-            description="Kamu dapat menambahkan showcase melalui Upload Gambar atau Pilih Logo
-    melalui tombol Tambah diatas dengan rekomendasi ratio gambar adalah 1 x 1 (.jpg dan .png) 
+            description="Kamu dapat menambahkan showcase dengan cara Upload Gambar atau Pilih Logo
+    melalui tombol Tambah diatas dengan rekomendasi ukuran gambar adalah resolusi 500 x 500 pixel (.jpg dan .png) 
     dan ukuran maksimal 2MB."
           />
         </section>
@@ -123,11 +123,11 @@
     },
   })
 
+  const pageStore = usePageStore()
+
   const isEditShowcase = ref(false)
   const isOpenAddEditShowcase = ref(false)
   const dataShowcase = reactive<ILogosData[]>([])
-
-  const pageStore = usePageStore()
 
   const emit = defineEmits(['close', 'set-active-content'])
 
@@ -161,7 +161,7 @@
         sectionIndex: props.sectionIndex,
         widgetIndex: props.widgetIndex,
         payload: {
-          images: dataShowcase,
+          items: toRaw(dataShowcase),
         },
       })
     },

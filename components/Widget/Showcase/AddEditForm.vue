@@ -87,7 +87,8 @@
               </button>
             </div>
             <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
-              Ukuran Maksimal file upload 2 MB dengan ratio 1:1.(.jpg dan .png)
+              Ukuran Maksimal file upload 2 MB dengan resolusi 500 x 500 pixel.
+              (.jpg dan .png)
             </p>
           </div>
           <div
@@ -266,6 +267,8 @@
     try {
       await validateImage(image, {
         maxSize: 2097152, // 2MB
+        maxWidth: 500,
+        maxHeight: 500,
         accepted: ['image/jpeg', 'image/jpg', 'image/png'],
       })
       uploadImage(image)
@@ -408,7 +411,7 @@
     state.title = logo.title || ''
     state.file.id = logo.file.id || ''
     state.file.uri = logo.file.uri || ''
-    state.source = 'logos'
+    state.source = 'logo'
   }
 
   function resetForm() {
