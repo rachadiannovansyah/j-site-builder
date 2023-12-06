@@ -163,7 +163,10 @@
           <UButton variant="ghost" color="gray" @click="onCancelForm">
             Batalkan
           </UButton>
-          <UButton @click="onSubmitShowcase"> Submit </UButton>
+          <UButton v-if="!props.isEditMode" @click="onSubmitShowcase">
+            Submit
+          </UButton>
+          <UButton v-else @click="onSaveShowcase"> Simpan </UButton>
         </section>
       </template>
     </UCard>
@@ -228,6 +231,10 @@
       type: Boolean,
       default: false,
     },
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
   })
 
   const state = reactive({
@@ -239,6 +246,7 @@
     description: '',
     link: '',
     source: '',
+    itemId: null,
   })
 
   const isActiveLink = ref(false)
@@ -256,13 +264,35 @@
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
 
-  const emit = defineEmits(['close', 'push-data'])
+  const emit = defineEmits(['close', 'push-data', 'edit-data'])
 
   const MAX_DESCRIPTION_LENGTH = 500
 
   const descriptionLengthRemaining = computed(() => {
     return MAX_DESCRIPTION_LENGTH - state.description.length
   })
+
+  watch(
+    () => props.open,
+    () => {
+      if (props.isEditMode) {
+        setInitialData()
+      } else {
+        resetForm()
+      }
+    },
+  )
+
+  function setInitialData() {
+    const { file, title, description, link, source } = toRaw(props.data)
+    state.file.uri = file.uri || ''
+    state.file.id = file.id || ''
+    state.title = title || ''
+    state.description = description || ''
+    state.link = link || ''
+    state.source = source || ''
+    isActiveLink.value = !!link
+  }
 
   function selectImage() {
     imageUploader.value?.click()
@@ -443,6 +473,12 @@
 
   function onSubmitShowcase() {
     emit('push-data', toRaw(state))
+    resetForm()
+    emit('close')
+  }
+
+  function onSaveShowcase() {
+    emit('edit-data', toRaw(state))
     resetForm()
     emit('close')
   }

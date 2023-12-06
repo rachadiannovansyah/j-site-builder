@@ -37,7 +37,7 @@
             variant="solid"
             label="Tambah"
             icon="i-heroicons-plus-20-solid"
-            @click="isOpenAddEditShowcase = true"
+            @click="addItemShowcase"
           />
         </div>
       </template>
@@ -66,14 +66,20 @@
             >
               {{ item.title }}
             </p>
-            <button class="absolute left-3 top-3" @click="removeShowcase(item)">
+            <button
+              class="absolute left-3 top-3"
+              @click="removeItemShowcase(item)"
+            >
               <NuxtIcon
                 name="common/trash"
                 aria-hidden="true"
                 class="text-base text-red-700"
               />
             </button>
-            <button class="absolute right-3 top-3">
+            <button
+              class="absolute right-3 top-3"
+              @click="editItemShowcase(item)"
+            >
               <NuxtIcon
                 name="common/pencil"
                 aria-hidden="true"
@@ -101,8 +107,10 @@
     <WidgetShowcaseAddEditForm
       :open="isOpenAddEditShowcase"
       :is-edit-mode="isEditShowcase"
+      :data="itemShowcase"
       @close="isOpenAddEditShowcase = false"
       @push-data="pushDataShowcase"
+      @edit-data="editDataShowcase"
     />
   </UModal>
 </template>
@@ -131,6 +139,7 @@
   const isEditShowcase = ref(false)
   const isOpenAddEditShowcase = ref(false)
   const dataShowcase = reactive<ILogosData[]>([])
+  const itemShowcase = ref({})
 
   const emit = defineEmits(['close', 'set-active-content'])
 
@@ -153,6 +162,31 @@
     })
   }
 
+  function editDataShowcase({
+    file,
+    title,
+    description,
+    link,
+    source,
+  }: ILogosData) {
+    const findIndexItemShowcase = dataShowcase.findIndex(
+      (item) => item.file.uri === file.uri,
+    )
+    if (findIndexItemShowcase > -1) {
+      dataShowcase[findIndexItemShowcase].file.uri = file.uri || ''
+      dataShowcase[findIndexItemShowcase].file.id = file.id || ''
+      dataShowcase[findIndexItemShowcase].title = title || ''
+      dataShowcase[findIndexItemShowcase].description = description || ''
+      dataShowcase[findIndexItemShowcase].link = link || ''
+      dataShowcase[findIndexItemShowcase].source = source || ''
+    }
+  }
+
+  function addItemShowcase() {
+    isEditShowcase.value = false
+    isOpenAddEditShowcase.value = true
+  }
+
   async function deleteUploadedShowcase(id: string) {
     await $jSiteApi.media.deleteMedia(id, undefined, {
       server: false,
@@ -164,11 +198,17 @@
     dataShowcase.splice(imageIndex, 1)
   }
 
-  function removeShowcase(item: ILogosData) {
+  function removeItemShowcase(item: ILogosData) {
     removeSelectedShowcase(item.file.uri || '')
     if (item.source === 'media') {
       deleteUploadedShowcase(item.file.id || '')
     }
+  }
+
+  function editItemShowcase(item: ILogosData) {
+    isEditShowcase.value = true
+    itemShowcase.value = item
+    isOpenAddEditShowcase.value = true
   }
 
   /**
