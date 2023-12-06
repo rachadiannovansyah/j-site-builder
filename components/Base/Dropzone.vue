@@ -114,20 +114,8 @@
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone(options)
 
-  // const mFiles = computed({
-  //   get() {
-  //     return props.files
-  //   },
-  //   set(value) {
-  //     console.log(props.files)
-
-  //     emit('update:files', value)
-  //   },
-  // })
-
   function onDrop(acceptFiles: File[], rejectReasons: FileRejectReason[]) {
     emit('change:files', { acceptFiles, rejectReasons })
-    console.log(props.files)
   }
 
   function handleClickDeleteFile(index: number) {
