@@ -38,115 +38,127 @@
       <section
         class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
-        <input
-          ref="imageUploader"
-          type="file"
-          accept="image/jpeg, image/jpg, image/png, image/webp"
-          hidden
-          @change="handleImageChange"
-        />
-        <div
-          class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
-        >
-          <!-- TODO: refactor this section below into dropzone component -->
+        <UForm :state="state">
+          <input
+            ref="imageUploader"
+            type="file"
+            accept="image/jpeg, image/jpg, image/png, image/webp"
+            hidden
+            @change="handleImageChange"
+          />
           <div
-            v-if="!state.file.uri"
-            class="flex h-full w-full flex-col items-center justify-center"
+            class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
           >
-            <p class="font-lato text-sm font-medium text-blue-gray-800">
-              drag and drop berkas disini atau
-            </p>
-            <div class="mt-4 flex gap-[15px]">
-              <button
-                class="flex flex-col items-center justify-center gap-3"
-                @click="selectImage"
-              >
-                <img
-                  src="~/assets/icons/common/upload-picture.svg"
-                  alt="Ikon Upload Gambar"
-                  width="45"
-                  height="45"
-                />
-                <p class="font-lato text-sm font-normal text-pink-600">
-                  Upload Gambar
-                </p>
-              </button>
-              <button
-                class="flex flex-col items-center justify-center gap-3"
-                @click="onOpenModalSelectLogo"
-              >
-                <img
-                  src="~/assets/icons/common/select-logo.svg"
-                  alt="Ikon Pilih Logo"
-                  width="45"
-                  height="45"
-                />
-                <p class="font-lato text-sm font-normal text-green-500">
-                  Pilih Logo
-                </p>
-              </button>
+            <!-- TODO: refactor this section below into dropzone component -->
+            <div
+              v-if="!state.file.uri"
+              class="flex h-full w-full flex-col items-center justify-center"
+            >
+              <p class="font-lato text-sm font-medium text-blue-gray-800">
+                drag and drop berkas disini atau
+              </p>
+              <div class="mt-4 flex gap-[15px]">
+                <button
+                  class="flex flex-col items-center justify-center gap-3"
+                  @click="selectImage"
+                >
+                  <img
+                    src="~/assets/icons/common/upload-picture.svg"
+                    alt="Ikon Upload Gambar"
+                    width="45"
+                    height="45"
+                  />
+                  <p class="font-lato text-sm font-normal text-pink-600">
+                    Upload Gambar
+                  </p>
+                </button>
+                <button
+                  class="flex flex-col items-center justify-center gap-3"
+                  @click="onOpenModalSelectLogo"
+                >
+                  <img
+                    src="~/assets/icons/common/select-logo.svg"
+                    alt="Ikon Pilih Logo"
+                    width="45"
+                    height="45"
+                  />
+                  <p class="font-lato text-sm font-normal text-green-500">
+                    Pilih Logo
+                  </p>
+                </button>
+              </div>
+              <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
+                Ukuran Maksimal file upload 2 MB dengan resolusi 500 x 500
+                pixel. (.jpg dan .png)
+              </p>
             </div>
-            <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
-              Ukuran Maksimal file upload 2 MB dengan resolusi 500 x 500 pixel.
-              (.jpg dan .png)
-            </p>
+            <div
+              v-else
+              class="relative flex h-full w-full flex-col items-center justify-center"
+            >
+              <div class="h-[150px] w-[150px] overflow-hidden">
+                <NuxtImg
+                  :src="state.file.uri"
+                  width="150"
+                  height="150"
+                  class="h-[150px] w-[150px] object-cover object-center"
+                />
+              </div>
+              <div class="absolute right-3 top-3">
+                <UButton color="primary" variant="outline">
+                  <NuxtIcon
+                    name="common/pencil"
+                    class="text-base"
+                    aria-hidden="true"
+                    filled
+                  />
+                  Sunting
+                </UButton>
+              </div>
+            </div>
           </div>
-          <div
-            v-else
-            class="relative flex h-full w-full flex-col items-center justify-center"
-          >
-            <div class="h-[150px] w-[150px] overflow-hidden">
-              <NuxtImg
-                :src="state.file.uri"
-                width="150"
-                height="150"
-                class="h-[150px] w-[150px] object-cover object-center"
-              />
-            </div>
-            <div class="absolute right-3 top-3">
-              <UButton color="primary" variant="outline">
-                <NuxtIcon
-                  name="common/pencil"
-                  class="text-base"
-                  aria-hidden="true"
-                  filled
+          <UFormGroup label="Judul" name="title">
+            <UInput
+              v-model="state.title"
+              placeholder="Masukkan judul"
+              color="gray"
+              maxlength="250"
+            />
+          </UFormGroup>
+          <UFormGroup label="Deskripsi" name="description">
+            <UTextarea
+              v-model="state.description"
+              placeholder="Masukkan deskipsi"
+              color="gray"
+              :rows="4"
+              maxlength="500"
+            />
+            <p class="py-2 text-right font-lato text-xs text-gray-600">
+              Tersisa
+              <span class="text-gray-800">{{
+                descriptionLengthRemaining
+              }}</span>
+              Karakter
+            </p>
+          </UFormGroup>
+          <UFormGroup label="Link Redirect" name="link">
+            <template #hint>
+              <div class="flex w-full justify-between">
+                <UToggle
+                  v-model="isActiveLink"
+                  color="primary"
+                  class="right-0"
                 />
-                Sunting
-              </UButton>
-            </div>
-          </div>
-        </div>
-        <UFormGroup label="Judul">
-          <UInput
-            v-model="state.title"
-            placeholder="Masukkan judul"
-            color="gray"
-          />
-        </UFormGroup>
-        <UFormGroup label="Deskripsi">
-          <UTextarea
-            v-model="state.description"
-            placeholder="Masukkan deskipsi"
-            color="gray"
-            :rows="4"
-          />
-          <p class="py-2 text-right font-lato text-xs text-gray-600">
-            Tersisa <span class="text-gray-800">500</span> Karakter
-          </p>
-        </UFormGroup>
-        <UFormGroup label="Link Redirect">
-          <template #hint>
-            <div class="flex w-full justify-between">
-              <UToggle v-model="isActiveLink" color="primary" class="right-0" />
-            </div>
-          </template>
-          <UInput
-            v-model="state.link"
-            :disabled="!isActiveLink"
-            placeholder="contoh: https://"
-            color="gray"
-          />
-        </UFormGroup>
+              </div>
+            </template>
+            <UInput
+              v-model="state.link"
+              :disabled="!isActiveLink"
+              placeholder="contoh: https://"
+              color="gray"
+            />
+          </UFormGroup>
+        </UForm>
       </section>
       <template #footer>
         <section class="flex justify-between">
@@ -230,6 +242,7 @@
     link: '',
     source: '',
   })
+
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
   const imageUploader = ref<HTMLInputElement | null>(null)
@@ -246,6 +259,12 @@
   const siteStore = useSiteStore()
 
   const emit = defineEmits(['close', 'push-data'])
+
+  const MAX_DESCRIPTION_LENGTH = 500
+
+  const descriptionLengthRemaining = computed(() => {
+    return MAX_DESCRIPTION_LENGTH - state.description.length
+  })
 
   function selectImage() {
     imageUploader.value?.click()
@@ -421,6 +440,7 @@
     state.description = ''
     state.link = ''
     state.source = ''
+    isActiveLink.value = false
   }
 
   function onSubmitShowcase() {
