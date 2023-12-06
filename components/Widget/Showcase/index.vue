@@ -61,7 +61,9 @@
                 height="78"
               />
             </div>
-            <p class="h-[24px] font-roboto text-base font-medium text-gray-800">
+            <p
+              class="line-clamp-1 h-[24px] font-roboto text-base font-medium text-gray-800"
+            >
               {{ item.title }}
             </p>
             <button class="absolute left-3 top-3" @click="removeShowcase(item)">
