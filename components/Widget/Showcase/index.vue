@@ -144,38 +144,26 @@
 
   const emit = defineEmits(['close', 'set-active-content'])
 
-  function pushDataShowcase({
-    file,
-    title,
-    description,
-    link,
-    source,
-  }: ILogosData) {
+  function pushDataShowcase({ file, title, description, link }: ILogosData) {
     dataShowcase.push({
       file: {
         uri: file.uri,
         id: file.id,
+        source: file.source,
       },
       title: title,
       description: description,
       link: link,
-      source: source,
     })
   }
 
-  function editDataShowcase({
-    file,
-    title,
-    description,
-    link,
-    source,
-  }: ILogosData) {
-    dataShowcase[indexItemActive.value].file.uri = file.uri || ''
+  function editDataShowcase({ file, title, description, link }: ILogosData) {
     dataShowcase[indexItemActive.value].file.id = file.id || ''
+    dataShowcase[indexItemActive.value].file.uri = file.uri || ''
+    dataShowcase[indexItemActive.value].file.source = file.source || ''
     dataShowcase[indexItemActive.value].title = title || ''
     dataShowcase[indexItemActive.value].description = description || ''
     dataShowcase[indexItemActive.value].link = link || ''
-    dataShowcase[indexItemActive.value].source = source || ''
   }
 
   function addItemShowcase() {
@@ -196,7 +184,7 @@
   function removeItemShowcase(item: ILogosData, index: number) {
     indexItemActive.value = index
     removeSelectedShowcase()
-    if (item.source === 'media') {
+    if (item.file.source === 'media') {
       deleteUploadedShowcase(item.file.id || '')
     }
   }

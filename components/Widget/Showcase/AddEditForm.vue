@@ -239,13 +239,13 @@
 
   const state = reactive({
     file: {
-      uri: '',
       id: '',
+      uri: '',
+      source: '',
     },
     title: '',
     description: '',
     link: '',
-    source: '',
     itemId: null,
   })
 
@@ -284,13 +284,13 @@
   )
 
   function setInitialData() {
-    const { file, title, description, link, source } = toRaw(props.data)
-    state.file.uri = file.uri || ''
+    const { file, title, description, link } = toRaw(props.data)
     state.file.id = file.id || ''
+    state.file.uri = file.uri || ''
+    state.file.source = file.source || ''
     state.title = title || ''
     state.description = description || ''
     state.link = link || ''
-    state.source = source || ''
     isActiveLink.value = !!link
   }
 
@@ -398,7 +398,7 @@
   function onUploadedImage({ id, file }: IMediaResponseData) {
     state.file.id = id || ''
     state.file.uri = file.uri || ''
-    state.source = 'media'
+    state.file.source = 'media'
   }
 
   async function deleteUploadedImage(id: string) {
@@ -458,16 +458,16 @@
     state.title = logo.title || ''
     state.file.id = logo.file.id || ''
     state.file.uri = logo.file.uri || ''
-    state.source = 'logo'
+    state.file.source = 'logo'
   }
 
   function resetForm() {
-    state.file.uri = ''
     state.file.id = ''
+    state.file.uri = ''
+    state.file.source = ''
     state.title = ''
     state.description = ''
     state.link = ''
-    state.source = ''
     isActiveLink.value = false
   }
 
@@ -484,7 +484,7 @@
   }
 
   async function onCancelForm() {
-    if (state.source === 'media') {
+    if (state.file.source === 'media') {
       await deleteUploadedImage(state.file.id)
     }
     resetForm()
@@ -492,12 +492,12 @@
   }
 
   async function removeFile() {
-    if (state.source === 'media') {
+    if (state.file.source === 'media') {
       await deleteUploadedImage(state.file.id)
     }
-    state.file.uri = ''
     state.file.id = ''
-    state.source = ''
+    state.file.uri = ''
+    state.file.source = ''
   }
 
   /**
