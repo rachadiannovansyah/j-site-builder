@@ -68,7 +68,7 @@
             </p>
             <button
               class="absolute left-3 top-3"
-              @click="removeItemShowcase(item)"
+              @click="removeItemShowcase(item, index)"
             >
               <NuxtIcon
                 name="common/trash"
@@ -78,7 +78,7 @@
             </button>
             <button
               class="absolute right-3 top-3"
-              @click="editItemShowcase(item)"
+              @click="editItemShowcase(item, index)"
             >
               <NuxtIcon
                 name="common/pencil"
@@ -140,6 +140,7 @@
   const isOpenAddEditShowcase = ref(false)
   const dataShowcase = reactive<ILogosData[]>([])
   const itemShowcase = ref({})
+  const indexItemActive = ref(0 as number)
 
   const emit = defineEmits(['close', 'set-active-content'])
 
@@ -169,17 +170,12 @@
     link,
     source,
   }: ILogosData) {
-    const findIndexItemShowcase = dataShowcase.findIndex(
-      (item) => item.file.uri === file.uri,
-    )
-    if (findIndexItemShowcase > -1) {
-      dataShowcase[findIndexItemShowcase].file.uri = file.uri || ''
-      dataShowcase[findIndexItemShowcase].file.id = file.id || ''
-      dataShowcase[findIndexItemShowcase].title = title || ''
-      dataShowcase[findIndexItemShowcase].description = description || ''
-      dataShowcase[findIndexItemShowcase].link = link || ''
-      dataShowcase[findIndexItemShowcase].source = source || ''
-    }
+    dataShowcase[indexItemActive.value].file.uri = file.uri || ''
+    dataShowcase[indexItemActive.value].file.id = file.id || ''
+    dataShowcase[indexItemActive.value].title = title || ''
+    dataShowcase[indexItemActive.value].description = description || ''
+    dataShowcase[indexItemActive.value].link = link || ''
+    dataShowcase[indexItemActive.value].source = source || ''
   }
 
   function addItemShowcase() {
@@ -193,22 +189,23 @@
     })
   }
 
-  function removeSelectedShowcase(uri: string) {
-    const imageIndex = dataShowcase.findIndex((item) => item.file.uri === uri)
-    dataShowcase.splice(imageIndex, 1)
+  function removeSelectedShowcase() {
+    dataShowcase.splice(indexItemActive.value, 1)
   }
 
-  function removeItemShowcase(item: ILogosData) {
-    removeSelectedShowcase(item.file.uri || '')
+  function removeItemShowcase(item: ILogosData, index: number) {
+    indexItemActive.value = index
+    removeSelectedShowcase()
     if (item.source === 'media') {
       deleteUploadedShowcase(item.file.id || '')
     }
   }
 
-  function editItemShowcase(item: ILogosData) {
+  function editItemShowcase(item: ILogosData, index: number) {
     isEditShowcase.value = true
     itemShowcase.value = item
     isOpenAddEditShowcase.value = true
+    indexItemActive.value = index
   }
 
   /**
