@@ -160,7 +160,7 @@
         Ukuran maksimal file adalah 1 MB dengan resolusi 1080 x 720 . File yang
         didukung adalah .jpg dan .png
       </h3>
-      <div class="dropzone disabled" v-bind="getRootProps()">
+      <div class="dropzone" v-bind="getRootProps()">
         <div
           :class="{
             'flex h-full w-full cursor-pointer items-center justify-center rounded-md border border-dashed border-gray-300 px-2 pb-[23px] pt-2': true,
@@ -193,21 +193,35 @@
         >
           <span>{{ file.name }}</span>
           <NuxtIcon size="30" name="common/eye" />
-          <button
+          <UButton
             class="delete-file inline"
             @click="handleClickDeleteFile(index)"
           >
             <NuxtIcon name="common/close" />
-          </button>
+          </UButton>
         </div>
       </div>
       <p v-else>Belum ada file terpilih</p>
+    </div>
+
+    <h1>Drag & Drop Dropzone Base Component</h1>
+    <div class="mb-8 flex w-full flex-col gap-4">
+      <BaseDropzone
+        :files="state.fileDropzone"
+        accept=".jpg, .png, .webp"
+        :disabled="state.dropzoneDisable"
+        :multiple="state.dropzoneMultiple"
+        @change:files="onDropFile($event)"
+        @delete:files="deleteFile($event)"
+        @update:files="updateFile($event)"
+      />
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
   import { useDropzone } from 'vue3-dropzone'
+  import type { FileRejectReason } from 'vue3-dropzone'
 
   definePageMeta({
     layout: 'public',
@@ -215,19 +229,50 @@
 
   const state = reactive({
     files: [],
+    fileDropzone: [],
+    errorDropzone: [],
+    dropzoneDisable: false,
+    dropzoneMultiple: true,
   })
-  const { getRootProps, getInputProps, isDragActive, ...rest } = useDropzone({
+
+  function onDropFile(event: Event) {
+    const { acceptFiles } = event as unknown
+    state.fileDropzone = acceptFiles
+  }
+
+  function updateFile(event: Event) {
+    console.log(event)
+  }
+
+  function deleteFile(index: number) {
+    state.fileDropzone.splice(index, 1)
+  }
+
+  const options = reactive({
+    multiple: false,
+    accept: '.jpg,.png',
+    maxSize: 1024 * 1024, // 1 MB, 1 KB = 1024 Byte
+    disabled: false,
     onDrop,
   })
+
+  const { getRootProps, getInputProps, isDragActive, ...rest } =
+    useDropzone(options)
 
   watch(isDragActive, () => {
     console.log('isDragActive', isDragActive.value, rest)
   })
 
-  function onDrop(acceptFiles: File[], rejectReasons: unknown) {
-    console.log(acceptFiles)
-    console.log(rejectReasons)
-    state.files = acceptFiles as never[]
+  function onDrop(acceptFiles: File[], rejectReasons: FileRejectReason[]) {
+    if (acceptFiles.length > 0) {
+      state.files = acceptFiles as never[]
+      options.disabled = true
+    }
+    const errors = rejectReasons[0]?.errors ?? ''
+    const error = errors[0]
+    if (typeof error === 'object') {
+      alert(error?.message ?? '')
+    }
   }
 
   function handleClickDeleteFile(index: number) {

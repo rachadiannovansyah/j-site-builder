@@ -123,6 +123,7 @@
       return props.currentPage
     },
     set(value) {
+      console.log(value)
       emit('change-page', value)
     },
   })
