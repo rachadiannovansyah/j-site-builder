@@ -105,14 +105,12 @@
                 />
               </div>
               <div class="absolute right-3 top-3">
-                <UButton color="primary" variant="outline">
+                <UButton color="primary" variant="ghost" @click="removeFile">
                   <NuxtIcon
-                    name="common/pencil"
-                    class="text-base"
+                    name="common/trash"
                     aria-hidden="true"
-                    filled
+                    class="text-base text-red-700"
                   />
-                  Sunting
                 </UButton>
               </div>
             </div>
@@ -455,6 +453,15 @@
     }
     resetForm()
     emit('close')
+  }
+
+  async function removeFile() {
+    if (state.source === 'media') {
+      await deleteUploadedImage(state.file.id)
+    }
+    state.file.uri = ''
+    state.file.id = ''
+    state.source = ''
   }
 
   /**
