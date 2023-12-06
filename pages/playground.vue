@@ -213,7 +213,6 @@
         :multiple="state.dropzoneMultiple"
         @change:files="onDropFile($event)"
         @delete:files="deleteFile($event)"
-        @update:files="updateFile($event)"
       />
     </div>
   </main>
@@ -238,10 +237,6 @@
   function onDropFile(event: Event) {
     const { acceptFiles } = event as unknown
     state.fileDropzone = acceptFiles
-  }
-
-  function updateFile(event: Event) {
-    console.log(event)
   }
 
   function deleteFile(index: number) {

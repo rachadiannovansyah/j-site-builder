@@ -97,32 +97,37 @@
     },
   })
 
-  const { multiple, accept, maxSize, minSize, disabled } = props
+  const multiple = computed(() => props.multiple)
+  const disabled = computed(() => props.disabled)
+  const minSize = computed(() => props.minSize)
+  const accept = computed(() => props.accept)
+  const maxSize = computed(() => props.maxSize)
 
   const options = reactive({
-    multiple: multiple,
-    accept: accept,
-    maxSize: maxSize,
-    minSize: minSize,
-    disabled: disabled,
+    multiple,
+    accept,
+    maxSize,
+    minSize,
+    disabled,
     onDrop,
   })
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone(options)
 
-  const mFiles = computed({
-    get() {
-      return props.files
-    },
-    set(value) {
-      emit('update:files', value)
-    },
-  })
+  // const mFiles = computed({
+  //   get() {
+  //     return props.files
+  //   },
+  //   set(value) {
+  //     console.log(props.files)
 
-  console.log(mFiles)
+  //     emit('update:files', value)
+  //   },
+  // })
 
   function onDrop(acceptFiles: File[], rejectReasons: FileRejectReason[]) {
     emit('change:files', { acceptFiles, rejectReasons })
+    console.log(props.files)
   }
 
   function handleClickDeleteFile(index: number) {
