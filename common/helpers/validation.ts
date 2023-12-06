@@ -4,8 +4,8 @@ import { getFileSize } from '@/common/helpers/currency'
 
 interface IValidateImageConfig {
   maxSize: number
-  maxWidth: number
-  maxHeight: number
+  maxWidth?: number
+  maxHeight?: number
   accepted?: string[]
 }
 

@@ -38,16 +38,29 @@
       <section
         class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
+        <input
+          ref="imageUploader"
+          type="file"
+          accept="image/jpeg, image/jpg, image/png, image/webp"
+          hidden
+          @change="handleImageChange"
+        />
         <div
           class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
         >
           <!-- TODO: refactor this section below into dropzone component -->
-          <div class="flex h-full w-full flex-col items-center justify-center">
+          <div
+            v-if="!state.file.uri"
+            class="flex h-full w-full flex-col items-center justify-center"
+          >
             <p class="font-lato text-sm font-medium text-blue-gray-800">
               drag and drop berkas disini atau
             </p>
-            <div class="flex gap-[15px]">
-              <button class="flex flex-col items-center justify-center gap-3">
+            <div class="mt-4 flex gap-[15px]">
+              <button
+                class="flex flex-col items-center justify-center gap-3"
+                @click="selectImage"
+              >
                 <img
                   src="~/assets/icons/common/upload-picture.svg"
                   alt="Ikon Upload Gambar"
@@ -76,6 +89,30 @@
             <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
               Ukuran Maksimal file upload 2 MB dengan ratio 1:1.(.jpg dan .png)
             </p>
+          </div>
+          <div
+            v-else
+            class="relative flex h-full w-full flex-col items-center justify-center"
+          >
+            <div class="h-[150px] w-[150px] overflow-hidden">
+              <NuxtImg
+                :src="state.file.uri"
+                width="150"
+                height="150"
+                class="h-[150px] w-[150px] object-cover object-center"
+              />
+            </div>
+            <div class="absolute right-3 top-3">
+              <UButton color="primary" variant="outline">
+                <NuxtIcon
+                  name="common/pencil"
+                  class="text-base"
+                  aria-hidden="true"
+                  filled
+                />
+                Sunting
+              </UButton>
+            </div>
           </div>
         </div>
         <UFormGroup label="Judul">
@@ -120,6 +157,34 @@
       </template>
     </UCard>
 
+    <!-- Validation Error -->
+    <BaseModal
+      :open="imageUploadStatus === 'VALIDATION_ERROR'"
+      with-close-button
+      button-position="center"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-start">
+        <NuxtIcon
+          name="common/warning-circle"
+          class="mr-4 inline-block flex-shrink-0 text-5xl"
+          aria-hidden="true"
+          filled
+        />
+        <div>
+          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+            {{ confirmation.title }}
+          </h3>
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ confirmation.body }}
+          </p>
+        </div>
+      </div>
+      <template #footer>
+        <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+      </template>
+    </BaseModal>
+
     <!-- Child Modal: Select Logo -->
     <WidgetShowcaseModalSelectLogo
       :open="isOpenModalSelectLogo"
@@ -131,6 +196,18 @@
 
 <script setup lang="ts">
   import { ILogosData } from '~/repository/j-site/types/logo'
+  import { validateImage } from '~/common/helpers/validation'
+  import { IMediaResponseData } from '~/repository/j-site/types/media'
+
+  const MEDIA_UPLOAD_STATUS = {
+    NONE: 'NONE',
+    UPLOADING: 'UPLOADING',
+    DELETING: 'DELETING',
+    SUCCESS: 'SUCCESS',
+    ERROR: 'ERROR',
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
+  }
+
   const props = defineProps({
     open: {
       type: Boolean,
@@ -150,11 +227,174 @@
     title: '',
     description: '',
     link: '',
+    source: '',
   })
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
+  const imageUploader = ref<HTMLInputElement | null>(null)
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+  const imageUploadProgress = ref(0)
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    icon: '',
+    imageId: '', // for delete purposes
+  })
+
+  const { $jSiteApi } = useNuxtApp()
+  const siteStore = useSiteStore()
 
   const emit = defineEmits(['close', 'push-data'])
+
+  function selectImage() {
+    imageUploader.value?.click()
+  }
+
+  function resetImageUploader() {
+    if (imageUploader.value) {
+      imageUploader.value.value = ''
+    }
+  }
+
+  async function handleImageChange(event: Event) {
+    const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
+
+    if (!image) {
+      return resetImageUploader()
+    }
+
+    try {
+      await validateImage(image, {
+        maxSize: 2097152, // 2MB
+        accepted: ['image/jpeg', 'image/jpg', 'image/png'],
+      })
+      uploadImage(image)
+    } catch (error) {
+      showValidationError()
+    } finally {
+      resetImageUploader()
+    }
+  }
+
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
+  }
+
+  /**
+   * NOTE: when this code is written, the `ofetch` library does not offer a way
+   * to handle upload progress, so we have to do it manually
+   *
+   * See: {@link https://github.com/unjs/ofetch/issues/45 GitHub}.
+   *
+   * TODO: refactor this code if `ofetch` library support upload progress
+   */
+  async function uploadImage(image: File) {
+    const formData = new FormData()
+
+    formData.append('file', image)
+    formData.append('caption', 'test')
+    formData.append('category', 'slideshow')
+    formData.append('setting_id', siteStore.siteId ?? '')
+
+    setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)
+    setUploadProgress(25)
+
+    const { data: uploadResponse, status } = await $jSiteApi.media.uploadMedia(
+      formData,
+      undefined,
+      {
+        server: false,
+      },
+    )
+
+    setUploadProgress(75)
+
+    if (status.value === 'success') {
+      const data = toRaw(uploadResponse?.value?.data)
+
+      if (data) {
+        onUploadedImage(data)
+        resetImageUploader()
+
+        setTimeout(() => {
+          setUploadProgress(100)
+
+          setTimeout(() => {
+            setModalStatus(MEDIA_UPLOAD_STATUS.SUCCESS)
+            setConfirmation({
+              title: 'Berhasil!',
+              body: 'Gambar yang Anda unggah berhasil ditambahkan.',
+              icon: 'common/check-circle',
+            })
+          }, 300)
+        }, 300)
+      }
+    }
+
+    if (status.value === 'error') {
+      setModalStatus(MEDIA_UPLOAD_STATUS.ERROR)
+      setConfirmation({
+        title: 'Oops, Upload Gambar Gagal!',
+        body: 'Mohon maaf, upload gambar gagal. Silakan coba beberapa saat lagi.',
+        icon: 'common/warning-triangle',
+      })
+    }
+  }
+
+  function onUploadedImage({ id, file }: IMediaResponseData) {
+    state.file.id = id || ''
+    state.file.uri = file.uri || ''
+    state.source = 'media'
+  }
+
+  async function deleteUploadedImage(id: string) {
+    await $jSiteApi.media.deleteMedia(id, undefined, {
+      server: false,
+    })
+  }
+
+  interface ISetConfirmation {
+    title: string
+    body: string
+    icon?: string
+    imageId?: string
+  }
+
+  function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
+    confirmation.title = title
+    confirmation.body = body
+
+    if (icon) {
+      confirmation.icon = icon
+    }
+
+    if (imageId) {
+      confirmation.imageId = imageId
+    }
+  }
+
+  function resetConfirmation() {
+    confirmation.title = ''
+    confirmation.body = ''
+    confirmation.icon = ''
+    confirmation.imageId = ''
+  }
+
+  function closeConfirmationModal() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
+  }
+
+  function setModalStatus(value: string) {
+    imageUploadStatus.value = value
+  }
+
+  function setUploadProgress(value: number) {
+    imageUploadProgress.value = value
+  }
 
   function toggleModalSelectLogo(val: boolean) {
     isOpenModalSelectLogo.value = val
@@ -168,6 +408,7 @@
     state.title = logo.title || ''
     state.file.id = logo.file.id || ''
     state.file.uri = logo.file.uri || ''
+    state.source = 'logos'
   }
 
   function resetForm() {
@@ -176,6 +417,7 @@
     state.title = ''
     state.description = ''
     state.link = ''
+    state.source = ''
   }
 
   function onSubmitShowcase() {
@@ -184,10 +426,27 @@
     emit('close')
   }
 
-  function onCancelForm() {
+  async function onCancelForm() {
+    if (state.source === 'media') {
+      await deleteUploadedImage(state.file.id)
+    }
     resetForm()
     emit('close')
   }
+
+  /**
+   * Reset confirmation data and upload progress
+   * when confirmation modal is closed
+   */
+  watch(imageUploadStatus, (newValue) => {
+    if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
+      // wait modal to closed all the way before reset confirmation
+      setTimeout(() => {
+        setUploadProgress(0)
+        resetConfirmation()
+      }, 300)
+    }
+  })
 
   watch(isActiveLink, (value) => {
     if (!value) {

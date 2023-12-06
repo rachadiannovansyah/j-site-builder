@@ -125,13 +125,19 @@
 
   const isEditShowcase = ref(false)
   const isOpenAddEditShowcase = ref(false)
+  const dataShowcase = reactive<ILogosData[]>([])
 
   const pageStore = usePageStore()
-  const dataShowcase = reactive<ILogosData[]>([])
 
   const emit = defineEmits(['close', 'set-active-content'])
 
-  function pushDataShowcase({ file, title, description, link }: ILogosData) {
+  function pushDataShowcase({
+    file,
+    title,
+    description,
+    link,
+    source,
+  }: ILogosData) {
     dataShowcase.push({
       file: {
         uri: file.uri,
@@ -140,6 +146,7 @@
       title: title,
       description: description,
       link: link,
+      source: source,
     })
   }
 

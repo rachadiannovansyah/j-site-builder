@@ -18,6 +18,7 @@ export interface ILogosData {
   file: ILogosFileData
   description?: string
   link?: string
+  source?: string
 }
 
 export type ILogosResponse = {
