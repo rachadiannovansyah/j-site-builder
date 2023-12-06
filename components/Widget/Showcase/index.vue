@@ -64,7 +64,7 @@
             <p class="font-roboto text-base font-medium text-gray-800">
               {{ item.title }}
             </p>
-            <button class="absolute left-3 top-3">
+            <button class="absolute left-3 top-3" @click="removeShowcase(item)">
               <NuxtIcon
                 name="common/trash"
                 aria-hidden="true"
@@ -123,6 +123,7 @@
     },
   })
 
+  const { $jSiteApi } = useNuxtApp()
   const pageStore = usePageStore()
 
   const isEditShowcase = ref(false)
@@ -148,6 +149,24 @@
       link: link,
       source: source,
     })
+  }
+
+  async function deleteUploadedShowcase(id: string) {
+    await $jSiteApi.media.deleteMedia(id, undefined, {
+      server: false,
+    })
+  }
+
+  function removeSelectedShowcase(uri: string) {
+    const imageIndex = dataShowcase.findIndex((item) => item.file.uri === uri)
+    dataShowcase.splice(imageIndex, 1)
+  }
+
+  function removeShowcase(item: ILogosData) {
+    removeSelectedShowcase(item.file.uri || '')
+    if (item.source === 'media') {
+      deleteUploadedShowcase(item.file.id || '')
+    }
   }
 
   /**
