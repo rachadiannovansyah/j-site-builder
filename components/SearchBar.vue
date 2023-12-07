@@ -11,7 +11,7 @@
     <form class="grow" @submit.prevent="onSubmit">
       <input
         ref="search-bar-input"
-        v-model.trim="state.value"
+        v-model.trim="searchInputValue"
         type="text"
         :placeholder="placeholder"
         :data-cy="
@@ -58,38 +58,36 @@
     },
   })
 
-  const state = reactive({
-    value: '',
-    isSearchActive: false,
-  })
+  const searchInputValue = ref('')
+  const isSearchActive = ref(false)
 
   const hasValue = computed(() => {
-    return state.value !== ''
+    return searchInputValue.value !== ''
   })
 
-  watch(state, () => {
-    if (state.isSearchActive && state.value.length >= 3) {
-      state.isSearchActive = true
+  watch(searchInputValue, (value) => {
+    if (isSearchActive && value.length >= 3) {
+      isSearchActive.value = true
     }
 
-    if (state.isSearchActive && state.value.length >= 3) {
-      onInputChange(state.value)
+    if (isSearchActive && value.length >= 3) {
+      onInputChange(searchInputValue.value)
     }
 
-    if (state.isSearchActive && state.value === '') {
+    if (isSearchActive && value === '') {
       onInputChange('')
-      state.isSearchActive = false
+      isSearchActive.value = false
     }
   })
 
   const emit = defineEmits(['submit', 'input'])
 
   function clearValue() {
-    state.value = ''
+    searchInputValue.value = ''
   }
 
   function onSubmit() {
-    emit('submit', state.value)
+    emit('submit', searchInputValue.value)
   }
 
   function onInputChange(value: string) {

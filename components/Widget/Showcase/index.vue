@@ -37,7 +37,7 @@
             variant="solid"
             label="Tambah"
             icon="i-heroicons-plus-20-solid"
-            @click="isOpenAddEditShowcase = true"
+            @click="addItemShowcase"
           />
         </div>
       </template>
@@ -61,17 +61,25 @@
                 height="78"
               />
             </div>
-            <p class="font-roboto text-base font-medium text-gray-800">
+            <p
+              class="line-clamp-1 h-[24px] font-roboto text-base font-medium text-gray-800"
+            >
               {{ item.title }}
             </p>
-            <button class="absolute left-3 top-3">
+            <button
+              class="absolute left-3 top-3"
+              @click="removeItemShowcase(item, index)"
+            >
               <NuxtIcon
                 name="common/trash"
                 aria-hidden="true"
                 class="text-base text-red-700"
               />
             </button>
-            <button class="absolute right-3 top-3">
+            <button
+              class="absolute right-3 top-3"
+              @click="editItemShowcase(item, index)"
+            >
               <NuxtIcon
                 name="common/pencil"
                 aria-hidden="true"
@@ -87,8 +95,8 @@
           <NoData
             class="col-span-4"
             title="Kamu belum memiliki showcase"
-            description="Kamu dapat menambahkan showcase melalui Upload Gambar atau Pilih Logo
-    melalui tombol Tambah diatas dengan rekomendasi ratio gambar adalah 1 x 1 (.jpg dan .png) 
+            description="Kamu dapat menambahkan showcase dengan cara Upload Gambar atau Pilih Logo
+    melalui tombol Tambah diatas dengan rekomendasi ukuran gambar adalah resolusi 500 x 500 pixel (.jpg dan .png) 
     dan ukuran maksimal 2MB."
           />
         </section>
@@ -99,8 +107,10 @@
     <WidgetShowcaseAddEditForm
       :open="isOpenAddEditShowcase"
       :is-edit-mode="isEditShowcase"
+      :data="itemShowcase"
       @close="isOpenAddEditShowcase = false"
       @push-data="pushDataShowcase"
+      @edit-data="editDataShowcase"
     />
   </UModal>
 </template>
@@ -123,11 +133,14 @@
     },
   })
 
+  const { $jSiteApi } = useNuxtApp()
+  const pageStore = usePageStore()
+
   const isEditShowcase = ref(false)
   const isOpenAddEditShowcase = ref(false)
-
-  const pageStore = usePageStore()
   const dataShowcase = reactive<ILogosData[]>([])
+  const itemShowcase = ref({})
+  const indexItemActive = ref(0 as number)
 
   const emit = defineEmits(['close', 'set-active-content'])
 
@@ -136,11 +149,51 @@
       file: {
         uri: file.uri,
         id: file.id,
+        source: file.source,
       },
       title: title,
       description: description,
       link: link,
     })
+  }
+
+  function editDataShowcase({ file, title, description, link }: ILogosData) {
+    dataShowcase[indexItemActive.value].file.id = file.id || ''
+    dataShowcase[indexItemActive.value].file.uri = file.uri || ''
+    dataShowcase[indexItemActive.value].file.source = file.source || ''
+    dataShowcase[indexItemActive.value].title = title || ''
+    dataShowcase[indexItemActive.value].description = description || ''
+    dataShowcase[indexItemActive.value].link = link || ''
+  }
+
+  function addItemShowcase() {
+    isEditShowcase.value = false
+    isOpenAddEditShowcase.value = true
+  }
+
+  async function deleteUploadedShowcase(id: string) {
+    await $jSiteApi.media.deleteMedia(id, undefined, {
+      server: false,
+    })
+  }
+
+  function removeSelectedShowcase() {
+    dataShowcase.splice(indexItemActive.value, 1)
+  }
+
+  function removeItemShowcase(item: ILogosData, index: number) {
+    indexItemActive.value = index
+    removeSelectedShowcase()
+    if (item.file.source === 'media') {
+      deleteUploadedShowcase(item.file.id || '')
+    }
+  }
+
+  function editItemShowcase(item: ILogosData, index: number) {
+    isEditShowcase.value = true
+    itemShowcase.value = item
+    isOpenAddEditShowcase.value = true
+    indexItemActive.value = index
   }
 
   /**
@@ -154,7 +207,7 @@
         sectionIndex: props.sectionIndex,
         widgetIndex: props.widgetIndex,
         payload: {
-          images: dataShowcase,
+          items: toRaw(dataShowcase),
         },
       })
     },

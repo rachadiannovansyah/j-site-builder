@@ -11,6 +11,7 @@ export interface ILogosFileData {
   path?: string
   uri?: string
   id?: string
+  source?: string
 }
 
 export interface ILogosData {
