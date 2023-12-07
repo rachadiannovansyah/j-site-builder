@@ -114,8 +114,12 @@
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone(options)
 
-  function onDrop(acceptFiles: File[], rejectReasons: FileRejectReason[]) {
-    emit('change:files', { acceptFiles, rejectReasons })
+  function onDrop(
+    acceptFiles: File[],
+    rejectReasons: FileRejectReason[],
+    event: Event,
+  ) {
+    emit('change:files', { acceptFiles, rejectReasons, event })
   }
 
   function handleClickDeleteFile(index: number) {

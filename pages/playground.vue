@@ -228,14 +228,14 @@
 
   const state = reactive({
     files: [],
-    fileDropzone: [],
+    fileDropzone: [] as File[],
     errorDropzone: [],
     dropzoneDisable: false,
     dropzoneMultiple: true,
   })
 
-  function onDropFile(event: Event) {
-    const { acceptFiles } = event as unknown
+  function onDropFile(event: { acceptFiles: File[] }) {
+    const { acceptFiles } = event
     state.fileDropzone = acceptFiles
   }
 
