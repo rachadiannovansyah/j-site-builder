@@ -214,6 +214,7 @@
         @change:files="onDropFile($event)"
         @delete:files="deleteFile($event)"
       />
+      <BaseDropzoneFile />
     </div>
   </main>
 </template>
@@ -261,7 +262,6 @@
   function onDrop(acceptFiles: File[], rejectReasons: FileRejectReason[]) {
     if (acceptFiles.length > 0) {
       state.files = acceptFiles as never[]
-      options.disabled = true
     }
     const errors = rejectReasons[0]?.errors ?? ''
     const error = errors[0]
