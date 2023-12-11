@@ -54,6 +54,7 @@
 
   const config = useRuntimeConfig()
   const siteStore = useSiteStore()
+  const pageStore = usePageStore()
   const { $jSiteApi } = useNuxtApp()
 
   const props = defineProps({
@@ -61,12 +62,19 @@
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
 
   const tinyMCEConfig = Object.freeze({
     'api-key': config.public.tinyMceApiKey,
     init: {
-      setup: editorSetup,
       height: 500,
       placeholder: 'Tulis isi post di sini',
       language_url: '/tinymce/langs/id.js',
@@ -87,15 +95,21 @@
     },
   })
 
-  const isEditorLoading = ref(true)
-  const editorContent = ref('')
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function editorSetup(editor: any) {
-    editor.on('init', () => {
-      isEditorLoading.value = false
-    })
-  }
+  const editorContent = computed({
+    get() {
+      pageStore.getWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+      })?.content || ''
+    },
+    set(value) {
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: { content: value },
+      })
+    },
+  })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onImageUpload(blobInfo: any) {
