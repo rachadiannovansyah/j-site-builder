@@ -14,9 +14,10 @@
         <span
           class="font-lato text-sm font-medium leading-6 text-blue-gray-800"
         >
-          {{ guide }} <br />
-          , atau
+          {{ guide }}
         </span>
+        <br />
+        <span>{{ helpText }}</span>
         <label class="inline cursor-pointer">
           <u
             :class="{
@@ -49,6 +50,10 @@
     guide: {
       type: String,
       default: 'drag and drop gambar di sini',
+    },
+    helpText: {
+      type: String,
+      default: ', atau',
     },
     disabled: {
       type: Boolean,
