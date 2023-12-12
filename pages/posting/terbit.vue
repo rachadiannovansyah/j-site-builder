@@ -14,7 +14,7 @@
         description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
       Post yang menakjubkan!"
       >
-        <UButton data-cy="j-site-page__button-create-new-page">
+        <UButton data-cy="j-site-post__button-create-new-post">
           <template #leading>
             <NuxtIcon
               name="common/plus"
