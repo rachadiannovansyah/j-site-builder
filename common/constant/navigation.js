@@ -49,3 +49,22 @@ export const PAGE_TAB_MENU = [
     link: '/halaman/arsip',
   },
 ]
+
+export const POST_TAB_MENU = [
+  {
+    label: 'Semua',
+    link: '/posting/semua',
+  },
+  {
+    label: 'Terbit',
+    link: '/posting/terbit',
+  },
+  {
+    label: 'Draft',
+    link: '/posting/draft',
+  },
+  {
+    label: 'Diarsipkan',
+    link: '/posting/arsip',
+  },
+]
