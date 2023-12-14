@@ -17,12 +17,12 @@
           {{ item.title }}
         </p>
         <span
-          class="rounded-lg bg-gray-50 px-3 py-0.5 text-xs font-semibold text-gray-600"
+          class="max-w-[120px] truncate rounded-lg bg-gray-50 px-3 py-0.5 text-xs font-semibold text-gray-600"
         >
           {{ item.category.name }}
         </span>
         <span class="rounded-lg bg-gray-100 px-3 py-0.5 text-xs text-gray-600">
-          {{ item.updated_at }}
+          {{ formatDate(item.updated_at) }}
         </span>
         <span
           v-if="item.status"
@@ -93,6 +93,9 @@
 </template>
 
 <script setup lang="ts">
+  import { format } from 'date-fns'
+  import ID from 'date-fns/locale/id'
+
   const props = defineProps({
     loading: {
       type: Boolean,
@@ -121,4 +124,8 @@
       icon: 'common/archived',
     },
   ]
+
+  function formatDate(date: string) {
+    return format(new Date(date), 'dd/MM/yyyy', { locale: ID })
+  }
 </script>
