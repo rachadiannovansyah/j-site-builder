@@ -5,7 +5,7 @@ import { IStoreMediaResponse, IDeleteMediaResponse } from '../types/media'
 
 import FetchFactory from '../../factory'
 
-class PageModules extends FetchFactory {
+class MediaModules extends FetchFactory {
   private RESOURCE = '/v1/media'
 
   async uploadMedia(
@@ -39,4 +39,4 @@ class PageModules extends FetchFactory {
   }
 }
 
-export default PageModules
+export default MediaModules
