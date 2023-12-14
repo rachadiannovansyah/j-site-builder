@@ -1,6 +1,6 @@
 <template>
   <UPopover :open="isOpenListAction" :popper="{ placement: 'bottom-end' }">
-    <UButton color="transparent" variant="ghost" @click="toggleOpenModal">
+    <UButton variant="ghost" @click="toggleOpenModal">
       <NuxtIcon
         name="common/vertical-dots"
         class="text-xl text-gray-600"

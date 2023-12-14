@@ -9,7 +9,7 @@
       </div>
     </div>
     <div
-      v-if="data.length === 0"
+      v-if="post.data.length === 0"
       class="flex h-full w-full flex-col items-center justify-center"
     >
       <NoData
@@ -32,66 +32,90 @@
 
     <div v-else class="flow-root">
       <ul role="list" class="flex flex-col gap-[10px]">
-        <PostList :data="data" />
+        <PostList :data="post.data" />
       </ul>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+  import { IPostData, IMetaData } from '~/repository/j-site/types/post'
+
   definePageMeta({
     title: 'Posting',
   })
 
+  const { $jSiteApi } = useNuxtApp()
+  const siteStore = useSiteStore()
+
+  const post = reactive({
+    data: [] as IPostData[],
+    meta: null as null | IMetaData,
+  })
+
+  const params = reactive({
+    page: 1 as string | number,
+    limit: 10 as string | number,
+  })
+
+  const { data } = await $jSiteApi.post.getPostList(
+    siteStore.siteId ?? '',
+    { query: params },
+    { server: false },
+  )
+
+  post.data = toRaw(data.value?.data ?? [])
+  post.meta = toRaw(data.value?.meta ?? null)
+
   // TODO: replace dummy data with service API
-  const data = [
-    {
-      title:
-        'The Importance of Public Services in Improving Quality of Life Life Life Life Life Life',
-      updated_at: '06/02/2023',
-      category: {
-        id: 1,
-        name: 'Pendidikan',
-      },
-      status: 'PUBLISHED',
-    },
-    {
-      title: 'The Future of Public Services: Challenges and Opportunities',
-      updated_at: '06/02/2023',
-      category: {
-        id: 2,
-        name: 'Ekonomi',
-      },
-      status: 'PUBLISHED',
-    },
-    {
-      title: 'The Impact of Technology on Public Services Delivery',
-      updated_at: '06/02/2023',
-      category: {
-        id: 3,
-        name: 'Berita Umum',
-      },
-      status: 'DRAFT',
-    },
-    {
-      title:
-        'How Public-Private Partnerships are Revolutionizing Public Services',
-      updated_at: '06/02/2023',
-      category: {
-        id: 2,
-        name: 'Ekonomi',
-      },
-      status: 'DRAFT',
-    },
-    {
-      title:
-        'Maximizing Efficiency in Public Service Provision through Innovation',
-      updated_at: '06/02/2023',
-      category: {
-        id: 3,
-        name: 'Berita Umum',
-      },
-      status: 'ARCHIVED',
-    },
-  ]
+  // const data = [
+  //   {
+  //     title:
+  //       'The Importance of Public Services in Improving Quality of Life Life Life Life Life Life',
+  //     updated_at: '06/02/2023',
+  //     category: {
+  //       id: 1,
+  //       name: 'Pendidikan',
+  //     },
+  //     status: 'PUBLISHED',
+  //   },
+  //   {
+  //     title: 'The Future of Public Services: Challenges and Opportunities',
+  //     updated_at: '06/02/2023',
+  //     category: {
+  //       id: 2,
+  //       name: 'Ekonomi',
+  //     },
+  //     status: 'PUBLISHED',
+  //   },
+  //   {
+  //     title: 'The Impact of Technology on Public Services Delivery',
+  //     updated_at: '06/02/2023',
+  //     category: {
+  //       id: 3,
+  //       name: 'Berita Umum',
+  //     },
+  //     status: 'DRAFT',
+  //   },
+  //   {
+  //     title:
+  //       'How Public-Private Partnerships are Revolutionizing Public Services',
+  //     updated_at: '06/02/2023',
+  //     category: {
+  //       id: 2,
+  //       name: 'Ekonomi',
+  //     },
+  //     status: 'DRAFT',
+  //   },
+  //   {
+  //     title:
+  //       'Maximizing Efficiency in Public Service Provision through Innovation',
+  //     updated_at: '06/02/2023',
+  //     category: {
+  //       id: 3,
+  //       name: 'Berita Umum',
+  //     },
+  //     status: 'ARCHIVED',
+  //   },
+  // ]
 </script>
