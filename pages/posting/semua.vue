@@ -1,6 +1,6 @@
 <template>
   <section
-    class="flex h-full w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
+    class="flex h-fit w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
   >
     <div class="mb-8 flex items-start justify-between sm:flex-wrap">
       <div class="flex gap-8">
@@ -8,7 +8,10 @@
         <FilterBar />
       </div>
     </div>
-    <div class="flex h-full w-full flex-col items-center justify-center">
+    <div
+      v-if="post.data.length === 0"
+      class="flex h-full w-full flex-col items-center justify-center"
+    >
       <NoData
         title="Kamu belum memiliki Post !"
         description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
@@ -26,11 +29,80 @@
         </UButton>
       </NoData>
     </div>
+
+    <div v-else class="flow-root">
+      <ul role="list" class="flex flex-col gap-3">
+        <PostList :data="post.data" />
+      </ul>
+      <BasePagination
+        class="mt-4"
+        :limit="params.limit"
+        :total-rows="post.meta?.total"
+        :limit-options="['10', '15', '20']"
+        :current-page="post.meta?.page"
+        :total-page="post.meta?.last_page"
+        @change-limit="setParamsLimit"
+        @change-page="setParamsPage"
+        @previous-page="onPreviousPage"
+        @next-page="onNextPage"
+      />
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
+  import { IPostData, IMetaData } from '~/repository/j-site/types/post'
+
   definePageMeta({
     title: 'Posting',
   })
+
+  const { $jSiteApi } = useNuxtApp()
+  const siteStore = useSiteStore()
+
+  const post = reactive({
+    data: [] as IPostData[],
+    meta: null as null | IMetaData,
+  })
+
+  const params = reactive({
+    page: 1 as string | number,
+    limit: 10 as string | number,
+  })
+
+  async function fetchDataPost() {
+    const { data } = await $jSiteApi.post.getPostList(
+      siteStore.siteId ?? '',
+      { query: params },
+      { server: false },
+    )
+
+    post.data = toRaw(data.value?.data ?? [])
+    post.meta = toRaw(data.value?.meta ?? null)
+  }
+
+  onMounted(() => {
+    fetchDataPost()
+  })
+
+  function setParamsLimit(limit: string | number) {
+    params.limit = limit
+    params.page = 1
+    fetchDataPost()
+  }
+
+  function setParamsPage(page: string | number) {
+    params.page = page
+    fetchDataPost()
+  }
+
+  function onPreviousPage() {
+    params.page = Number(params.page) - 1
+    fetchDataPost()
+  }
+
+  function onNextPage() {
+    params.page = Number(params.page) + 1
+    fetchDataPost()
+  }
 </script>
