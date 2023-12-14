@@ -4,7 +4,7 @@ import FetchFactory from '../../factory'
 import { ILogosResponse } from '../types/logo'
 import { FetchOptions } from 'ofetch'
 
-class TemplateModules extends FetchFactory {
+class LogoModules extends FetchFactory {
   private RESOURCE = '/v1/logos'
 
   async getLogos(
@@ -22,4 +22,4 @@ class TemplateModules extends FetchFactory {
   }
 }
 
-export default TemplateModules
+export default LogoModules
