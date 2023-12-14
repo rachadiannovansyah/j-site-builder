@@ -33,19 +33,19 @@
     <div v-else class="flow-root">
       <ul role="list" class="flex flex-col gap-3">
         <PostList :data="post.data" />
-        <BasePagination
-          class="mt-2"
-          :limit="params.limit"
-          :total-rows="post.meta?.total"
-          :limit-options="['10', '15', '20']"
-          :current-page="post.meta?.page"
-          :total-page="post.meta?.last_page"
-          @change-limit="setParamsLimit"
-          @change-page="setParamsPage"
-          @previous-page="onPreviousPage"
-          @next-page="onNextPage"
-        />
       </ul>
+      <BasePagination
+        class="mt-4"
+        :limit="params.limit"
+        :total-rows="post.meta?.total"
+        :limit-options="['10', '15', '20']"
+        :current-page="post.meta?.page"
+        :total-page="post.meta?.last_page"
+        @change-limit="setParamsLimit"
+        @change-page="setParamsPage"
+        @previous-page="onPreviousPage"
+        @next-page="onNextPage"
+      />
     </div>
   </section>
 </template>
