@@ -4,7 +4,7 @@ import { FetchOptions } from 'ofetch'
 import FetchFactory from '../../factory'
 import { ISettingsResponse, ISettingResponse } from '../types/settings'
 
-class TemplateModules extends FetchFactory {
+class SettingModules extends FetchFactory {
   private RESOURCE = '/v1/settings'
 
   async getSettings(
@@ -37,4 +37,4 @@ class TemplateModules extends FetchFactory {
   }
 }
 
-export default TemplateModules
+export default SettingModules
