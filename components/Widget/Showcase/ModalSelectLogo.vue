@@ -159,6 +159,7 @@
   }
 
   function onSelectedLogo() {
+    onSearch('')
     const data = toRaw(selectedLogo)
     emit('select-logo', toRaw(data.value))
     emit('close')
