@@ -21,7 +21,7 @@
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
-            @click="$emit('close')"
+            @click="handleClose"
           />
         </div>
       </template>
@@ -36,11 +36,11 @@
             variant="ghost"
             color="gray"
             type="button"
-            @click="$emit('close')"
+            @click="handleClose"
           >
             Batalkan
           </UButton>
-          <UButton type="submit"> Simpan </UButton>
+          <UButton type="button" @click="onSave"> Simpan </UButton>
         </section>
       </template>
     </UCard>
@@ -95,21 +95,7 @@
     },
   })
 
-  const editorContent = computed({
-    get() {
-      pageStore.getWidgetPayload({
-        sectionIndex: props.sectionIndex,
-        widgetIndex: props.widgetIndex,
-      })?.content || ''
-    },
-    set(value) {
-      pageStore.setWidgetPayload({
-        sectionIndex: props.sectionIndex,
-        widgetIndex: props.widgetIndex,
-        payload: { content: value },
-      })
-    },
-  })
+  const editorContent = ref(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onImageUpload(blobInfo: any) {
@@ -157,5 +143,30 @@
     })
   }
 
-  defineEmits(['close'])
+  function onSave() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        content: editorContent.value,
+      },
+    })
+
+    emit('close')
+  }
+
+  function handleClose() {
+    const payload = pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+
+    if (!!payload?.content) {
+      editorContent.value = payload.content
+    }
+
+    emit('close')
+  }
+
+  const emit = defineEmits(['close'])
 </script>
