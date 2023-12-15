@@ -96,13 +96,10 @@
               v-else
               class="relative flex h-full w-full flex-col items-center justify-center"
             >
-              <div class="h-[150px] w-[150px] overflow-hidden">
-                <NuxtImg
-                  :src="state.file.uri"
-                  width="150"
-                  height="150"
-                  class="h-[150px] w-[150px] object-cover object-center"
-                />
+              <div
+                class="flex h-[150px] w-[150px] items-center justify-center overflow-hidden"
+              >
+                <NuxtImg :src="state.file.uri" width="150" height="150" />
               </div>
               <div class="absolute right-3 top-3">
                 <UButton color="primary" variant="ghost" @click="removeFile">
