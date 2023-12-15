@@ -44,7 +44,7 @@
 
       <template v-if="dataShowcase.length !== 0">
         <section
-          class="flex h-[385px] w-full flex-col items-center justify-center gap-x-3 gap-y-4 overflow-y-auto bg-[#F9F9F9] px-6 py-4 md:grid md:grid-cols-2 lg:grid-cols-3"
+          class="showcase-list flex h-[385px] w-full flex-col items-center justify-center gap-x-3 gap-y-4 overflow-y-auto bg-[#F9F9F9] px-6 py-4 md:grid md:grid-cols-2 lg:grid-cols-3"
         >
           <div
             v-for="(item, index) in dataShowcase"
@@ -218,3 +218,26 @@
     emit('set-active-content', value.length)
   })
 </script>
+
+<style scoped>
+  /* Scroll bar stylings */
+  .showcase-list {
+    scrollbar-color: #bdbdbd none;
+    scrollbar-width: thin;
+  }
+  .showcase-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .showcase-list::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .showcase-list::-webkit-scrollbar-thumb {
+    background-color: #bdbdbd;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+  /* End of scroll bar stylings */
+</style>
