@@ -164,7 +164,7 @@
             Batalkan
           </UButton>
           <UButton v-if="!props.isEditMode" @click="onSubmitShowcase">
-            Submit
+            Simpan
           </UButton>
           <UButton v-else @click="onSaveShowcase"> Simpan </UButton>
         </section>
