@@ -73,7 +73,7 @@
         <BasePagination
           :limit="params.limit"
           :total-rows="logos.meta?.total"
-          :limit-options="['10', '15', '20']"
+          :limit-options="['8', '10', '15', '20']"
           :current-page="logos.meta?.page"
           :total-page="logos.meta?.last_page"
           @change-page="setParamsPage"
@@ -139,6 +139,7 @@
 
   function setParamsLimit(limit: string | number) {
     params.limit = limit
+    params.page = 1
     fetchDataLogos()
   }
 
@@ -158,6 +159,7 @@
   }
 
   function onSelectedLogo() {
+    onSearch('')
     const data = toRaw(selectedLogo)
     emit('select-logo', toRaw(data.value))
     emit('close')
