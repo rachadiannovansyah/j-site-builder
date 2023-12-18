@@ -4,7 +4,11 @@
   >
     <div class="mb-8 flex items-start justify-between sm:flex-wrap">
       <div class="flex gap-8">
-        <SearchBar placeholder="Cari Postingan" class="max-w-[181px]" />
+        <SearchBar
+          placeholder="Cari Postingan"
+          class="max-w-[181px]"
+          @input="onSearch($event)"
+        />
         <FilterBar />
       </div>
     </div>
@@ -68,6 +72,7 @@
   const params = reactive({
     page: 1 as string | number,
     limit: 10 as string | number,
+    q: '' as string,
   })
 
   async function fetchDataPost() {
@@ -103,6 +108,11 @@
 
   function onNextPage() {
     params.page = Number(params.page) + 1
+    fetchDataPost()
+  }
+
+  function onSearch(query: string) {
+    params.q = query
     fetchDataPost()
   }
 </script>
