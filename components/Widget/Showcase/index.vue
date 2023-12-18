@@ -44,7 +44,7 @@
 
       <template v-if="dataShowcase.length !== 0">
         <section
-          class="flex h-[385px] w-full flex-col items-center justify-center gap-x-3 gap-y-4 overflow-y-auto bg-[#F9F9F9] px-6 py-4 md:grid md:grid-cols-2 lg:grid-cols-3"
+          class="showcase-list flex h-[385px] w-full flex-col items-center justify-center gap-x-3 gap-y-4 overflow-y-auto bg-[#F9F9F9] px-6 py-4 md:grid md:grid-cols-2 lg:grid-cols-3"
         >
           <div
             v-for="(item, index) in dataShowcase"
@@ -68,7 +68,7 @@
             </p>
             <button
               class="absolute left-3 top-3"
-              @click="removeItemShowcase(item, index)"
+              @click="showDeleteConfirmation(item, index)"
             >
               <NuxtIcon
                 name="common/trash"
@@ -112,12 +112,61 @@
       @push-data="pushDataShowcase"
       @edit-data="editDataShowcase"
     />
+
+    <!-- Delete Confirmation -->
+    <BaseModal
+      :open="imageUploadStatus === 'DELETING'"
+      with-close-button
+      button-position="right"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-start">
+        <NuxtIcon
+          name="common/trash-circle"
+          class="mr-4 inline-block flex-shrink-0 text-5xl"
+          aria-hidden="true"
+          filled
+        />
+        <div>
+          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+            {{ confirmation.title }}
+          </h3>
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ confirmation.body }}
+          </p>
+        </div>
+      </div>
+      <template #footer>
+        <UButton variant="outline" color="gray" @click="closeConfirmationModal">
+          Batalkan
+        </UButton>
+        <UButton @click="removeItemShowcase()"> Ya, saya yakin </UButton>
+      </template>
+    </BaseModal>
+
+    <!-- Upload/Delete Status -->
+    <BaseModal
+      :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
+      :header="confirmation.title"
+    >
+      <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
+        {{ confirmation.body }}
+      </p>
+      <template #footer>
+        <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
+      </template>
+    </BaseModal>
   </UModal>
 </template>
 
 <script setup lang="ts">
   import { ILogosData } from '~/repository/j-site/types/logo'
-
+  const MEDIA_UPLOAD_STATUS = {
+    NONE: 'NONE',
+    DELETING: 'DELETING',
+    SUCCESS: 'SUCCESS',
+    ERROR: 'ERROR',
+  }
   const props = defineProps({
     open: {
       type: Boolean,
@@ -141,6 +190,13 @@
   const dataShowcase = reactive<ILogosData[]>([])
   const itemShowcase = ref({})
   const indexItemActive = ref(0 as number)
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    media: '',
+    itemId: '', // for delete purposes
+  })
 
   const emit = defineEmits(['close', 'set-active-content'])
 
@@ -181,12 +237,12 @@
     dataShowcase.splice(indexItemActive.value, 1)
   }
 
-  function removeItemShowcase(item: ILogosData, index: number) {
-    indexItemActive.value = index
+  function removeItemShowcase() {
     removeSelectedShowcase()
-    if (item.file.source === 'media') {
-      deleteUploadedShowcase(item.file.id || '')
+    if (confirmation.media === 'media') {
+      deleteUploadedShowcase(confirmation.itemId || '')
     }
+    closeConfirmationModal()
   }
 
   function editItemShowcase(item: ILogosData, index: number) {
@@ -217,4 +273,86 @@
   watch(dataShowcase, (value) => {
     emit('set-active-content', value.length)
   })
+
+  /**
+   * Reset confirmation data and upload progress
+   * when confirmation modal is closed
+   */
+  watch(imageUploadStatus, (newValue) => {
+    if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
+      // wait modal to closed all the way before reset confirmation
+      setTimeout(() => {
+        resetConfirmation()
+      }, 300)
+    }
+  })
+
+  interface ISetConfirmation {
+    title: string
+    body: string
+    media?: string
+    itemId?: string
+  }
+
+  function setConfirmation({ title, body, media, itemId }: ISetConfirmation) {
+    confirmation.title = title
+    confirmation.body = body
+
+    if (itemId) {
+      confirmation.itemId = itemId
+    }
+
+    if (media) {
+      confirmation.media = media
+    }
+  }
+
+  function resetConfirmation() {
+    confirmation.title = ''
+    confirmation.body = ''
+    confirmation.media = ''
+    confirmation.itemId = ''
+  }
+
+  function setModalStatus(value: string) {
+    imageUploadStatus.value = value
+  }
+
+  function closeConfirmationModal() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
+  }
+
+  function showDeleteConfirmation(item: ILogosData, index: number) {
+    indexItemActive.value = index
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar Showcase?',
+      media: item.file.source,
+      itemId: item.file.id,
+    })
+  }
 </script>
+
+<style scoped>
+  /* Scroll bar stylings */
+  .showcase-list {
+    scrollbar-color: #bdbdbd none;
+    scrollbar-width: thin;
+  }
+  .showcase-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .showcase-list::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .showcase-list::-webkit-scrollbar-thumb {
+    background-color: #bdbdbd;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+  /* End of scroll bar stylings */
+</style>
