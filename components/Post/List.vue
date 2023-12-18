@@ -80,8 +80,8 @@
           <li>
             <button>Sematkan Post</button>
           </li>
-          <li>
-            <button>Arsipkan</button>
+          <li v-if="item.status === statusPost[0].status">
+            <button @click="onArchivePost(item.id)">Arsipkan</button>
           </li>
           <li>
             <button class="text-red-400">Hapus</button>
@@ -124,6 +124,12 @@
       icon: 'common/archived',
     },
   ]
+
+  const emit = defineEmits(['archive'])
+
+  function onArchivePost(id: string) {
+    emit('archive', id)
+  }
 
   function formatDate(date: string) {
     return format(new Date(date), 'dd/MM/yyyy', { locale: ID })
