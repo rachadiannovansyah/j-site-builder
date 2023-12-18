@@ -1,5 +1,12 @@
 <template>
   <section
+    v-if="loadingData"
+    class="flex h-full w-full flex-col rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
+  >
+    <LoadingListSkeleton />
+  </section>
+  <section
+    v-else
     class="flex h-fit w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
   >
     <div class="mb-8 flex items-start justify-between sm:flex-wrap">
@@ -7,6 +14,19 @@
         <SearchBar placeholder="Cari Postingan" class="max-w-[181px]" />
         <FilterBar />
       </div>
+      <UButton
+        v-if="post.data.length !== 0"
+        data-cy="j-site-post__button-create-new-post"
+      >
+        <template #leading>
+          <NuxtIcon
+            name="common/plus"
+            class="text-lg text-white"
+            aria-hidden="true"
+          />
+        </template>
+        Membuat Post
+      </UButton>
     </div>
     <div
       v-if="post.data.length === 0"
@@ -60,6 +80,8 @@
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
 
+  const loadingData = ref(true)
+
   const post = reactive({
     data: [] as IPostData[],
     meta: null as null | IMetaData,
@@ -68,9 +90,12 @@
   const params = reactive({
     page: 1 as string | number,
     limit: 10 as string | number,
+    q: '' as string,
+    status: '' as string,
   })
 
   async function fetchDataPost() {
+    loadingData.value = true
     const { data } = await $jSiteApi.post.getPostList(
       siteStore.siteId ?? '',
       { query: params },
@@ -79,6 +104,7 @@
 
     post.data = toRaw(data.value?.data ?? [])
     post.meta = toRaw(data.value?.meta ?? null)
+    loadingData.value = false
   }
 
   onMounted(() => {
