@@ -1,17 +1,14 @@
 <template>
   <section
-    v-if="loadingData"
-    class="flex h-full w-full flex-col rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
-  >
-    <LoadingListSkeleton />
-  </section>
-  <section
-    v-else
     class="flex h-fit w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
   >
     <div class="mb-8 flex items-start justify-between sm:flex-wrap">
       <div class="flex gap-8">
-        <SearchBar placeholder="Cari Postingan" class="max-w-[181px]" />
+        <SearchBar
+          placeholder="Cari Postingan"
+          class="max-w-[181px]"
+          @input="onSearch($event)"
+        />
         <FilterBar />
       </div>
       <UButton
@@ -28,45 +25,53 @@
         Membuat Post
       </UButton>
     </div>
-    <div
-      v-if="post.data.length === 0"
-      class="flex h-full w-full flex-col items-center justify-center"
+    <section
+      v-if="loadingData"
+      class="flex h-full w-full flex-col rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
     >
-      <NoData
-        title="Kamu belum memiliki Post !"
-        description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
-      Post yang menakjubkan!"
+      <LoadingListSkeleton />
+    </section>
+    <section v-else>
+      <div
+        v-if="post.data.length === 0"
+        class="flex h-full w-full flex-col items-center justify-center"
       >
-        <UButton data-cy="j-site-post__button-create-new-post">
-          <template #leading>
-            <NuxtIcon
-              name="common/plus"
-              class="text-lg text-white"
-              aria-hidden="true"
-            />
-          </template>
-          Membuat Post
-        </UButton>
-      </NoData>
-    </div>
+        <NoData
+          title="Kamu belum memiliki Post !"
+          description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
+      Post yang menakjubkan!"
+        >
+          <UButton data-cy="j-site-post__button-create-new-post">
+            <template #leading>
+              <NuxtIcon
+                name="common/plus"
+                class="text-lg text-white"
+                aria-hidden="true"
+              />
+            </template>
+            Membuat Post
+          </UButton>
+        </NoData>
+      </div>
 
-    <div v-else class="flow-root">
-      <ul role="list" class="flex flex-col gap-3">
-        <PostList :data="post.data" @archive="onArchivePost($event)" />
-      </ul>
-      <BasePagination
-        class="mt-4"
-        :limit="params.limit"
-        :total-rows="post.meta?.total"
-        :limit-options="['10', '15', '20']"
-        :current-page="post.meta?.page"
-        :total-page="post.meta?.last_page"
-        @change-limit="setParamsLimit"
-        @change-page="setParamsPage"
-        @previous-page="onPreviousPage"
-        @next-page="onNextPage"
-      />
-    </div>
+      <div v-else class="flow-root">
+        <ul role="list" class="flex flex-col gap-3">
+          <PostList :data="post.data" @archive="onArchivePost($event)" />
+        </ul>
+        <BasePagination
+          class="mt-4"
+          :limit="params.limit"
+          :total-rows="post.meta?.total"
+          :limit-options="['10', '15', '20']"
+          :current-page="post.meta?.page"
+          :total-page="post.meta?.last_page"
+          @change-limit="setParamsLimit"
+          @change-page="setParamsPage"
+          @previous-page="onPreviousPage"
+          @next-page="onNextPage"
+        />
+      </div>
+    </section>
   </section>
 
   <!-- Status Change Confirmation -->
@@ -77,7 +82,7 @@
     :header="confirmation.title"
     @close="isOpenActionConfirmation = false"
   >
-    <div class="flex items-start p-6">
+    <div class="flex items-start p-3">
       <p class="font-lato text-sm leading-6 text-gray-600">
         {{ confirmation.body }}
       </p>
@@ -189,6 +194,11 @@
     fetchDataPost()
   }
 
+  function onSearch(query: string) {
+    params.q = query
+    fetchDataPost()
+  }
+
   async function onArchivePost(id: string) {
     isOpenActionConfirmation.value = true
     setConfirmation({
@@ -207,6 +217,5 @@
       { status: 'ARCHIVED' },
       { server: false },
     )
-    fetchDataPost()
   }
 </script>
