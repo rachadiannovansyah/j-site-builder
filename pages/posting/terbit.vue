@@ -4,7 +4,11 @@
   >
     <div class="mb-8 flex items-start justify-between sm:flex-wrap">
       <div class="flex gap-8">
-        <SearchBar placeholder="Cari Postingan" class="max-w-[181px]" />
+        <SearchBar
+          placeholder="Cari Postingan"
+          class="max-w-[181px]"
+          @input="onSearch($event)"
+        />
         <FilterBar />
       </div>
       <UButton
@@ -190,6 +194,11 @@
     fetchDataPost()
   }
 
+  function onSearch(query: string) {
+    params.q = query
+    fetchDataPost()
+  }
+
   async function onArchivePost(id: string) {
     isOpenActionConfirmation.value = true
     setConfirmation({
@@ -208,6 +217,5 @@
       { status: 'ARCHIVED' },
       { server: false },
     )
-    fetchDataPost()
   }
 </script>
