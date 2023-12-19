@@ -21,6 +21,21 @@ class PostModules extends FetchFactory {
       )
     }, options)
   }
+
+  async patchPostStatus(
+    idSetting: string,
+    idPost: string,
+    body?: { status: string },
+    options?: AsyncDataOptions<IPostsResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPostsResponse>(
+        'PATCH',
+        `${this.RESOURCE}/${idSetting}/${idPost}`,
+        body,
+      )
+    }, options)
+  }
 }
 
 export default PostModules

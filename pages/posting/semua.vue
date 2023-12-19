@@ -56,7 +56,7 @@
 
       <div v-else class="flow-root">
         <ul role="list" class="flex flex-col gap-3">
-          <PostList :data="post.data" />
+          <PostList :data="post.data" @archive="onArchivePost($event)" />
         </ul>
         <BasePagination
           class="mt-4"
@@ -73,6 +73,36 @@
       </div>
     </section>
   </section>
+
+  <!-- Status Change Confirmation -->
+  <BaseModal
+    :open="isOpenActionConfirmation"
+    with-close-button
+    button-position="right"
+    :header="confirmation.title"
+    @close="isOpenActionConfirmation = false"
+  >
+    <div class="flex items-start p-3">
+      <p class="font-lato text-sm leading-6 text-gray-600">
+        {{ confirmation.body }}
+      </p>
+    </div>
+    <template #footer>
+      <UButton
+        variant="outline"
+        color="gray"
+        @click="isOpenActionConfirmation = false"
+      >
+        Tidak
+      </UButton>
+      <UButton
+        v-if="confirmation.status === 'ARCHIVED'"
+        @click="actionArchivePost()"
+      >
+        Ya, Arsipkan
+      </UButton>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -99,6 +129,14 @@
     status: '' as string,
   })
 
+  const isOpenActionConfirmation = ref(false)
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    status: '', // status post action
+    postId: '', // id post
+  })
+
   async function fetchDataPost() {
     loadingData.value = true
     const { data } = await $jSiteApi.post.getPostList(
@@ -115,6 +153,25 @@
   onMounted(() => {
     fetchDataPost()
   })
+
+  interface ISetConfirmation {
+    title: string
+    body: string
+    status?: string
+    postId?: string
+  }
+
+  function setConfirmation({ title, body, status, postId }: ISetConfirmation) {
+    confirmation.title = title
+    confirmation.body = body
+
+    if (status) {
+      confirmation.status = status
+    }
+    if (postId) {
+      confirmation.postId = postId
+    }
+  }
 
   function setParamsLimit(limit: string | number) {
     params.limit = limit
@@ -140,5 +197,25 @@
   function onSearch(query: string) {
     params.q = query
     fetchDataPost()
+  }
+
+  async function onArchivePost(id: string) {
+    isOpenActionConfirmation.value = true
+    setConfirmation({
+      title: 'Arsipkan Post',
+      body: 'Apakah Anda ingin mengarsipkan Post ini ?',
+      status: 'ARCHIVED',
+      postId: id,
+    })
+  }
+
+  async function actionArchivePost() {
+    isOpenActionConfirmation.value = false
+    await $jSiteApi.post.patchPostStatus(
+      siteStore.siteId ?? '',
+      confirmation.postId,
+      { status: 'ARCHIVED' },
+      { server: false },
+    )
   }
 </script>
