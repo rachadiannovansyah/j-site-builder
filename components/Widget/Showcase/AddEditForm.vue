@@ -36,7 +36,7 @@
       </template>
 
       <section
-        class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
+        class="showcase-form-body flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
         <UForm :state="state">
           <input
@@ -523,4 +523,25 @@
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='silver' stroke-width='2' stroke-dasharray='8' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
     border-radius: 8px;
   }
+
+  /* Scroll bar stylings */
+  .showcase-form-body {
+    scrollbar-color: #bdbdbd none;
+    scrollbar-width: thin;
+  }
+  .showcase-form-body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .showcase-form-body::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .showcase-form-body::-webkit-scrollbar-thumb {
+    background-color: #bdbdbd;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+  /* End of scroll bar stylings */
 </style>
