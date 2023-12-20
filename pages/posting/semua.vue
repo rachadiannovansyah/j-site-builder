@@ -9,7 +9,7 @@
           class="max-w-[181px]"
           @input="onSearch($event)"
         />
-        <FilterBar />
+        <FilterBar v-bind="filterProps" />
       </div>
       <UButton
         v-if="post.data.length !== 0"
@@ -116,6 +116,21 @@
   const siteStore = useSiteStore()
 
   const loadingData = ref(true)
+  // @TODO: Update static filterProps when input calendar component is ready
+  const filterProps = {
+    title: 'Filter Post',
+    categoryTitle: 'Kategori Post',
+    categories: [
+      'Pendidikan',
+      'Berita',
+      'Kesehatan',
+      'Pembangunan',
+      'Properti',
+      'Lingkungan',
+      'Ketenagakerjaan',
+    ],
+    disabled: false,
+  }
 
   const post = reactive({
     data: [] as IPostData[],
