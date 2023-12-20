@@ -95,8 +95,7 @@
         </div>
 
         <!-- Date Input -->
-        <!-- @TODO: Show date input if component is ready -->
-        <div v-show="false" class="w-full">
+        <div class="w-full">
           <div class="mb-4 flex w-full min-w-0 items-center gap-3">
             <h4
               class="whitespace-nowrap font-lato text-sm leading-none text-blue-gray-700"
@@ -107,14 +106,17 @@
           </div>
         </div>
 
-        <!-- @TODO: slicing calendar -->
-        <div class="w-full"></div>
+        <!-- @TODO: Add functionality and validation -->
+        <div class="flex w-full flex-row gap-4">
+          <InputCalendar id="input" label="Tanggal Awal" />
+          <InputCalendar id="input" label="Tanggal Akhir" />
+        </div>
       </section>
 
       <template #footer>
         <UButton
           :ui="{
-            base: 'w-[177px] justify-center',
+            base: 'w-[223px] justify-center',
           }"
           variant="outline"
           @click="cancelFilter"
@@ -123,10 +125,11 @@
         </UButton>
         <UButton
           :ui="{
-            base: 'w-[177px] justify-center',
+            base: 'w-[223px] justify-center',
           }"
-          >Terapkan</UButton
         >
+          Terapkan
+        </UButton>
       </template>
     </BaseModal>
   </section>
