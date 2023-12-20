@@ -160,10 +160,16 @@
           <UButton variant="ghost" color="gray" @click="onCancelForm">
             Batalkan
           </UButton>
-          <UButton v-if="!props.isEditMode" @click="onSubmitShowcase">
+          <UButton
+            v-if="!props.isEditMode"
+            :disabled="!isFormCompleted"
+            @click="onSubmitShowcase"
+          >
             Simpan
           </UButton>
-          <UButton v-else @click="onSaveShowcase"> Simpan </UButton>
+          <UButton v-else :disabled="!isFormCompleted" @click="onSaveShowcase">
+            Simpan
+          </UButton>
         </section>
       </template>
     </UCard>
@@ -279,6 +285,19 @@
       }
     },
   )
+
+  const isFormCompleted = computed(() => {
+    if (isActiveLink.value) {
+      return !!(
+        state.title &&
+        state.description &&
+        state.file.source &&
+        state.link
+      )
+    } else {
+      return !!(state.title && state.description && state.file.source)
+    }
+  })
 
   function setInitialData() {
     const { file, title, description, link } = toRaw(props.data)
