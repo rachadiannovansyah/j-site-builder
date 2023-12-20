@@ -204,7 +204,7 @@
       <p v-else>Belum ada file terpilih</p>
     </div>
 
-    <h1>Drag & Drop Dropzone Base Component</h1>
+    <h1>Drag & Drop Dropzone Base Csomponent</h1>
     <div class="mb-8 flex w-full flex-col gap-4">
       <BaseDropzone
         :files="state.fileDropzone"
@@ -215,6 +215,12 @@
         @delete:files="deleteFile($event)"
       />
       <BaseDropzoneFile />
+    </div>
+
+    <h1>Date Picker</h1>
+    <div class="mb-8 flex w-full flex-row justify-between">
+      <BaseCalendar class="w-[178px]" />
+      <BaseCalendar class="w-[178px]" />
     </div>
   </main>
 </template>
