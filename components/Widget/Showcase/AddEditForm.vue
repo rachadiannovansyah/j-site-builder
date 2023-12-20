@@ -38,7 +38,7 @@
       <section
         class="showcase-form-body flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
-        <UForm :state="state">
+        <UForm :state="state" :schema="stateSchema">
           <input
             ref="imageUploader"
             type="file"
@@ -212,6 +212,7 @@
 </template>
 
 <script setup lang="ts">
+  import { z as zod } from 'zod'
   import { ILogosData } from '~/repository/j-site/types/logo'
   import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
@@ -252,6 +253,25 @@
     itemId: null,
   })
 
+  const stateSchema = zod.object({
+    file: zod.object({
+      uri: zod.string().min(1, 'Isian file wajib diisi'),
+    }),
+    title: zod
+      .string()
+      .min(3, 'Isian judul minimal 3 karakter')
+      .max(250, 'Isian judul maksimal 250 karakter'),
+    description: zod
+      .string()
+      .min(3, 'Isian deskripsi minimal 3 karakter')
+      .max(500, 'Isian deskripsi maksimal 500 karakter'),
+    link: zod
+      .string()
+      .url('Isian link tidak valid')
+      .optional()
+      .or(zod.literal('')),
+  })
+
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
   const imageUploader = ref<HTMLInputElement | null>(null)
@@ -288,15 +308,9 @@
 
   const isFormCompleted = computed(() => {
     if (isActiveLink.value) {
-      return !!(
-        state.title &&
-        state.description &&
-        state.file.source &&
-        state.link
-      )
-    } else {
-      return !!(state.title && state.description && state.file.source)
+      return stateSchema.safeParse(state).success && !!state.link
     }
+    return stateSchema.safeParse(state).success
   })
 
   function setInitialData() {
