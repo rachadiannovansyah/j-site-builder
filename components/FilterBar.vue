@@ -63,7 +63,7 @@
             <span class="w-full border border-gray-100" />
           </div>
 
-          <div class="w-full">
+          <div class="max-h-[400px] w-full overflow-y-auto">
             <template v-if="props.categories.length > 0">
               <UCheckbox label="Pilih Semua Kategori" class="mb-3" />
               <div class="flex w-full min-w-0 flex-col gap-4 pl-[28px]">
