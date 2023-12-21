@@ -66,7 +66,7 @@
       </div>
       <PostItemAction>
         <ul
-          class="flex flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
+          class="flex w-[130px] flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
         >
           <li>
             <button>Lihat Detail</button>
