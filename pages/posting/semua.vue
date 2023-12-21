@@ -62,7 +62,7 @@
           class="mt-4"
           :limit="params.limit"
           :total-rows="post.meta?.total"
-          :limit-options="['10', '15', '20']"
+          :limit-options="['5', '10', '15', '20']"
           :current-page="post.meta?.page"
           :total-page="post.meta?.last_page"
           @change-limit="setParamsLimit"
@@ -154,14 +154,24 @@
 
   async function fetchDataPost() {
     loadingData.value = true
-    const { data } = await $jSiteApi.post.getPostList(
+    const { data: responseData } = await $jSiteApi.post.getPostList(
       siteStore.siteId ?? '',
       { query: params },
       { server: false },
     )
 
-    post.data = toRaw(data.value?.data ?? [])
-    post.meta = toRaw(data.value?.meta ?? null)
+    const postData = toRaw(responseData.value?.data ?? [])
+    const metaData = toRaw(responseData.value?.meta ?? null)
+
+    // handle numbering on each page
+    if (postData.length > 0) {
+      post.data = postData.map((item, index) => ({
+        ...item,
+        index: index + Number(metaData?.from),
+      }))
+    }
+
+    post.meta = metaData
     loadingData.value = false
   }
 

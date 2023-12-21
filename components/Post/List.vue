@@ -5,7 +5,7 @@
     class="flex items-center gap-[10px]"
   >
     <span class="font-medium text-blue-gray-900">
-      {{ `${index + 1}.` }}
+      {{ item.index }}
     </span>
     <div
       class="flex h-[52px] w-full items-center justify-between rounded-xl border border-gray-300 px-4"
@@ -66,7 +66,7 @@
       </div>
       <PostItemAction>
         <ul
-          class="flex flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
+          class="flex w-[130px] flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
         >
           <li>
             <button>Lihat Detail</button>

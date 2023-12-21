@@ -101,14 +101,24 @@
 
   async function fetchDataPost() {
     loadingData.value = true
-    const { data } = await $jSiteApi.post.getPostList(
+    const { data: responseData } = await $jSiteApi.post.getPostList(
       siteStore.siteId ?? '',
       { query: params },
       { server: false },
     )
 
-    post.data = toRaw(data.value?.data ?? [])
-    post.meta = toRaw(data.value?.meta ?? null)
+    const postData = toRaw(responseData.value?.data ?? [])
+    const metaData = toRaw(responseData.value?.meta ?? null)
+
+    // handle numbering on each page
+    if (postData.length > 0) {
+      post.data = postData.map((item, index) => ({
+        ...item,
+        index: index + Number(metaData?.from),
+      }))
+    }
+
+    post.meta = metaData
     loadingData.value = false
   }
 
