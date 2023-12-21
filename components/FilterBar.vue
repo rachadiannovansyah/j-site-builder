@@ -68,9 +68,9 @@
               <UCheckbox label="Pilih Semua Kategori" class="mb-3" />
               <div class="flex w-full min-w-0 flex-col gap-4 pl-[28px]">
                 <UCheckbox
-                  v-for="(category, index) in props.categories"
-                  :key="index"
-                  :label="category"
+                  v-for="category in props.categories"
+                  :key="category.id"
+                  :label="category.name"
                 />
               </div>
             </template>
@@ -136,6 +136,8 @@
 </template>
 
 <script lang="ts" setup>
+  import { ICategoryData } from '~/repository/j-site/types/category'
+
   const filterCount = ref(0)
 
   const isModalOpen = ref(false)
@@ -150,7 +152,7 @@
       default: 'Kategori',
     },
     categories: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<ICategoryData[]>,
       default: () => [],
     },
     disabled: {
