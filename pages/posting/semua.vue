@@ -66,7 +66,7 @@
           class="mt-4"
           :limit="params.limit"
           :total-rows="post.meta?.total"
-          :limit-options="['5', '10', '15', '20']"
+          :limit-options="['10', '15', '20']"
           :current-page="post.meta?.page"
           :total-page="post.meta?.last_page"
           @change-limit="setParamsLimit"
