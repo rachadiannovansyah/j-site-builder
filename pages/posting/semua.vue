@@ -117,12 +117,11 @@
   const siteStore = useSiteStore()
 
   const loadingData = ref(true)
-  // @TODO: Update static filterProps when input calendar component is ready
   const filterProps = reactive({
-    title: 'Filter Post',
-    categoryTitle: 'Kategori Post',
+    title: 'Filter Post' as string,
+    categoryTitle: 'Kategori Post' as string,
     categories: [] as ICategoryData[],
-    disabled: false,
+    disabled: false as boolean,
   })
 
   const post = reactive({
