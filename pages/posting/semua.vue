@@ -107,6 +107,7 @@
 
 <script setup lang="ts">
   import { IPostData, IMetaData } from '~/repository/j-site/types/post'
+  import { ICategoryData } from '~/repository/j-site/types/category'
 
   definePageMeta({
     title: 'Posting',
@@ -117,20 +118,12 @@
 
   const loadingData = ref(true)
   // @TODO: Update static filterProps when input calendar component is ready
-  const filterProps = {
+  const filterProps = reactive({
     title: 'Filter Post',
     categoryTitle: 'Kategori Post',
-    categories: [
-      'Pendidikan',
-      'Berita',
-      'Kesehatan',
-      'Pembangunan',
-      'Properti',
-      'Lingkungan',
-      'Ketenagakerjaan',
-    ],
+    categories: [] as ICategoryData[],
     disabled: false,
-  }
+  })
 
   const post = reactive({
     data: [] as IPostData[],
@@ -165,8 +158,19 @@
     loadingData.value = false
   }
 
+  async function fetchCategory() {
+    const { data } = await $jSiteApi.category.getCategory(
+      siteStore.siteId ?? '',
+      { query: params },
+      { server: false },
+    )
+
+    filterProps.categories = toRaw(data.value?.data ?? [])
+  }
+
   onMounted(() => {
     fetchDataPost()
+    fetchCategory()
   })
 
   interface ISetConfirmation {
