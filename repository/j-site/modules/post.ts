@@ -36,6 +36,20 @@ class PostModules extends FetchFactory {
       )
     }, options)
   }
+
+  async deletePost(
+    idSetting: string,
+    idPost: string,
+    options?: AsyncDataOptions<IPostsResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPostsResponse>(
+        'DELETE',
+        `${this.RESOURCE}/${idSetting}/${idPost}`,
+        undefined,
+      )
+    }, options)
+  }
 }
 
 export default PostModules
