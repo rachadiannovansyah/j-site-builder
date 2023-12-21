@@ -62,7 +62,7 @@
           class="mt-4"
           :limit="params.limit"
           :total-rows="post.meta?.total"
-          :limit-options="['10', '15', '20']"
+          :limit-options="['5', '10', '15', '20']"
           :current-page="post.meta?.page"
           :total-page="post.meta?.last_page"
           @change-limit="setParamsLimit"
@@ -165,18 +165,10 @@
 
     // handle numbering on each page
     if (postData.length > 0) {
-      if (metaData?.page === 1) {
-        post.data = postData.map((item, index) => ({
-          ...item,
-          index: index + 1,
-        }))
-      } else {
-        post.data = postData.map((item, index) => ({
-          ...item,
-          index:
-            index + 1 + (Number(metaData?.page) - 1) * Number(metaData?.limit),
-        }))
-      }
+      post.data = postData.map((item, index) => ({
+        ...item,
+        index: index + Number(metaData?.from),
+      }))
     }
 
     post.meta = metaData

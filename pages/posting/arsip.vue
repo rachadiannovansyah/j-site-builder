@@ -112,18 +112,10 @@
 
     // handle numbering on each page
     if (postData.length > 0) {
-      if (metaData?.page === 1) {
-        post.data = postData.map((item, index) => ({
-          ...item,
-          index: index + 1,
-        }))
-      } else {
-        post.data = postData.map((item, index) => ({
-          ...item,
-          index:
-            index + 1 + (Number(metaData?.page) - 1) * Number(metaData?.limit),
-        }))
-      }
+      post.data = postData.map((item, index) => ({
+        ...item,
+        index: index + Number(metaData?.from),
+      }))
     }
 
     post.meta = metaData
