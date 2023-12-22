@@ -84,7 +84,9 @@
             <button @click="onArchivePost(item.id)">Arsipkan</button>
           </li>
           <li>
-            <button class="text-red-400">Hapus</button>
+            <button class="text-red-400" @click="onDeletePost(item.id)">
+              Hapus
+            </button>
           </li>
         </ul>
       </PostItemAction>
@@ -125,10 +127,14 @@
     },
   ]
 
-  const emit = defineEmits(['archive'])
+  const emit = defineEmits(['archive', 'delete'])
 
   function onArchivePost(id: string) {
     emit('archive', id)
+  }
+
+  function onDeletePost(id: string) {
+    emit('delete', id)
   }
 
   function formatDate(date: string) {
