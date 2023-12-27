@@ -514,7 +514,7 @@
   }
 
   async function onCancelForm() {
-    if (state.file.source === 'media') {
+    if (state.file.source === 'media' && !props.isEditMode) {
       await deleteUploadedImage(state.file.id)
     }
     resetForm()
