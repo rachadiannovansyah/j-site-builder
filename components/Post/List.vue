@@ -74,12 +74,13 @@
           <li>
             <button>Ubah</button>
           </li>
-          <li>
+          <!-- Temporary hide features -->
+          <!-- <li>
             <button>Duplikat Post</button>
           </li>
           <li>
             <button>Sematkan Post</button>
-          </li>
+          </li> -->
           <li v-if="item.status === statusPost[0].status">
             <button @click="onArchivePost(item.id)">Arsipkan</button>
           </li>
