@@ -90,7 +90,7 @@
                   square
                   color="gray"
                   variant="ghost"
-                  @click="toggleEditCategory(index)"
+                  @click.stop="toggleEditCategory(index)"
                 >
                   <NuxtIcon
                     name="common/pencil"
@@ -270,8 +270,6 @@
 
   const isAddCategory = ref(false)
 
-  const category = ref('')
-
   // TODO: remove this dummy category
   const categories = reactive([
     {
@@ -362,6 +360,15 @@
     },
     set(value) {
       postStore.setAuthor(value)
+    },
+  })
+
+  const category = computed({
+    get() {
+      return postStore.form.category
+    },
+    set(value) {
+      postStore.setCategory(value)
     },
   })
 </script>

@@ -32,5 +32,8 @@ export const usePostStore = defineStore('post', {
     setAuthor(author: string) {
       this.form.author = author
     },
+    setCategory(category: string) {
+      this.form.category = category
+    },
   },
 })
