@@ -35,18 +35,18 @@
         <UFormGroup :error="dropzoneErrorMessages.length > 0">
           <BaseDropzone
             accept="image/jpeg, image/jpg, image/png, image/webp"
-            :disabled="!!dropzoneImage"
+            :disabled="!!image.id"
             @change="handleImageChange"
             @clear="handleDeleteImage"
           >
-            <template v-if="!!dropzoneImage" #preview="{ clear }">
+            <template v-if="!!image.id" #preview="{ clear }">
               <div
                 class="mt-4 flex w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4 py-2"
               >
                 <span
                   class="line-clamp-1 pr-4 font-lato text-sm leading-6 text-gray-800"
                 >
-                  {{ dropzoneImage?.name }}
+                  {{ image?.filename }}
                 </span>
                 <div class="flex flex-shrink-0">
                   <UButton
@@ -427,14 +427,16 @@
     },
   })
 
-  const dropzoneImage = ref<null | File>(null)
+  const image = computed(() => {
+    return postStore.form.image
+  })
+
   const dropzoneErrorMessages = ref<string[]>([])
 
   async function handleImageChange(image: File) {
     if (!image) return
 
     try {
-      dropzoneImage.value = image
       dropzoneErrorMessages.value = []
 
       await validateImage(image, {
@@ -453,8 +455,12 @@
       const response = await uploadImage(formData)
       const { file, id } = response?.value?.data ?? {}
 
-      if (file?.uri && id) {
-        postStore.setImage({ id, uri: file.uri })
+      if (file && id) {
+        postStore.setImage({
+          id,
+          uri: file.uri,
+          filename: file.filename,
+        })
       }
     } catch (error) {
       resetDropzone()
@@ -498,7 +504,6 @@
   }
 
   function resetDropzone() {
-    dropzoneImage.value = null
-    postStore.setImage({ id: '', uri: '' })
+    postStore.setImage({ id: '', uri: '', filename: '' })
   }
 </script>
