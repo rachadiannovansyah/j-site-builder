@@ -44,7 +44,7 @@
                 class="mt-4 flex w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4 py-2"
               >
                 <span
-                  class="line-clamp-1 pr-4 font-lato text-sm leading-6 text-gray-800"
+                  class="truncate pr-4 font-lato text-sm leading-6 text-gray-800"
                 >
                   {{ image?.filename }}
                 </span>
@@ -54,6 +54,7 @@
                     variant="ghost"
                     square
                     size="sm"
+                    @click="togglePreviewImage"
                   >
                     <NuxtIcon name="common/eye" class="text-2xl" />
                   </UButton>
@@ -287,6 +288,23 @@
       </UButton>
     </template>
   </BaseModal>
+
+  <!-- Image Preview -->
+  <BaseModal
+    :open="isPreviewImage"
+    with-close-button
+    @close="togglePreviewImage"
+  >
+    <NuxtImg
+      :src="postStore.form.image.uri"
+      :alt="postStore.form.image.filename"
+      class="h-full w-full"
+    />
+
+    <template #footer>
+      <UButton type="button" @click="togglePreviewImage"> Tutup </UButton>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -505,5 +523,11 @@
 
   function resetDropzone() {
     postStore.setImage({ id: '', uri: '', filename: '' })
+  }
+
+  const isPreviewImage = ref(false)
+
+  function togglePreviewImage() {
+    isPreviewImage.value = !isPreviewImage.value
   }
 </script>
