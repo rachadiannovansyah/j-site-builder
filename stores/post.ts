@@ -29,5 +29,8 @@ export const usePostStore = defineStore('post', {
     setContent(content: string) {
       this.form.content = content
     },
+    setAuthor(author: string) {
+      this.form.author = author
+    },
   },
 })

@@ -49,7 +49,7 @@
 
       <!-- Author Input Field -->
       <UFormGroup label="Nama Penulis" class="mb-[14px]">
-        <UInput placeholder="Masukkan Nama Penulis" />
+        <UInput v-model="author" placeholder="Masukkan Nama Penulis" />
       </UFormGroup>
 
       <!-- Category Radio Button -->
@@ -353,6 +353,15 @@
     },
     set(value) {
       postStore.setContent(value)
+    },
+  })
+
+  const author = computed({
+    get() {
+      return postStore.form.author
+    },
+    set(value) {
+      postStore.setAuthor(value)
     },
   })
 </script>
