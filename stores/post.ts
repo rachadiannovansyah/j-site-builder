@@ -26,5 +26,8 @@ export const usePostStore = defineStore('post', {
     setTitle(title: string) {
       this.form.title = title
     },
+    setContent(content: string) {
+      this.form.content = content
+    },
   },
 })

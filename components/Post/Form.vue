@@ -36,7 +36,7 @@
       </div>
 
       <div class="rounded-lg bg-white p-[14px]">
-        <Editor v-bind="tinyMCEConfig" />
+        <Editor v-model="content" v-bind="tinyMCEConfig" />
       </div>
     </div>
 
@@ -344,6 +344,15 @@
     },
     set(value) {
       postStore.setTitle(value)
+    },
+  })
+
+  const content = computed({
+    get() {
+      return postStore.form.content
+    },
+    set(value) {
+      postStore.setContent(value)
     },
   })
 </script>
