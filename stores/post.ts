@@ -1,6 +1,9 @@
 type IForm = {
   title: string
-  image: string
+  image: {
+    id: string
+    uri: string
+  }
   content: string
   author: string
   category: string
@@ -14,7 +17,10 @@ export const usePostStore = defineStore('post', {
   state: () => ({
     form: {
       title: '',
-      image: '',
+      image: {
+        id: '',
+        uri: '',
+      },
       content: '',
       author: '',
       category: '',
@@ -34,6 +40,10 @@ export const usePostStore = defineStore('post', {
     },
     setCategory(category: string) {
       this.form.category = category
+    },
+    setImage({ id, uri }: { id: string; uri: string }) {
+      this.form.image.id = id
+      this.form.image.uri = uri
     },
   },
 })

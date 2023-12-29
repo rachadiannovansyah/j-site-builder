@@ -32,7 +32,32 @@
         </p>
 
         <!-- Image Dropzone -->
-        <BaseDropzone />
+        <UFormGroup :error="dropzoneErrorMessages.length > 0">
+          <BaseDropzone
+            accept="image/jpeg, image/jpg, image/png, image/webp"
+            :disabled="!!dropzoneImage"
+            @change="handleImageChange"
+            @clear="handleDeleteImage"
+          >
+            <template v-if="!!dropzoneImage" #preview="{ clear }">
+              <div
+                class="flex w-full items-center justify-between rounded-md border p-2"
+              >
+                <span>{{ dropzoneImage?.name }}</span>
+                <UButton variant="ghost" @click="clear"> Clear </UButton>
+              </div>
+            </template>
+          </BaseDropzone>
+          <template #error>
+            <p
+              v-for="error in dropzoneErrorMessages"
+              :key="error"
+              class="font-lato text-xs leading-6 text-red-500"
+            >
+              {{ error }}
+            </p>
+          </template>
+        </UFormGroup>
       </div>
 
       <div class="rounded-lg bg-white p-[14px]">
@@ -245,8 +270,13 @@
   import Editor from '@tinymce/tinymce-vue'
   import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
   import { usePostStore } from '~/stores/post'
+  import { validateImage } from '~/common/helpers/validation'
+  import z from 'zod'
 
   const config = useRuntimeConfig()
+  const siteStore = useSiteStore()
+  const postStore = usePostStore()
+  const { $jSiteApi } = useNuxtApp()
 
   const tinyMCEConfig = Object.freeze({
     'api-key': config.public.tinyMceApiKey,
@@ -338,8 +368,6 @@
     // TODO: handle delete tag
   }
 
-  const postStore = usePostStore()
-
   const title = computed({
     get() {
       return postStore.form.title
@@ -375,4 +403,69 @@
       postStore.setCategory(value)
     },
   })
+
+  const dropzoneImage = ref<null | File>(null)
+  const dropzoneErrorMessages = ref<string[]>([])
+
+  async function handleImageChange(image: File) {
+    if (!image) return
+
+    try {
+      dropzoneImage.value = image
+      dropzoneErrorMessages.value = []
+
+      await validateImage(image, {
+        maxSize: 1048576, // 1MB
+        maxWidth: 1080, // 1024 pixel
+        maxHeight: 720, // 576 pixel
+      })
+
+      const formData = new FormData()
+
+      formData.append('file', image)
+      formData.append('caption', 'post')
+      formData.append('category', 'post')
+      formData.append('setting_id', siteStore.siteId ?? '')
+
+      const response = await uploadImage(formData)
+      const { file, id } = response?.value?.data ?? {}
+
+      if (file?.uri && id) {
+        postStore.setImage({ id, uri: file.uri })
+      }
+    } catch (error) {
+      resetDropzone()
+      if (error instanceof z.ZodError) {
+        dropzoneErrorMessages.value = error.issues.map((err) => err.message)
+      } else {
+        console.log(error)
+      }
+    }
+  }
+
+  async function uploadImage(formData: FormData) {
+    const {
+      data: uploadResponse,
+      status,
+      error,
+    } = await $jSiteApi.media.uploadMedia(formData, undefined, {
+      server: false,
+    })
+
+    if (status.value === 'success') {
+      return uploadResponse
+    } else if (status.value === 'error') {
+      throw error
+    }
+  }
+
+  async function handleDeleteImage() {
+    console.log('delete image')
+    resetDropzone()
+  }
+
+  function resetDropzone() {
+    dropzoneImage.value = null
+    postStore.setImage({ id: '', uri: '' })
+  }
 </script>
