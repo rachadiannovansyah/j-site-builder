@@ -41,10 +41,33 @@
           >
             <template v-if="!!dropzoneImage" #preview="{ clear }">
               <div
-                class="flex w-full items-center justify-between rounded-md border p-2"
+                class="mt-4 flex w-full max-w-[400px] items-center justify-between rounded-md border border-gray-300 px-4 py-2"
               >
-                <span>{{ dropzoneImage?.name }}</span>
-                <UButton variant="ghost" @click="clear"> Clear </UButton>
+                <span
+                  class="line-clamp-1 pr-4 font-lato text-sm leading-6 text-gray-800"
+                >
+                  {{ dropzoneImage?.name }}
+                </span>
+                <div class="flex flex-shrink-0">
+                  <UButton
+                    title="Pratinjau gambar"
+                    variant="ghost"
+                    square
+                    size="sm"
+                  >
+                    <NuxtIcon name="common/eye" class="text-2xl" />
+                  </UButton>
+                  <UButton
+                    title="Hapus gambar"
+                    variant="ghost"
+                    square
+                    size="sm"
+                    class="ml-2"
+                    @click="clear"
+                  >
+                    <NuxtIcon name="common/close" class="text-2xl" />
+                  </UButton>
+                </div>
               </div>
             </template>
           </BaseDropzone>
@@ -438,7 +461,7 @@
       if (error instanceof z.ZodError) {
         dropzoneErrorMessages.value = error.issues.map((err) => err.message)
       } else {
-        console.log(error)
+        console.error(error)
       }
     }
   }
@@ -460,8 +483,18 @@
   }
 
   async function handleDeleteImage() {
-    console.log('delete image')
+    await deleteUploadedImage(postStore.form.image.id)
     resetDropzone()
+  }
+
+  async function deleteUploadedImage(id: string) {
+    const { status, error } = await $jSiteApi.media.deleteMedia(id, undefined, {
+      server: false,
+    })
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
   }
 
   function resetDropzone() {
