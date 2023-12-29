@@ -49,7 +49,11 @@
 
       <!-- Author Input Field -->
       <UFormGroup label="Nama Penulis" class="mb-[14px]">
-        <UInput v-model="author" placeholder="Masukkan Nama Penulis" />
+        <UInput
+          v-model="author"
+          placeholder="Masukkan Nama Penulis"
+          maxlength="150"
+        />
       </UFormGroup>
 
       <!-- Category Radio Button -->
