@@ -8,10 +8,15 @@
           Judul
         </p>
         <UFormGroup>
-          <UTextarea :rows="2" placeholder="Masukkan judul berita" />
+          <UTextarea
+            v-model="title"
+            :rows="2"
+            placeholder="Masukkan judul berita"
+            maxlength="255"
+          />
           <template #help>
             <span class="font-lato text-xs text-gray-600">
-              Tersisa 255 Karakter
+              Tersisa {{ 255 - title.length }} Karakter
             </span>
           </template>
         </UFormGroup>
@@ -235,6 +240,7 @@
 <script setup lang="ts">
   import Editor from '@tinymce/tinymce-vue'
   import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
+  import { usePostStore } from '~/stores/post'
 
   const config = useRuntimeConfig()
 
@@ -329,4 +335,15 @@
   function handleDeleteTag() {
     // TODO: handle delete tag
   }
+
+  const postStore = usePostStore()
+
+  const title = computed({
+    get() {
+      return postStore.form.title
+    },
+    set(value) {
+      postStore.setTitle(value)
+    },
+  })
 </script>
