@@ -35,13 +35,16 @@
         <UFormGroup :error="dropzoneErrorMessages.length > 0">
           <BaseDropzone
             accept="image/jpeg, image/jpg, image/png, image/webp"
-            :disabled="!!image.id"
+            :disabled="!!image.id || isDropzoneUploading"
             @change="handleImageChange"
             @clear="handleDeleteImage"
           >
-            <template v-if="!!image.id" #preview="{ clear }">
+            <template
+              v-if="!!image.id && !isDropzoneUploading"
+              #preview="{ clear }"
+            >
               <div
-                class="mt-4 flex w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4 py-2"
+                class="mt-4 flex h-10 w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4"
               >
                 <span
                   class="truncate pr-4 font-lato text-sm leading-6 text-gray-800"
@@ -72,6 +75,7 @@
               </div>
             </template>
           </BaseDropzone>
+
           <template #error>
             <p
               v-for="error in dropzoneErrorMessages"
@@ -81,6 +85,24 @@
               {{ error }}
             </p>
           </template>
+
+          <p
+            v-show="
+              !image.id &&
+              !isDropzoneUploading &&
+              dropzoneErrorMessages.length === 0
+            "
+            class="mt-4 font-lato text-sm leading-6 text-gray-800"
+          >
+            Belum ada file terpilih
+          </p>
+
+          <p
+            v-show="isDropzoneUploading && !image.id"
+            class="mt-4 font-lato text-sm leading-6 text-gray-800"
+          >
+            Mengupload gambar...
+          </p>
         </UFormGroup>
       </div>
 
@@ -450,11 +472,13 @@
   })
 
   const dropzoneErrorMessages = ref<string[]>([])
+  const isDropzoneUploading = ref(false)
 
   async function handleImageChange(image: File) {
     if (!image) return
 
     try {
+      isDropzoneUploading.value = true
       dropzoneErrorMessages.value = []
 
       await validateImage(image, {
@@ -487,6 +511,8 @@
       } else {
         console.error(error)
       }
+    } finally {
+      isDropzoneUploading.value = false
     }
   }
 
@@ -507,7 +533,9 @@
   }
 
   async function handleDeleteImage() {
+    isDropzoneUploading.value = true
     await deleteUploadedImage(postStore.form.image.id)
+    isDropzoneUploading.value = false
     resetDropzone()
   }
 
