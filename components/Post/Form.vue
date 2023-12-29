@@ -8,10 +8,15 @@
           Judul
         </p>
         <UFormGroup>
-          <UTextarea :rows="2" placeholder="Masukkan judul berita" />
+          <UTextarea
+            v-model="title"
+            :rows="2"
+            placeholder="Masukkan judul berita"
+            maxlength="255"
+          />
           <template #help>
             <span class="font-lato text-xs text-gray-600">
-              Tersisa 255 Karakter
+              Tersisa {{ 255 - title.length }} Karakter
             </span>
           </template>
         </UFormGroup>
@@ -31,7 +36,7 @@
       </div>
 
       <div class="rounded-lg bg-white p-[14px]">
-        <Editor v-bind="tinyMCEConfig" />
+        <Editor v-model="content" v-bind="tinyMCEConfig" />
       </div>
     </div>
 
@@ -44,7 +49,11 @@
 
       <!-- Author Input Field -->
       <UFormGroup label="Nama Penulis" class="mb-[14px]">
-        <UInput placeholder="Masukkan Nama Penulis" />
+        <UInput
+          v-model="author"
+          placeholder="Masukkan Nama Penulis"
+          maxlength="150"
+        />
       </UFormGroup>
 
       <!-- Category Radio Button -->
@@ -85,7 +94,7 @@
                   square
                   color="gray"
                   variant="ghost"
-                  @click="toggleEditCategory(index)"
+                  @click.stop="toggleEditCategory(index)"
                 >
                   <NuxtIcon
                     name="common/pencil"
@@ -235,6 +244,7 @@
 <script setup lang="ts">
   import Editor from '@tinymce/tinymce-vue'
   import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
+  import { usePostStore } from '~/stores/post'
 
   const config = useRuntimeConfig()
 
@@ -263,8 +273,6 @@
   const isEditCategory = ref(false)
 
   const isAddCategory = ref(false)
-
-  const category = ref('')
 
   // TODO: remove this dummy category
   const categories = reactive([
@@ -329,4 +337,42 @@
   function handleDeleteTag() {
     // TODO: handle delete tag
   }
+
+  const postStore = usePostStore()
+
+  const title = computed({
+    get() {
+      return postStore.form.title
+    },
+    set(value) {
+      postStore.setTitle(value)
+    },
+  })
+
+  const content = computed({
+    get() {
+      return postStore.form.content
+    },
+    set(value) {
+      postStore.setContent(value)
+    },
+  })
+
+  const author = computed({
+    get() {
+      return postStore.form.author
+    },
+    set(value) {
+      postStore.setAuthor(value)
+    },
+  })
+
+  const category = computed({
+    get() {
+      return postStore.form.category
+    },
+    set(value) {
+      postStore.setCategory(value)
+    },
+  })
 </script>
