@@ -418,8 +418,8 @@
 
       await validateImage(image, {
         maxSize: 1048576, // 1MB
-        maxWidth: 1080, // 1024 pixel
-        maxHeight: 720, // 576 pixel
+        maxWidth: 1080, // 1080 pixel
+        maxHeight: 720, // 720 pixel
       })
 
       const formData = new FormData()
