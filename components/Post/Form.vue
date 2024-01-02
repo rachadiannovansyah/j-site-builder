@@ -363,74 +363,7 @@
     },
   })
 
-  const isEditCategory = ref(false)
-
-  const isAddCategory = ref(false)
-
-  // TODO: remove this dummy category
-  const categories = reactive([
-    {
-      value: 'Pendidikan',
-    },
-    {
-      value: 'Kesehatan',
-    },
-    {
-      value: 'Sosial Politik',
-    },
-  ])
-
-  const categoryForm = reactive({
-    newCategory: '',
-    categoryIndex: null as number | null,
-  })
-
-  async function toggleEditCategory(index: number | null) {
-    isEditCategory.value = !isEditCategory.value
-
-    if (isEditCategory && index !== null) {
-      categoryForm.newCategory = categories[index].value
-      categoryForm.categoryIndex = index
-    } else {
-      categoryForm.newCategory = ''
-      categoryForm.categoryIndex = null
-    }
-  }
-
-  function handleEditCategory() {
-    // TODO: handle edit category
-  }
-
-  function getCategoryLabel(index: number | null) {
-    if (index !== null) {
-      return categories[index].value
-    }
-  }
-
-  function toggleAddCategory() {
-    isAddCategory.value = !isAddCategory.value
-  }
-
-  function handleAddCategory() {
-    // TODO: handle add category
-  }
-
-  const tags: string[] = reactive([])
-
-  const tagForm = reactive({
-    tag: '',
-  })
-
-  function handleAddTag() {
-    // TODO: store tag to API
-    tags.push(tagForm.tag)
-    tagForm.tag = ''
-  }
-
-  function handleDeleteTag() {
-    // TODO: handle delete tag
-  }
-
+  /* ------------------------- Post Store Data Binding ------------------------ */
   const title = computed({
     get() {
       return postStore.form.title
@@ -470,6 +403,8 @@
   const image = computed(() => {
     return postStore.form.image
   })
+
+  /* ------------------------- Image Handler, Upload and Delete ------------------------ */
 
   const dropzoneErrorMessages = ref<string[]>([])
   const isDropzoneUploading = ref(false)
@@ -559,5 +494,75 @@
 
   function togglePreviewImage() {
     isPreviewImage.value = !isPreviewImage.value
+  }
+
+  /* ---------------------------- Category and Tags --------------------------- */
+
+  const isEditCategory = ref(false)
+
+  const isAddCategory = ref(false)
+
+  // TODO: remove this dummy category
+  const categories = reactive([
+    {
+      value: 'Pendidikan',
+    },
+    {
+      value: 'Kesehatan',
+    },
+    {
+      value: 'Sosial Politik',
+    },
+  ])
+
+  const categoryForm = reactive({
+    newCategory: '',
+    categoryIndex: null as number | null,
+  })
+
+  async function toggleEditCategory(index: number | null) {
+    isEditCategory.value = !isEditCategory.value
+
+    if (isEditCategory && index !== null) {
+      categoryForm.newCategory = categories[index].value
+      categoryForm.categoryIndex = index
+    } else {
+      categoryForm.newCategory = ''
+      categoryForm.categoryIndex = null
+    }
+  }
+
+  function handleEditCategory() {
+    // TODO: handle edit category
+  }
+
+  function getCategoryLabel(index: number | null) {
+    if (index !== null) {
+      return categories[index].value
+    }
+  }
+
+  function toggleAddCategory() {
+    isAddCategory.value = !isAddCategory.value
+  }
+
+  function handleAddCategory() {
+    // TODO: handle add category
+  }
+
+  const tags: string[] = reactive([])
+
+  const tagForm = reactive({
+    tag: '',
+  })
+
+  function handleAddTag() {
+    // TODO: store tag to API
+    tags.push(tagForm.tag)
+    tagForm.tag = ''
+  }
+
+  function handleDeleteTag() {
+    // TODO: handle delete tag
   }
 </script>
