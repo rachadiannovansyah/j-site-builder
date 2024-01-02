@@ -32,7 +32,78 @@
         </p>
 
         <!-- Image Dropzone -->
-        <BaseDropzone />
+        <UFormGroup :error="dropzoneErrorMessages.length > 0">
+          <BaseDropzone
+            accept="image/jpeg, image/jpg, image/png, image/webp"
+            :disabled="!!image.id || isDropzoneUploading"
+            @change="handleImageChange"
+            @clear="handleDeleteImage"
+          >
+            <template
+              v-if="!!image.id && !isDropzoneUploading"
+              #preview="{ clear }"
+            >
+              <div
+                class="mt-4 flex h-10 w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4"
+              >
+                <span
+                  class="truncate pr-4 font-lato text-sm leading-6 text-gray-800"
+                >
+                  {{ image?.filename }}
+                </span>
+                <div class="flex flex-shrink-0">
+                  <UButton
+                    title="Pratinjau gambar"
+                    variant="ghost"
+                    square
+                    size="sm"
+                    @click="togglePreviewImage"
+                  >
+                    <NuxtIcon name="common/eye" class="text-2xl" />
+                  </UButton>
+                  <UButton
+                    title="Hapus gambar"
+                    variant="ghost"
+                    square
+                    size="sm"
+                    class="ml-2"
+                    @click="clear"
+                  >
+                    <NuxtIcon name="common/close" class="text-2xl" />
+                  </UButton>
+                </div>
+              </div>
+            </template>
+          </BaseDropzone>
+
+          <template #error>
+            <p
+              v-for="error in dropzoneErrorMessages"
+              :key="error"
+              class="font-lato text-xs leading-6 text-red-500"
+            >
+              {{ error }}
+            </p>
+          </template>
+
+          <p
+            v-show="
+              !image.id &&
+              !isDropzoneUploading &&
+              dropzoneErrorMessages.length === 0
+            "
+            class="mt-4 font-lato text-sm leading-6 text-gray-800"
+          >
+            Belum ada file terpilih
+          </p>
+
+          <p
+            v-show="isDropzoneUploading && !image.id"
+            class="mt-4 font-lato text-sm leading-6 text-gray-800"
+          >
+            Mengupload gambar...
+          </p>
+        </UFormGroup>
       </div>
 
       <div class="rounded-lg bg-white p-[14px]">
@@ -239,14 +310,36 @@
       </UButton>
     </template>
   </BaseModal>
+
+  <!-- Image Preview -->
+  <BaseModal
+    :open="isPreviewImage"
+    with-close-button
+    @close="togglePreviewImage"
+  >
+    <NuxtImg
+      :src="postStore.form.image.uri"
+      :alt="postStore.form.image.filename"
+      class="h-full w-full"
+    />
+
+    <template #footer>
+      <UButton type="button" @click="togglePreviewImage"> Tutup </UButton>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
   import Editor from '@tinymce/tinymce-vue'
   import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
   import { usePostStore } from '~/stores/post'
+  import { validateImage } from '~/common/helpers/validation'
+  import z from 'zod'
 
   const config = useRuntimeConfig()
+  const siteStore = useSiteStore()
+  const postStore = usePostStore()
+  const { $jSiteApi } = useNuxtApp()
 
   const tinyMCEConfig = Object.freeze({
     'api-key': config.public.tinyMceApiKey,
@@ -269,6 +362,141 @@
       invalid_elements: 'div',
     },
   })
+
+  /* ------------------------- Post Store Data Binding ------------------------ */
+  const title = computed({
+    get() {
+      return postStore.form.title
+    },
+    set(value) {
+      postStore.setTitle(value)
+    },
+  })
+
+  const content = computed({
+    get() {
+      return postStore.form.content
+    },
+    set(value) {
+      postStore.setContent(value)
+    },
+  })
+
+  const author = computed({
+    get() {
+      return postStore.form.author
+    },
+    set(value) {
+      postStore.setAuthor(value)
+    },
+  })
+
+  const category = computed({
+    get() {
+      return postStore.form.category
+    },
+    set(value) {
+      postStore.setCategory(value)
+    },
+  })
+
+  const image = computed(() => {
+    return postStore.form.image
+  })
+
+  /* ------------------------- Image Handler, Upload and Delete ------------------------ */
+
+  const dropzoneErrorMessages = ref<string[]>([])
+  const isDropzoneUploading = ref(false)
+
+  async function handleImageChange(image: File) {
+    if (!image) return
+
+    try {
+      isDropzoneUploading.value = true
+      dropzoneErrorMessages.value = []
+
+      await validateImage(image, {
+        maxSize: 1048576, // 1MB
+        maxWidth: 1080, // 1080 pixel
+        maxHeight: 720, // 720 pixel
+      })
+
+      const formData = new FormData()
+
+      formData.append('file', image)
+      formData.append('caption', 'post')
+      formData.append('category', 'post')
+      formData.append('setting_id', siteStore.siteId ?? '')
+
+      const response = await uploadImage(formData)
+      const { file, id } = response?.value?.data ?? {}
+
+      if (file && id) {
+        postStore.setImage({
+          id,
+          uri: file.uri,
+          filename: file.filename,
+        })
+      }
+    } catch (error) {
+      resetDropzone()
+      if (error instanceof z.ZodError) {
+        dropzoneErrorMessages.value = error.issues.map((err) => err.message)
+      } else {
+        console.error(error)
+      }
+    } finally {
+      isDropzoneUploading.value = false
+    }
+  }
+
+  async function uploadImage(formData: FormData) {
+    const {
+      data: uploadResponse,
+      status,
+      error,
+    } = await $jSiteApi.media.uploadMedia(formData, undefined, {
+      server: false,
+    })
+
+    if (status.value === 'success') {
+      return uploadResponse
+    } else if (status.value === 'error') {
+      throw error
+    }
+  }
+
+  async function handleDeleteImage() {
+    try {
+      await deleteUploadedImage(postStore.form.image.id)
+      resetDropzone()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function deleteUploadedImage(id: string) {
+    const { status, error } = await $jSiteApi.media.deleteMedia(id, undefined, {
+      server: false,
+    })
+
+    if (status.value === 'error') {
+      throw error
+    }
+  }
+
+  function resetDropzone() {
+    postStore.setImage({ id: '', uri: '', filename: '' })
+  }
+
+  const isPreviewImage = ref(false)
+
+  function togglePreviewImage() {
+    isPreviewImage.value = !isPreviewImage.value
+  }
+
+  /* ---------------------------- Category and Tags --------------------------- */
 
   const isEditCategory = ref(false)
 
@@ -337,42 +565,4 @@
   function handleDeleteTag() {
     // TODO: handle delete tag
   }
-
-  const postStore = usePostStore()
-
-  const title = computed({
-    get() {
-      return postStore.form.title
-    },
-    set(value) {
-      postStore.setTitle(value)
-    },
-  })
-
-  const content = computed({
-    get() {
-      return postStore.form.content
-    },
-    set(value) {
-      postStore.setContent(value)
-    },
-  })
-
-  const author = computed({
-    get() {
-      return postStore.form.author
-    },
-    set(value) {
-      postStore.setAuthor(value)
-    },
-  })
-
-  const category = computed({
-    get() {
-      return postStore.form.category
-    },
-    set(value) {
-      postStore.setCategory(value)
-    },
-  })
 </script>
