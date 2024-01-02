@@ -533,10 +533,12 @@
   }
 
   async function handleDeleteImage() {
-    isDropzoneUploading.value = true
-    await deleteUploadedImage(postStore.form.image.id)
-    isDropzoneUploading.value = false
-    resetDropzone()
+    try {
+      await deleteUploadedImage(postStore.form.image.id)
+      resetDropzone()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   async function deleteUploadedImage(id: string) {
@@ -545,7 +547,7 @@
     })
 
     if (status.value === 'error') {
-      console.error(error)
+      throw error
     }
   }
 
