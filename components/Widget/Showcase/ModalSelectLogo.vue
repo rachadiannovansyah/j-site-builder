@@ -43,6 +43,7 @@
         <SearchBar placeholder="Cari Logo" @input="onSearch($event)" />
         <RadioGroup v-model="selectedLogo">
           <div
+            v-if="logos.data && logos.data.length > 0"
             class="widget-showcase__list-logo flex max-h-[296px] w-full items-center justify-center gap-4 overflow-y-auto rounded-[10px] border border-gray-100 bg-[#F9F9F9] p-[10px] sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
           >
             <RadioGroupOption
@@ -69,6 +70,7 @@
               </button>
             </RadioGroupOption>
           </div>
+          <NoData v-else title="Logo tidak ditemukan !" />
         </RadioGroup>
         <BasePagination
           :limit="params.limit"

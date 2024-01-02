@@ -38,7 +38,11 @@
       <section
         class="showcase-form-body flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
-        <UForm :state="state" :schema="stateSchema">
+        <UForm
+          :state="state"
+          :schema="stateSchema"
+          :validate-on="['change', 'blur', 'input']"
+        >
           <input
             ref="imageUploader"
             type="file"
@@ -112,7 +116,7 @@
               </div>
             </div>
           </div>
-          <UFormGroup label="Judul" name="title">
+          <UFormGroup label="Judul" name="title" :eager-validation="true">
             <UInput
               v-model="state.title"
               placeholder="Masukkan judul"
@@ -120,7 +124,11 @@
               maxlength="250"
             />
           </UFormGroup>
-          <UFormGroup label="Deskripsi" name="description">
+          <UFormGroup
+            label="Deskripsi"
+            name="description"
+            :eager-validation="true"
+          >
             <UTextarea
               v-model="state.description"
               placeholder="Masukkan deskipsi"
@@ -136,7 +144,11 @@
               Karakter
             </p>
           </UFormGroup>
-          <UFormGroup label="Link Redirect" name="link">
+          <UFormGroup
+            label="Link Redirect"
+            name="link"
+            :eager-validation="true"
+          >
             <template #hint>
               <div class="flex w-full justify-between">
                 <UToggle
