@@ -33,7 +33,12 @@
       Setup element sesuai dengan kebutuhan kamu
     </p>
     <div class="max-w-[200px]">
-      <UButton @click="toggleConfig">
+      <UButton
+        :data-cy="`j-site-page-builder__button-widget-setup-${props.widgetName
+          .toLowerCase()
+          .replaceAll(' ', '-')}`"
+        @click="toggleConfig"
+      >
         <template #leading>
           <NuxtIcon
             name="common/cog-wheel"
