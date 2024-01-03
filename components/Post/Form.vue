@@ -360,6 +360,7 @@
       image_caption: true,
       paste_block_drop: true,
       invalid_elements: 'div',
+      images_upload_handler: handleContentImageUpload,
     },
   })
 
@@ -494,6 +495,48 @@
 
   function togglePreviewImage() {
     isPreviewImage.value = !isPreviewImage.value
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function handleContentImageUpload(blobInfo: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await validateImage(blobInfo.blob(), {
+          maxSize: 1048576, // 1MB
+          maxWidth: 1080, // 1080 pixel
+          maxHeight: 720, // 720 pixel
+        })
+
+        const formData = new FormData()
+
+        formData.append('file', blobInfo.blob())
+        formData.append('caption', 'post')
+        formData.append('category', 'post')
+        formData.append('setting_id', siteStore.siteId ?? '')
+
+        const response = await uploadImage(formData)
+        const { file } = response?.value?.data ?? {}
+
+        if (file) {
+          resolve(file.uri)
+        }
+      } catch (error) {
+        // Validation error throw by Zod
+        if (error instanceof z.ZodError) {
+          reject({
+            message: error.issues[0].message,
+            remove: true,
+          })
+        } else {
+          console.error(error)
+          reject({
+            message:
+              'Mohon maaf gambar gagal diupload, silakan coba beberapa saat lagi.',
+            remove: true,
+          })
+        }
+      }
+    })
   }
 
   /* ---------------------------- Category and Tags --------------------------- */
