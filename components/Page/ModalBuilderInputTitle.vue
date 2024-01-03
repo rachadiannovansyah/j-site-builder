@@ -22,6 +22,7 @@
           <div class="flex items-center justify-between">
             <h3
               class="font-roboto text-xl font-medium leading-8 text-green-800"
+              data-cy="j-site-page-builder-modal-section__header"
             >
               Isi Judul Section
             </h3>
@@ -30,6 +31,7 @@
               variant="ghost"
               icon="i-heroicons-x-mark-20-solid"
               class="-my-1"
+              data-cy="j-site-page-builder-modal-section__button-close"
               @click="onCancel"
             />
           </div>
@@ -50,6 +52,7 @@
                 placeholder="Masukkan judul"
                 color="gray"
                 maxlength="250"
+                data-cy="j-site-page-builder-modal-section__form-input-title"
               />
               <template #help>
                 Tersisa {{ titleLengthRemaining }} Karakter
@@ -62,6 +65,7 @@
                 color="gray"
                 :rows="5"
                 maxlength="500"
+                data-cy="j-site-page-builder-modal-section__form-input-description"
               />
               <template #help>
                 Tersisa {{ descriptionLengthRemaining }} Karakter
@@ -76,6 +80,7 @@
               type="button"
               variant="ghost"
               color="gray"
+              data-cy="j-site-page-builder-modal-section__button-cancel"
               @click="onCancel"
             >
               Batalkan
@@ -86,6 +91,7 @@
                 color="red"
                 variant="outline"
                 :disabled="isFormInputEmpty"
+                data-cy="j-site-page-builder-modal-section__button-remove"
                 @click="onRemove"
               >
                 <template #leading>
@@ -93,7 +99,12 @@
                 </template>
                 Hapus
               </UButton>
-              <UButton type="submit"> Simpan </UButton>
+              <UButton
+                type="submit"
+                data-cy="j-site-page-builder-modal-section__button-submit"
+              >
+                Simpan
+              </UButton>
             </div>
           </section>
         </template>
