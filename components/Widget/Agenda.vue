@@ -16,6 +16,7 @@
           <div class="flex items-center justify-between">
             <h3
               class="font-roboto text-xl font-medium leading-8 text-green-800"
+              data-cy="j-site-widget-agenda__header"
             >
               Pengaturan Agenda
             </h3>
@@ -24,6 +25,7 @@
               variant="ghost"
               icon="i-heroicons-x-mark-20-solid"
               class="-my-1"
+              data-cy="j-site-widget-agenda__button-close"
               @click="$emit('close')"
             />
           </div>
@@ -45,10 +47,19 @@
               v-model="form.title"
               placeholder="Masukkan judul"
               maxlength="50"
+              data-cy="j-site-widget-agenda__form-input-title"
             />
             <template #help>
               <span class="font-lato text-xs text-gray-600">
                 Tersisa {{ titleLengthRemaining }} karakter
+              </span>
+            </template>
+            <template #error="{ error }">
+              <span
+                class="dark:text-red-400' text-red-600"
+                data-cy="j-site-widget-agenda__form-error-message-title"
+              >
+                {{ error }}
               </span>
             </template>
           </UFormGroup>
@@ -59,6 +70,7 @@
               placeholder="Masukkan deskripsi"
               :rows="5"
               maxlength="100"
+              data-cy="j-site-widget-agenda__form-input-description"
             />
             <template #help>
               <span class="font-lato text-xs text-gray-600">
@@ -67,14 +79,24 @@
             </template>
           </UFormGroup>
 
-          <UFormGroup label="Aktifkan Agenda">
+          <UFormGroup
+            label="Aktifkan Agenda"
+            data-cy="j-site-widget-agenda__form-action-activation"
+          >
             <div class="flex items-center justify-between">
-              <span class="font-lato text-sm text-gray-600">
+              <span
+                class="font-lato text-sm text-gray-600"
+                data-cy="j-site-widget-agenda__form-action-activation-description"
+              >
                 Data Agenda akan diambil dari agenda portal jabar yang sudah
                 disesuaikan dengan OPD
               </span>
               <div class="ml-4">
-                <UToggle v-model="form.isActive" class="flex-shrink-0" />
+                <UToggle
+                  v-model="form.isActive"
+                  class="flex-shrink-0"
+                  data-cy="j-site-widget-agenda__form-action-activation-toggle"
+                />
               </div>
             </div>
           </UFormGroup>
@@ -86,11 +108,17 @@
               variant="ghost"
               color="gray"
               type="button"
+              data-cy="j-site-widget-agenda__button-cancel"
               @click="$emit('close')"
             >
               Batalkan
             </UButton>
-            <UButton type="submit"> Simpan </UButton>
+            <UButton
+              type="submit"
+              data-cy="j-site-widget-agenda__button-submit"
+            >
+              Simpan
+            </UButton>
           </section>
         </template>
       </UCard>
