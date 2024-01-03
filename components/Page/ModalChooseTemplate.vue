@@ -61,7 +61,9 @@
                     :src="template.thumbnail"
                     :alt="template.name"
                     class="h-full w-full object-cover"
-                    data-cy="j-site-page-template__image-thumbnail"
+                    :data-cy="`j-site-page-template__image-thumbnail-${template.name
+                      .toLowerCase()
+                      .replaceAll(' ', '-')}`"
                   />
                 </div>
               </div>
@@ -69,7 +71,9 @@
                 :to="template.preview"
                 target="_blank"
                 class="absolute right-2 top-2 rounded-md border border-gray-500"
-                data-cy="j-site-page-template__button-preview"
+                :data-cy="`j-site-page-template__button-preview-${template.name
+                  .toLowerCase()
+                  .replaceAll(' ', '-')}`"
               >
                 <NuxtIcon
                   name="common/eye"
@@ -82,14 +86,18 @@
                   <RadioGroupLabel
                     as="p"
                     class="font-lato text-sm font-bold capitalize text-gray-800"
-                    data-cy="j-site-page-template__label"
+                    :data-cy="`j-site-page-template__label-${template.name
+                      .toLowerCase()
+                      .replaceAll(' ', '-')}`"
                   >
                     {{ template.name }}
                   </RadioGroupLabel>
                   <RadioGroupDescription
                     as="span"
                     class="font-lato text-[11px] text-gray-700"
-                    data-cy="j-site-page-template__description"
+                    :data-cy="`j-site-page-template__description-${template.name
+                      .toLowerCase()
+                      .replaceAll(' ', '-')}`"
                   >
                     {{ countWidget(template.sections) }}
                     konten tersedia di templat ini
@@ -101,7 +109,9 @@
                     :variant="checked ? 'solid' : 'outline'"
                     :color="checked ? 'primary' : 'gray'"
                     :ui="{ font: 'font-normal' }"
-                    data-cy="j-site-page-template__button-select"
+                    :data-cy="`j-site-page-template__button-select-${template.name
+                      .toLowerCase()
+                      .replaceAll(' ', '-')}`"
                   >
                     <template v-if="checked" #leading>
                       <NuxtIcon
