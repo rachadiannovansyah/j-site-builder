@@ -662,13 +662,14 @@
 
     if (status.value === 'success') {
       // TODO: add success toast
-      await fetchCategories()
       newCategoryForm.name = ''
     }
 
     if (status.value === 'error') {
       console.error(error)
     }
+
+    fetchCategories()
   }
 
   const tags: string[] = reactive([])
