@@ -415,7 +415,6 @@
 
     formData.append('file', image)
     formData.append('caption', 'gallery')
-    formData.append('category', 'gallery')
     formData.append('setting_id', siteStore.siteId ?? '')
 
     setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)

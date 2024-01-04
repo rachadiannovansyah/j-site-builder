@@ -427,7 +427,6 @@
 
       formData.append('file', image)
       formData.append('caption', 'post')
-      formData.append('category', 'post')
       formData.append('setting_id', siteStore.siteId ?? '')
 
       const response = await uploadImage(formData)
@@ -510,7 +509,6 @@
 
       formData.append('file', blobInfo.blob())
       formData.append('caption', 'post')
-      formData.append('category', 'post')
       formData.append('setting_id', siteStore.siteId ?? '')
 
       const response = await uploadImage(formData)
