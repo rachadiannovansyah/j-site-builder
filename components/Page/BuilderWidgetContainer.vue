@@ -24,7 +24,7 @@
             class="line-clamp-1 max-w-[150px] self-center font-lato text-[12px] font-medium leading-[23px] text-gray-900"
             :data-cy="`j-site-page-builder__title-section-${
               sectionTitle
-                ? sectionTitle.toLowerCase().replaceAll(' ', '-')
+                ? sectionTitle?.toLowerCase().replaceAll(' ', '-')
                 : props.sectionIndex
             }`"
           >
