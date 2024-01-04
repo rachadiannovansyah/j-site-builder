@@ -15,6 +15,10 @@ export interface IMetaData {
   total: number
 }
 
+export interface ICategoryRequestBody {
+  name: string
+}
+
 export interface ICategoriesResponse {
   data: ICategory[]
   meta: IMetaData

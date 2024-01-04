@@ -1,7 +1,7 @@
 import { AsyncDataOptions } from '#app'
 
 import FetchFactory from '../../factory'
-import { ICategoriesResponse } from '../types/category'
+import { ICategoriesResponse, ICategoryRequestBody } from '../types/category'
 import { FetchOptions } from 'ofetch'
 
 class CategoryModules extends FetchFactory {
@@ -18,6 +18,21 @@ class CategoryModules extends FetchFactory {
         `${this.RESOURCE}/${settingId}`,
         undefined,
         fetchOptions,
+      )
+    }, options)
+  }
+
+  async updateCategory(
+    settingId: string,
+    categoryId: string,
+    body: ICategoryRequestBody,
+    options?: AsyncDataOptions<ICategoriesResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ICategoriesResponse>(
+        'PATCH',
+        `${this.RESOURCE}/${settingId}/${categoryId}`,
+        body,
       )
     }, options)
   }
