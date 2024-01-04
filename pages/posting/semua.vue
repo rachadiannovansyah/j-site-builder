@@ -161,17 +161,19 @@
   }
 
   async function fetchCategory() {
-    const { data } = await $jSiteApi.category.getCategory(
+    const { data, status, error } = await $jSiteApi.category.getCategory(
       siteStore.siteId ?? '',
       { query: params },
       { server: false },
     )
-
+   
+   if (status.value === 'success') {
     const categories = data.value?.data as ICategoryData[]
 
     categories.forEach((cat) => {
       cat.selected = false
     })
+    }
 
     filterProps.categories = toRaw(categories ?? [])
   }
