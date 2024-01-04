@@ -141,7 +141,7 @@
         <!-- Options -->
         <RadioGroup v-else v-model="category">
           <RadioGroupOption
-            v-for="(option, index) in categories"
+            v-for="option in categories"
             :key="option.id"
             v-slot="{ checked }"
             :value="option.id"
@@ -175,7 +175,7 @@
                   square
                   color="gray"
                   variant="ghost"
-                  @click.stop="toggleEditCategory(index)"
+                  @click.stop="handleEditCategory(option.id)"
                 >
                   <NuxtIcon
                     name="common/pencil"
@@ -204,7 +204,7 @@
       </UFormGroup>
 
       <!-- Add Category Input Field -->
-      <div
+      <!-- <div
         :class="{
           'grid w-full grid-rows-[0] overflow-clip px-3 transition-all duration-150 ease-in': true,
           'grid-rows-[125px]': isAddCategory,
@@ -231,7 +231,7 @@
             </template>
           </UFormGroup>
         </UForm>
-      </div>
+      </div> -->
 
       <UDivider class="mb-[14px]" />
 
@@ -302,27 +302,19 @@
     <p class="mb-3">
       Masukkan nama baru untuk kategori
       <strong>
-        {{ getCategoryLabel(categoryForm.categoryIndex) }}
+        {{ getCategoryLabel(editCategoryForm.id) }}
       </strong>
     </p>
 
-    <UForm :state="categoryForm" @submit="handleEditCategory">
-      <UFormGroup>
-        <UInput v-model="categoryForm.newCategory" />
-      </UFormGroup>
-    </UForm>
+    <UFormGroup>
+      <UInput v-model="editCategoryForm.name" />
+    </UFormGroup>
 
     <template #footer>
-      <UButton
-        type="button"
-        variant="outline"
-        @click="toggleEditCategory(categoryForm.categoryIndex)"
-      >
+      <UButton type="button" variant="outline" @click="closeEditCategory">
         Batal
       </UButton>
-      <UButton type="button" @click="handleEditCategory">
-        Ubah Kategori
-      </UButton>
+      <UButton type="button" @click="editCategory"> Ubah Kategori </UButton>
     </template>
   </BaseModal>
 
@@ -565,11 +557,6 @@
 
   const categories = ref<ICategory[]>([])
 
-  const categoryForm = reactive({
-    newCategory: '',
-    categoryIndex: null as number | null,
-  })
-
   async function fetchCategories() {
     try {
       isCategoryLoading.value = true
@@ -593,34 +580,63 @@
     }
   }
 
-  async function toggleEditCategory(index: number | null) {
-    isEditCategory.value = !isEditCategory.value
+  const editCategoryForm = reactive({
+    id: '',
+    name: '',
+  })
 
-    if (isEditCategory && index !== null) {
-      categoryForm.newCategory = categories[index].value
-      categoryForm.categoryIndex = index
-    } else {
-      categoryForm.newCategory = ''
-      categoryForm.categoryIndex = null
+  function handleEditCategory(categoryId: string) {
+    isEditCategory.value = true
+
+    const category = getCategoryById(categoryId)
+
+    editCategoryForm.name = category?.name ?? ''
+    editCategoryForm.id = category?.id ?? ''
+  }
+
+  function closeEditCategory() {
+    isEditCategory.value = false
+    editCategoryForm.name = ''
+    editCategoryForm.id = ''
+  }
+
+  async function editCategory() {
+    try {
+      isCategoryLoading.value = true
+
+      const body = {
+        name: editCategoryForm.name,
+      }
+
+      const { status } = await $jSiteApi.category.updateCategory(
+        siteStore.siteId ?? '',
+        editCategoryForm?.id ?? '',
+        body,
+        { server: false },
+      )
+
+      if (status.value === 'success') {
+        // TODO: add success toast
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      closeEditCategory()
+      fetchCategories()
     }
   }
 
-  function handleEditCategory() {
-    // TODO: handle edit category
+  function getCategoryById(categoryId: string) {
+    return categories.value.find((category) => category.id === categoryId)
   }
 
-  function getCategoryLabel(index: number | null) {
-    if (index !== null) {
-      return categories[index].value
-    }
+  function getCategoryLabel(categoryId: string) {
+    const category = getCategoryById(categoryId)
+    return category?.name
   }
 
   function toggleAddCategory() {
     isAddCategory.value = !isAddCategory.value
-  }
-
-  function handleAddCategory() {
-    // TODO: handle add category
   }
 
   const tags: string[] = reactive([])
