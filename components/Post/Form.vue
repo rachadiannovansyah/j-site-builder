@@ -130,16 +130,23 @@
       <!-- Category Radio Buttons -->
       <UFormGroup label="Kategori" class="py-5">
         <!-- Skeletons -->
-        <div v-if="isCategoryLoading" class="flex flex-col gap-2 py-5">
+        <div
+          v-if="isCategoryLoading"
+          class="flex h-[200px] flex-col gap-2 py-5"
+        >
           <div
-            v-for="index in 2"
+            v-for="index in 3"
             :key="index"
             class="h-[42px] w-full animate-pulse bg-gray-100"
           />
         </div>
 
         <!-- Options -->
-        <RadioGroup v-else v-model="category">
+        <RadioGroup
+          v-else
+          v-model="category"
+          class="max-h-[200px] overflow-y-auto"
+        >
           <RadioGroupOption
             v-for="option in categories"
             :key="option.id"
