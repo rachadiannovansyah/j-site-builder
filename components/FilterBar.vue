@@ -21,7 +21,7 @@
           {{ filterButtonLabel }}
           <span
             v-show="filterCount"
-            class="ml-2 rounded-md bg-red-500 p-1 text-center text-white"
+            class="ml-2 flex-shrink-0 rounded-md bg-red-500 p-1 text-center text-white"
           >
             {{ filterCount }}
           </span>
@@ -69,11 +69,10 @@
           <div class="max-h-[400px] w-full overflow-y-auto">
             <template v-if="props.categories.length > 0">
               <UCheckbox
-                v-model="selectedAllCategories"
                 class="mb-3"
                 label="Pilih Semua Kategori"
                 :indeterminate="isCategoryIndeterminate"
-                :checked="selectedAllCategories"
+                :model-value="allSelected"
                 @change="toggleSelectAll"
               />
               <div class="flex w-full min-w-0 flex-col gap-4 pl-[28px]">
@@ -210,31 +209,27 @@
     if (selectedCategories.length < props.categories.length) return true
   })
 
-  const selectedAllCategories = computed({
-    get() {
-      return filter.categories.length === props.categories.length
-    },
-    set(value) {
-      const checked = [] as string[]
-
-      if (value) {
-        props.categories.forEach((category) => {
-          checked.push(category.id)
-        })
-      }
-      filter.categories = checked
-    },
-  })
-
   const filterButtonLabel = computed(() => {
     return filterCount.value > 0 ? 'Diterapkan' : 'Belum ada filter'
   })
 
   function toggleSelectAll() {
+    const checked = [] as string[]
+
     allSelected.value = !allSelected.value
-    props.categories.forEach(
-      (category) => (category.selected = allSelected.value),
-    )
+
+    if (allSelected.value) {
+      props.categories.forEach((category) => {
+        category.selected = allSelected.value
+        checked.push(category.id)
+      })
+      filter.categories = checked
+    } else {
+      props.categories.forEach((category) => {
+        category.selected = allSelected.value
+      })
+      filter.categories = []
+    }
   }
 
   function onChecked(categoryId: string) {
