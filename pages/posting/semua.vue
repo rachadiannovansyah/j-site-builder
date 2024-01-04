@@ -9,7 +9,7 @@
           class="max-w-[181px]"
           @input="onSearch($event)"
         />
-        <FilterBar v-bind="filterProps" />
+        <FilterBar v-bind="filterProps" @submit:filter="submitFilter($event)" />
       </div>
       <UButton
         v-if="post.data.length !== 0"
@@ -129,11 +129,14 @@
     meta: null as null | IMetaData,
   })
 
-  const params = reactive({
+  let params = reactive({
     page: 1 as string | number,
     limit: 10 as string | number,
     q: '' as string,
     status: '' as string,
+    start_date: '' as string,
+    end_date: '' as string,
+    categories: [] as string[],
   })
 
   const isOpenActionConfirmation = ref(false)
@@ -164,7 +167,18 @@
       { server: false },
     )
 
-    filterProps.categories = toRaw(data.value?.data ?? [])
+    const categories = data.value?.data as ICategoryData[]
+
+    categories.forEach((cat) => {
+      cat.selected = false
+    })
+
+    filterProps.categories = toRaw(categories ?? [])
+  }
+
+  function submitFilter(value: object) {
+    setParams(value)
+    fetchDataPost()
   }
 
   onMounted(() => {
@@ -200,6 +214,11 @@
   function setParamsPage(page: string | number) {
     params.page = page
     fetchDataPost()
+  }
+
+  function setParams(parameters: object) {
+    const newParams = { ...params, ...parameters }
+    params = { ...newParams }
   }
 
   function onPreviousPage() {
