@@ -34,7 +34,7 @@
     </p>
     <div class="max-w-[200px]">
       <UButton
-        :data-cy="`j-site-page-builder__button-widget-setup-${props.widgetName
+        :data-cy="`j-site-page-builder__button-widget-setup-${props.widgetName?
           .toLowerCase()
           .replaceAll(' ', '-')}`"
         @click="toggleConfig"
