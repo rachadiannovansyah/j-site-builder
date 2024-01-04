@@ -61,7 +61,7 @@
                     :src="template.thumbnail"
                     :alt="template.name"
                     class="h-full w-full object-cover"
-                    :data-cy="`j-site-page-template__image-thumbnail-${template.name
+                    :data-cy="`j-site-page-template__image-thumbnail-${template.name?
                       .toLowerCase()
                       .replaceAll(' ', '-')}`"
                   />
