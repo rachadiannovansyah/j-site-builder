@@ -3,6 +3,7 @@ export interface ICategoryData {
   name: string
   is_deletable: boolean
   used_by: number
+  selected?: boolean
 }
 
 export interface IMetaData {
