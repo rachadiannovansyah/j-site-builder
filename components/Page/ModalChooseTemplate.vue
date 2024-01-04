@@ -61,8 +61,8 @@
                     :src="template.thumbnail"
                     :alt="template.name"
                     class="h-full w-full object-cover"
-                    :data-cy="`j-site-page-template__image-thumbnail-${template.name?
-                      .toLowerCase()
+                    :data-cy="`j-site-page-template__image-thumbnail-${template.name
+                      ?.toLowerCase()
                       .replaceAll(' ', '-')}`"
                   />
                 </div>
@@ -72,7 +72,7 @@
                 target="_blank"
                 class="absolute right-2 top-2 rounded-md border border-gray-500"
                 :data-cy="`j-site-page-template__button-preview-${template.name
-                  .toLowerCase()
+                  ?.toLowerCase()
                   .replaceAll(' ', '-')}`"
               >
                 <NuxtIcon
@@ -87,7 +87,7 @@
                     as="p"
                     class="font-lato text-sm font-bold capitalize text-gray-800"
                     :data-cy="`j-site-page-template__label-${template.name
-                      .toLowerCase()
+                      ?.toLowerCase()
                       .replaceAll(' ', '-')}`"
                   >
                     {{ template.name }}
@@ -96,7 +96,7 @@
                     as="span"
                     class="font-lato text-[11px] text-gray-700"
                     :data-cy="`j-site-page-template__description-${template.name
-                      .toLowerCase()
+                      ?.toLowerCase()
                       .replaceAll(' ', '-')}`"
                   >
                     {{ countWidget(template.sections) }}
@@ -110,7 +110,7 @@
                     :color="checked ? 'primary' : 'gray'"
                     :ui="{ font: 'font-normal' }"
                     :data-cy="`j-site-page-template__button-select-${template.name
-                      .toLowerCase()
+                      ?.toLowerCase()
                       .replaceAll(' ', '-')}`"
                   >
                     <template v-if="checked" #leading>

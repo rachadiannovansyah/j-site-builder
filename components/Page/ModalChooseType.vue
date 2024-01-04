@@ -47,7 +47,7 @@
                 :value="type"
                 :disabled="true"
                 :data-cy="`j-site-page-type__option-${type
-                  .toLowerCase()
+                  ?.toLowerCase()
                   .replaceAll(' ', '-')}`"
               >
                 <div
