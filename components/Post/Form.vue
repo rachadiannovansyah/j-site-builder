@@ -127,14 +127,24 @@
         />
       </UFormGroup>
 
-      <!-- Category Radio Button -->
+      <!-- Category Radio Buttons -->
       <UFormGroup label="Kategori" class="py-5">
-        <RadioGroup v-model="category">
+        <!-- Skeletons -->
+        <div v-if="isCategoryLoading" class="flex flex-col gap-2 py-5">
+          <div
+            v-for="index in 2"
+            :key="index"
+            class="h-[42px] w-full animate-pulse bg-gray-100"
+          />
+        </div>
+
+        <!-- Options -->
+        <RadioGroup v-else v-model="category">
           <RadioGroupOption
             v-for="(option, index) in categories"
-            :key="option.value"
+            :key="option.id"
             v-slot="{ checked }"
-            :value="option.value"
+            :value="option.id"
           >
             <li
               class="group grid w-full cursor-pointer list-none grid-cols-[20px,1fr,auto] items-center gap-3 bg-white p-2 hover:bg-gray-50"
@@ -155,7 +165,7 @@
               <span
                 class="line-clamp-2 font-lato text-sm leading-6 text-gray-800"
               >
-                {{ option.value }}
+                {{ option.name }}
               </span>
 
               <div
@@ -174,7 +184,12 @@
                     aria-hidden="true"
                   />
                 </UButton>
-                <UButton color="gray" square variant="ghost">
+                <UButton
+                  color="gray"
+                  square
+                  variant="ghost"
+                  :disabled="option.is_deletable"
+                >
                   <NuxtIcon
                     name="common/trash"
                     class="text-lg"
@@ -335,6 +350,7 @@
   import { usePostStore } from '~/stores/post'
   import { validateImage } from '~/common/helpers/validation'
   import z from 'zod'
+  import { ICategory } from '~/repository/j-site/types/category'
 
   const config = useRuntimeConfig()
   const siteStore = useSiteStore()
@@ -362,6 +378,10 @@
       invalid_elements: 'div',
       images_upload_handler: handleContentImageUpload,
     },
+  })
+
+  onMounted(() => {
+    fetchCategories()
   })
 
   /* ------------------------- Post Store Data Binding ------------------------ */
@@ -541,23 +561,37 @@
 
   const isAddCategory = ref(false)
 
-  // TODO: remove this dummy category
-  const categories = reactive([
-    {
-      value: 'Pendidikan',
-    },
-    {
-      value: 'Kesehatan',
-    },
-    {
-      value: 'Sosial Politik',
-    },
-  ])
+  const isCategoryLoading = ref(true)
+
+  const categories = ref<ICategory[]>([])
 
   const categoryForm = reactive({
     newCategory: '',
     categoryIndex: null as number | null,
   })
+
+  async function fetchCategories() {
+    try {
+      isCategoryLoading.value = true
+
+      const { data: categoriesResponse, status } =
+        await $jSiteApi.category.getCategories(
+          siteStore.siteId ?? '',
+          undefined,
+          { server: false },
+        )
+
+      if (status.value === 'success') {
+        categories.value = categoriesResponse?.value?.data ?? []
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setTimeout(() => {
+        isCategoryLoading.value = false
+      }, 300)
+    }
+  }
 
   async function toggleEditCategory(index: number | null) {
     isEditCategory.value = !isEditCategory.value
