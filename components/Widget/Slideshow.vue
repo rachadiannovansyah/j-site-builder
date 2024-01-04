@@ -103,7 +103,9 @@
               />
               <span class="font-lato text-sm text-gray-800">
                 Media Aktif
-                <strong>({{ uploadedImages.length }})</strong>
+                <strong data-cy="j-site-widget-slideshow__counter-media">
+                  ({{ uploadedImages.length }})
+                </strong>
               </span>
             </div>
           </UBadge>
