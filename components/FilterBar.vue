@@ -270,7 +270,7 @@
   }
 
   function formatDate(date: Date) {
-    return format(new Date(date), 'dd-MM-yyyy', { locale: ID })
+    return format(new Date(date), 'yyyy-MM-dd', { locale: ID })
   }
 
   function applyFilter() {
