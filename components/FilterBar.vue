@@ -8,8 +8,10 @@
     <p class="font-lato text-sm text-blue-gray-800">Filter :</p>
     <button
       :class="{
-        'font-lato text-sm text-gray-600': true,
-        'rounded-full bg-gray-200 px-4 py-[10px]': props.disabled,
+        'rounded-full px-4 py-[10px] font-lato text-sm': true,
+        'bg-gray-200 ': props.disabled,
+        'bg-green-700 text-white  hover:bg-green-600': filterCount > 0,
+        'text-gray-600': filterCount === 0,
       }"
       :disabled="props.disabled"
       @click="showFilterModal"
@@ -19,7 +21,7 @@
           {{ filterButtonLabel }}
           <span
             v-show="filterCount"
-            class="h-5 w-5 rounded-full bg-red-500 text-white"
+            class="ml-2 rounded-md bg-red-500 p-1 text-center text-white"
           >
             {{ filterCount }}
           </span>
@@ -262,6 +264,15 @@
     resetFilter()
   }
 
+  function updateFilterCount() {
+    const count =
+      filter.categories.length +
+      (filter.start_date ? 1 : 0) +
+      (filter.end_date ? 1 : 0)
+
+    filterCount.value = count
+  }
+
   function resetFilter() {
     filter.categories = []
     filter.start_date = null
@@ -287,6 +298,7 @@
       end_date: endDate,
     }
     emit('submit:filter', filterParams)
+    updateFilterCount()
     showFilterModal()
   }
 </script>
