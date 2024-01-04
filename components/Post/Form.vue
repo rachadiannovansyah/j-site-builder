@@ -611,29 +611,29 @@
   }
 
   async function editCategory() {
-    try {
-      isCategoryLoading.value = true
+    isCategoryLoading.value = true
 
-      const body = {
-        name: editCategoryForm.name,
-      }
-
-      const { status } = await $jSiteApi.category.updateCategory(
-        siteStore.siteId ?? '',
-        editCategoryForm?.id ?? '',
-        body,
-        { server: false },
-      )
-
-      if (status.value === 'success') {
-        // TODO: add success toast
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      closeEditCategory()
-      fetchCategories()
+    const body = {
+      name: editCategoryForm.name,
     }
+
+    const { status, error } = await $jSiteApi.category.updateCategory(
+      siteStore.siteId ?? '',
+      editCategoryForm?.id ?? '',
+      body,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      // TODO: add success toast
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    closeEditCategory()
+    fetchCategories()
   }
 
   function getCategoryById(categoryId: string) {
