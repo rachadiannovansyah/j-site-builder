@@ -204,34 +204,34 @@
       </UFormGroup>
 
       <!-- Add Category Input Field -->
-      <!-- <div
+      <div
         :class="{
           'grid w-full grid-rows-[0] overflow-clip px-3 transition-all duration-150 ease-in': true,
           'grid-rows-[125px]': isAddCategory,
         }"
       >
-        <UForm
-          v-show="isAddCategory"
-          :state="categoryForm"
-          @submit="handleAddCategory"
-        >
-          <UFormGroup>
-            <template #description>
-              <span class="font-lato text-xs leading-6 text-gray-600">
-                Tekan enter untuk menambahkan.
-              </span>
-            </template>
+        <UFormGroup>
+          <template #description>
+            <span class="font-lato text-xs leading-6 text-gray-600">
+              Tekan enter untuk menambahkan.
+            </span>
+          </template>
 
-            <UInput v-model="categoryForm.newCategory" autofocus />
+          <UInput
+            v-model="newCategoryForm.name"
+            :loading="isCategoryLoading"
+            autofocus
+            maxlength="125"
+            @keyup.enter="handleAddCategory"
+          />
 
-            <template #help>
-              <span class="font-lato text-xs leading-none text-gray-400">
-                Sisa karakter: 10 dari 125
-              </span>
-            </template>
-          </UFormGroup>
-        </UForm>
-      </div> -->
+          <template #help>
+            <span class="font-lato text-xs leading-none text-gray-400">
+              Sisa karakter: {{ 125 - newCategoryForm.name.length }} dari 125
+            </span>
+          </template>
+        </UFormGroup>
+      </div>
 
       <UDivider class="mb-[14px]" />
 
@@ -558,26 +558,29 @@
   const categories = ref<ICategory[]>([])
 
   async function fetchCategories() {
-    try {
-      isCategoryLoading.value = true
+    isCategoryLoading.value = true
 
-      const { data: categoriesResponse, status } =
-        await $jSiteApi.category.getCategories(
-          siteStore.siteId ?? '',
-          undefined,
-          { server: false },
-        )
+    const {
+      data: categoriesResponse,
+      status,
+      error,
+    } = await $jSiteApi.category.getCategories(
+      siteStore.siteId ?? '',
+      undefined,
+      { server: false },
+    )
 
-      if (status.value === 'success') {
-        categories.value = categoriesResponse?.value?.data ?? []
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setTimeout(() => {
-        isCategoryLoading.value = false
-      }, 300)
+    if (status.value === 'success') {
+      categories.value = categoriesResponse?.value?.data ?? []
     }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    setTimeout(() => {
+      isCategoryLoading.value = false
+    }, 300)
   }
 
   const editCategoryForm = reactive({
@@ -635,8 +638,30 @@
     return category?.name
   }
 
+  const newCategoryForm = reactive({
+    name: '',
+  })
+
   function toggleAddCategory() {
     isAddCategory.value = !isAddCategory.value
+  }
+
+  async function handleAddCategory() {
+    const { status, error } = await $jSiteApi.category.createCategory(
+      siteStore.siteId ?? '',
+      newCategoryForm,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      // TODO: add success toast
+      await fetchCategories()
+      newCategoryForm.name = ''
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
   }
 
   const tags: string[] = reactive([])

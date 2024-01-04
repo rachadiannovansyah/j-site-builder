@@ -36,6 +36,20 @@ class CategoryModules extends FetchFactory {
       )
     }, options)
   }
+
+  async createCategory(
+    settingId: string,
+    body: ICategoryRequestBody,
+    options?: AsyncDataOptions<ICategoriesResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ICategoriesResponse>(
+        'POST',
+        `${this.RESOURCE}/${settingId}`,
+        body,
+      )
+    }, options)
+  }
 }
 
 export default CategoryModules
