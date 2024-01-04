@@ -195,7 +195,8 @@
                   color="gray"
                   square
                   variant="ghost"
-                  :disabled="option.is_deletable"
+                  :disabled="!option.is_deletable"
+                  @click.stop="handleDeleteCategory(option.id)"
                 >
                   <NuxtIcon
                     name="common/trash"
@@ -306,7 +307,7 @@
     header="Ubah Kategori"
     :open="isEditCategory"
   >
-    <p class="mb-3">
+    <p class="text-md mb-3 font-lato leading-6 text-gray-800">
       Masukkan nama baru untuk kategori
       <strong>
         {{ getCategoryLabel(editCategoryForm.id) }}
@@ -322,6 +323,30 @@
         Batal
       </UButton>
       <UButton type="button" @click="editCategory"> Ubah Kategori </UButton>
+    </template>
+  </BaseModal>
+
+  <!-- Delete Category Modal -->
+  <BaseModal
+    :modal-ui="{
+      width: 'w-[400px]',
+    }"
+    header="Hapus Kategori"
+    :open="isDeleteCategory"
+  >
+    <p class="text-md mb-3 font-lato leading-6 text-gray-800">
+      Apakah anda yakin ingin menghapus kategori
+      <strong>
+        {{ deleteCategoryForm.name }}
+      </strong>
+      ?
+    </p>
+
+    <template #footer>
+      <UButton type="button" variant="outline" @click="closeDeleteCategory">
+        Batal
+      </UButton>
+      <UButton type="button" @click="deleteCategory"> Hapus Kategori </UButton>
     </template>
   </BaseModal>
 
@@ -560,6 +585,8 @@
 
   const isAddCategory = ref(false)
 
+  const isDeleteCategory = ref(false)
+
   const isCategoryLoading = ref(true)
 
   const categories = ref<ICategory[]>([])
@@ -669,6 +696,49 @@
       console.error(error)
     }
 
+    fetchCategories()
+  }
+
+  const deleteCategoryForm = reactive({
+    id: '',
+    name: '',
+  })
+
+  function handleDeleteCategory(categoryId: string) {
+    isDeleteCategory.value = true
+
+    const category = getCategoryById(categoryId)
+
+    deleteCategoryForm.id = category?.id ?? ''
+    deleteCategoryForm.name = category?.name ?? ''
+  }
+
+  function closeDeleteCategory() {
+    isDeleteCategory.value = false
+
+    deleteCategoryForm.id = ''
+    deleteCategoryForm.name = ''
+  }
+
+  async function deleteCategory() {
+    const { status, error } = await $jSiteApi.category.deleteCategory(
+      siteStore?.siteId ?? '',
+      deleteCategoryForm.id,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      if (postStore.form.category === deleteCategoryForm.id) {
+        postStore.setCategory('')
+      }
+      // TODO: add success toast
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    closeDeleteCategory()
     fetchCategories()
   }
 

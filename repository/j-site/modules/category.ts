@@ -50,6 +50,20 @@ class CategoryModules extends FetchFactory {
       )
     }, options)
   }
+
+  async deleteCategory(
+    settingId: string,
+    categoryId: string,
+    options?: AsyncDataOptions<ICategoriesResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ICategoriesResponse>(
+        'DELETE',
+        `${this.RESOURCE}/${settingId}/${categoryId}`,
+        undefined,
+      )
+    }, options)
+  }
 }
 
 export default CategoryModules
