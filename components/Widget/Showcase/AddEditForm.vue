@@ -48,54 +48,23 @@
             type="file"
             accept="image/jpeg, image/jpg, image/png, image/webp"
             hidden
-            @change="handleImageChange"
+            @change="handleImageUpload"
           />
-          <div
-            class="custom-border-dash mb-2 flex h-[206px] w-[719px] items-center justify-center gap-3 bg-gray-50"
-          >
-            <!-- TODO: refactor this section below into dropzone component -->
-            <div
+          <div class="mb-3">
+            <UFormGroup
               v-if="!state.file.uri"
-              class="flex h-full w-full flex-col items-center justify-center"
+              :error="dropzoneErrorMessages.length > 0"
             >
-              <p class="font-lato text-sm font-medium text-blue-gray-800">
-                drag and drop berkas disini atau
-              </p>
-              <div class="mt-4 flex gap-[15px]">
-                <button
-                  class="flex flex-col items-center justify-center gap-3"
-                  @click="selectImage"
-                >
-                  <img
-                    src="~/assets/icons/common/upload-picture.svg"
-                    alt="Ikon Upload Gambar"
-                    width="45"
-                    height="45"
-                  />
-                  <p class="font-lato text-sm font-normal text-pink-600">
-                    Upload Gambar
-                  </p>
-                </button>
-                <button
-                  class="flex flex-col items-center justify-center gap-3"
-                  @click="onOpenModalSelectLogo"
-                >
-                  <img
-                    src="~/assets/icons/common/select-logo.svg"
-                    alt="Ikon Pilih Logo"
-                    width="45"
-                    height="45"
-                  />
-                  <p class="font-lato text-sm font-normal text-green-500">
-                    Pilih Logo
-                  </p>
-                </button>
-              </div>
-              <p class="mt-2 font-lato text-sm font-normal text-blue-gray-300">
-                Ukuran Maksimal file upload 2 MB dengan resolusi 500 x 500
-                pixel. (.jpg dan .png)
-              </p>
-            </div>
+              <WidgetShowcaseDropzone
+                accept="image/jpeg, image/jpg, image/png, image/webp"
+                :disabled="!!state.file.uri || isDropzoneUploading"
+                @drop="handleImageDrop($event)"
+                @change="selectImage"
+                @select="onOpenModalSelectLogo"
+                @clear="removeFile"
+              >
+              </WidgetShowcaseDropzone>
+            </UFormGroup>
             <div
               v-else
               class="relative flex h-full w-full flex-col items-center justify-center"
@@ -279,7 +248,10 @@
       .max(500, 'Isian deskripsi maksimal 500 karakter'),
     link: zod
       .string()
-      .url('Isian link tidak valid')
+      .regex(
+        /(http(s)?):\/\/(?:www\.|(?!www))[a-zA-Z0-9-@:%._\+~#=?]{1,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi,
+        'Isian link tidak valid',
+      )
       .optional()
       .or(zod.literal('')),
   })
@@ -295,6 +267,9 @@
     icon: '',
     imageId: '', // for delete purposes
   })
+
+  const dropzoneErrorMessages = ref<string[]>([])
+  const isDropzoneUploading = ref(false)
 
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
@@ -346,8 +321,18 @@
     }
   }
 
-  async function handleImageChange(event: Event) {
+  function handleImageDrop(file: File) {
+    handleImageChange(file)
+  }
+
+  function handleImageUpload(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
+    handleImageChange(image)
+  }
+
+  async function handleImageChange(image: File | null) {
+    isDropzoneUploading.value = true
+    dropzoneErrorMessages.value = []
 
     if (!image) {
       return resetImageUploader()
@@ -363,7 +348,13 @@
       uploadImage(image)
     } catch (error) {
       showValidationError()
+      if (error instanceof zod.ZodError) {
+        dropzoneErrorMessages.value = error.issues.map((err) => err.message)
+      } else {
+        console.error(error)
+      }
     } finally {
+      isDropzoneUploading.value = false
       resetImageUploader()
     }
   }

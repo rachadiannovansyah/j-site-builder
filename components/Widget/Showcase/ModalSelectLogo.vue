@@ -169,6 +169,7 @@
 
   function onSearch(query: string) {
     params.q = query
+    params.page = 1
     fetchDataLogos()
   }
 </script>
