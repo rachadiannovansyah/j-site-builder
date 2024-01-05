@@ -248,7 +248,10 @@
       .max(500, 'Isian deskripsi maksimal 500 karakter'),
     link: zod
       .string()
-      .url('Isian link tidak valid')
+      .regex(
+        /(http(s)?):\/\/(?:www\.|(?!www))[a-zA-Z0-9-@:%._\+~#=?]{1,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi,
+        'Isian link tidak valid',
+      )
       .optional()
       .or(zod.literal('')),
   })
