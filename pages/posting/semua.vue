@@ -9,7 +9,7 @@
           class="max-w-[181px]"
           @input="onSearch($event)"
         />
-        <FilterBar v-bind="filterProps" />
+        <FilterBar v-bind="filterProps" @submit:filter="submitFilter($event)" />
       </div>
       <UButton
         v-if="post.data.length !== 0"
@@ -183,6 +183,7 @@
 
 <script setup lang="ts">
   import { IPostData, IMetaData } from '~/repository/j-site/types/post'
+  import { ICategory } from '~/repository/j-site/types/category'
 
   definePageMeta({
     title: 'Posting',
@@ -201,32 +202,26 @@
   const siteStore = useSiteStore()
 
   const loadingData = ref(true)
-  // @TODO: Update static filterProps when input calendar component is ready
-  const filterProps = {
-    title: 'Filter Post',
-    categoryTitle: 'Kategori Post',
-    categories: [
-      'Pendidikan',
-      'Berita',
-      'Kesehatan',
-      'Pembangunan',
-      'Properti',
-      'Lingkungan',
-      'Ketenagakerjaan',
-    ],
-    disabled: false,
-  }
+  const filterProps = reactive({
+    title: 'Filter Post' as string,
+    categoryTitle: 'Kategori Post' as string,
+    categories: [] as ICategory[],
+    disabled: false as boolean,
+  })
 
   const post = reactive({
     data: [] as IPostData[],
     meta: null as null | IMetaData,
   })
 
-  const params = reactive({
+  let params = reactive({
     page: 1 as string | number,
     limit: 10 as string | number,
     q: '' as string,
     status: '' as string,
+    start_date: '' as string,
+    end_date: '' as string,
+    categories: [] as string[],
   })
 
   const postActionStatus = ref(POST_STATUS.NONE)
@@ -268,8 +263,31 @@
     loadingData.value = false
   }
 
+  async function fetchCategory() {
+    const { data, status } = await $jSiteApi.category.getCategories(
+      siteStore.siteId ?? '',
+      { query: params },
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      const categories = data.value?.data as ICategory[]
+
+      categories.forEach((cat) => {
+        cat.selected = false
+      })
+      filterProps.categories = toRaw(categories ?? [])
+    }
+  }
+
+  function submitFilter(value: object) {
+    setParams(value)
+    fetchDataPost()
+  }
+
   onMounted(() => {
     fetchDataPost()
+    fetchCategory()
   })
 
   interface ISetConfirmation {
@@ -328,6 +346,11 @@
   function setParamsPage(page: string | number) {
     params.page = page
     fetchDataPost()
+  }
+
+  function setParams(parameters: object) {
+    const newParams = { ...params, ...parameters }
+    params = { ...newParams }
   }
 
   function onPreviousPage() {

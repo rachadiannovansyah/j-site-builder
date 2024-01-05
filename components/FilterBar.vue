@@ -8,8 +8,10 @@
     <p class="font-lato text-sm text-blue-gray-800">Filter :</p>
     <button
       :class="{
-        'font-lato text-sm text-gray-600': true,
-        'rounded-full bg-gray-200 px-4 py-[10px]': props.disabled,
+        'rounded-full px-4 py-[10px] font-lato text-sm': true,
+        'bg-gray-200 ': props.disabled,
+        'bg-green-700 text-white  hover:bg-green-600': filterCount > 0,
+        'text-gray-600': filterCount === 0,
       }"
       :disabled="props.disabled"
       @click="showFilterModal"
@@ -19,7 +21,7 @@
           {{ filterButtonLabel }}
           <span
             v-show="filterCount"
-            class="h-5 w-5 rounded-full bg-red-500 text-white"
+            class="ml-2 flex-shrink-0 rounded-md bg-red-500 p-1 text-center text-white"
           >
             {{ filterCount }}
           </span>
@@ -38,7 +40,6 @@
         width: 'w-[400px]',
       }"
       :open="isModalOpen"
-      :overlay="false"
     >
       <template #header>
         <div class="flex items-center justify-between">
@@ -47,7 +48,9 @@
           >
             {{ props.title }}
           </h3>
-          <UButton variant="ghost"> Hapus Semua Filter </UButton>
+          <UButton variant="ghost" @click="resetFilter">
+            Hapus Semua Filter
+          </UButton>
         </div>
       </template>
 
@@ -65,12 +68,22 @@
 
           <div class="max-h-[400px] w-full overflow-y-auto">
             <template v-if="props.categories.length > 0">
-              <UCheckbox label="Pilih Semua Kategori" class="mb-3" />
+              <UCheckbox
+                class="mb-3"
+                label="Pilih Semua Kategori"
+                :indeterminate="isCategoryIndeterminate"
+                :model-value="allSelected"
+                @change="toggleSelectAll"
+              />
               <div class="flex w-full min-w-0 flex-col gap-4 pl-[28px]">
                 <UCheckbox
-                  v-for="(category, index) in props.categories"
-                  :key="index"
-                  :label="category"
+                  v-for="category in props.categories"
+                  :key="category.id"
+                  :label="category.name"
+                  :value="category.id"
+                  :checked="category.selected"
+                  :model-value="category.selected"
+                  @change="onChecked(category.id)"
                 />
               </div>
             </template>
@@ -106,10 +119,17 @@
           </div>
         </div>
 
-        <!-- @TODO: Add functionality and validation -->
         <div class="flex w-full flex-row gap-4">
-          <InputCalendar id="input" label="Tanggal Awal" />
-          <InputCalendar id="input" label="Tanggal Akhir" />
+          <InputCalendar
+            id="start_date"
+            v-model="filter.start_date"
+            label="Tanggal Awal"
+          />
+          <InputCalendar
+            id="end_date"
+            v-model="filter.end_date"
+            label="Tanggal Akhir"
+          />
         </div>
       </section>
 
@@ -127,6 +147,7 @@
           :ui="{
             base: 'w-[223px] justify-center',
           }"
+          @click="applyFilter"
         >
           Terapkan
         </UButton>
@@ -136,9 +157,9 @@
 </template>
 
 <script lang="ts" setup>
-  const filterCount = ref(0)
-
-  const isModalOpen = ref(false)
+  import { format } from 'date-fns'
+  import ID from 'date-fns/locale/id'
+  import { ICategory } from '~/repository/j-site/types/category'
 
   const props = defineProps({
     title: {
@@ -150,7 +171,7 @@
       default: 'Kategori',
     },
     categories: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<ICategory[]>,
       default: () => [],
     },
     disabled: {
@@ -159,15 +180,120 @@
     },
   })
 
+  const emit = defineEmits(['submit:filter'])
+
+  const filterCount = ref(0)
+  const isModalOpen = ref(false)
+  const allSelected = ref(false)
+  const filter = reactive({
+    categories: [] as string[],
+    start_date: null as Date | null,
+    end_date: null as Date | null,
+  })
+
+  watch(
+    () => props.categories.map((category) => category.selected),
+    () => {
+      const selectedCategories = props.categories.filter(
+        (category) => category.selected,
+      )
+      allSelected.value = selectedCategories.length === props.categories.length
+    },
+  )
+
+  const isCategoryIndeterminate = computed(() => {
+    const selectedCategories = props.categories.filter(
+      (category) => category.selected,
+    )
+    if (selectedCategories.length === 0) return false
+    if (selectedCategories.length < props.categories.length) return true
+  })
+
   const filterButtonLabel = computed(() => {
     return filterCount.value > 0 ? 'Diterapkan' : 'Belum ada filter'
   })
+
+  function toggleSelectAll() {
+    const checked = [] as string[]
+
+    allSelected.value = !allSelected.value
+
+    if (allSelected.value) {
+      props.categories.forEach((category) => {
+        category.selected = allSelected.value
+        checked.push(category.id)
+      })
+      filter.categories = checked
+    } else {
+      props.categories.forEach((category) => {
+        category.selected = allSelected.value
+      })
+      filter.categories = []
+    }
+  }
+
+  function onChecked(categoryId: string) {
+    let checked: string[] = []
+
+    const category = props.categories.find(
+      (category) => category.id === categoryId,
+    )
+
+    if (category) {
+      category.selected = !category.selected
+    }
+
+    checked = filter.categories.includes(categoryId)
+      ? filter.categories.filter((id: string) => id !== categoryId)
+      : [...filter.categories, categoryId]
+
+    filter.categories = checked
+  }
 
   function showFilterModal() {
     isModalOpen.value = !isModalOpen.value
   }
 
   function cancelFilter() {
+    showFilterModal()
+    resetFilter()
+  }
+
+  function updateFilterCount() {
+    const count =
+      filter.categories.length +
+      (filter.start_date ? 1 : 0) +
+      (filter.end_date ? 1 : 0)
+
+    filterCount.value = count
+  }
+
+  function resetFilter() {
+    filter.categories = []
+    filter.start_date = null
+    filter.end_date = null
+    props.categories.filter((category) => (category.selected = false))
+  }
+
+  function formatDate(date: Date) {
+    return format(new Date(date), 'yyyy-MM-dd', { locale: ID })
+  }
+
+  function applyFilter() {
+    const startDate = filter.start_date
+      ? formatDate(filter.start_date)
+      : filter.start_date
+    const endDate = filter.end_date
+      ? formatDate(filter.end_date)
+      : filter.end_date
+
+    const filterParams = {
+      categories: toRaw(filter.categories),
+      start_date: startDate,
+      end_date: endDate,
+    }
+    emit('submit:filter', filterParams)
+    updateFilterCount()
     showFilterModal()
   }
 </script>

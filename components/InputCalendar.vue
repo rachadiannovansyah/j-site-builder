@@ -1,12 +1,16 @@
 <template>
   <DatePicker
     v-model="date"
+    locale="id"
     trim-weeks
     color="green"
     :attributes="attrs"
     :masks="masks"
     :first-day-of-week="2"
-    :popover="popover"
+    value-type="format"
+    :popover="{
+      visibility: 'click',
+    }"
   >
     <template #default="{ inputValue, inputEvents }">
       <div>
@@ -21,6 +25,7 @@
         </p>
         <UInput
           placeholder="DD/MM/YYYY"
+          readonly
           :model-value="inputValue"
           v-on="inputEvents"
         >
@@ -49,11 +54,11 @@
     },
     label: {
       type: String,
-      default: 'null',
+      default: '',
     },
   })
 
-  const emit = defineEmits(['update:model-value', 'close'])
+  const emit = defineEmits(['update:model-value', 'reset:model-value', 'close'])
 
   const date = computed({
     get: () => props.modelValue,
@@ -63,26 +68,21 @@
     },
   })
 
-  const popover = {
-    visibility: 'click',
-  }
-
   const masks = ref({
     weekdays: 'WW',
     input: 'DD/MM/YYYY',
-    data: ['DD/MM/YYYY'],
   })
 
-  const attrs = [
+  const attrs = ref([
     {
       content: {
         style: {
           fontWeight: 'bold',
         },
       },
-      dates: [new Date()],
+      dates: new Date(),
     },
-  ]
+  ])
 </script>
 
 <style>
