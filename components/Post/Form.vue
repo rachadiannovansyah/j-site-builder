@@ -127,14 +127,31 @@
         />
       </UFormGroup>
 
-      <!-- Category Radio Button -->
+      <!-- Category Radio Buttons -->
       <UFormGroup label="Kategori" class="py-5">
-        <RadioGroup v-model="category">
+        <!-- Skeletons -->
+        <div
+          v-if="isCategoryLoading"
+          class="flex h-[200px] flex-col gap-2 py-5"
+        >
+          <div
+            v-for="index in 3"
+            :key="index"
+            class="h-[42px] w-full animate-pulse bg-gray-100"
+          />
+        </div>
+
+        <!-- Options -->
+        <RadioGroup
+          v-else
+          v-model="category"
+          class="max-h-[200px] overflow-y-auto"
+        >
           <RadioGroupOption
-            v-for="(option, index) in categories"
-            :key="option.value"
+            v-for="option in categories"
+            :key="option.id"
             v-slot="{ checked }"
-            :value="option.value"
+            :value="option.id"
           >
             <li
               class="group grid w-full cursor-pointer list-none grid-cols-[20px,1fr,auto] items-center gap-3 bg-white p-2 hover:bg-gray-50"
@@ -155,7 +172,7 @@
               <span
                 class="line-clamp-2 font-lato text-sm leading-6 text-gray-800"
               >
-                {{ option.value }}
+                {{ option.name }}
               </span>
 
               <div
@@ -165,7 +182,7 @@
                   square
                   color="gray"
                   variant="ghost"
-                  @click.stop="toggleEditCategory(index)"
+                  @click.stop="handleEditCategory(option.id)"
                 >
                   <NuxtIcon
                     name="common/pencil"
@@ -174,7 +191,13 @@
                     aria-hidden="true"
                   />
                 </UButton>
-                <UButton color="gray" square variant="ghost">
+                <UButton
+                  color="gray"
+                  square
+                  variant="ghost"
+                  :disabled="!option.is_deletable"
+                  @click.stop="handleDeleteCategory(option.id)"
+                >
                   <NuxtIcon
                     name="common/trash"
                     class="text-lg"
@@ -195,27 +218,27 @@
           'grid-rows-[125px]': isAddCategory,
         }"
       >
-        <UForm
-          v-show="isAddCategory"
-          :state="categoryForm"
-          @submit="handleAddCategory"
-        >
-          <UFormGroup>
-            <template #description>
-              <span class="font-lato text-xs leading-6 text-gray-600">
-                Tekan enter untuk menambahkan.
-              </span>
-            </template>
+        <UFormGroup>
+          <template #description>
+            <span class="font-lato text-xs leading-6 text-gray-600">
+              Tekan enter untuk menambahkan.
+            </span>
+          </template>
 
-            <UInput v-model="categoryForm.newCategory" autofocus />
+          <UInput
+            v-model="newCategoryForm.name"
+            :loading="isCategoryLoading"
+            autofocus
+            maxlength="125"
+            @keyup.enter="handleAddCategory"
+          />
 
-            <template #help>
-              <span class="font-lato text-xs leading-none text-gray-400">
-                Sisa karakter: 10 dari 125
-              </span>
-            </template>
-          </UFormGroup>
-        </UForm>
+          <template #help>
+            <span class="font-lato text-xs leading-none text-gray-400">
+              Sisa karakter: {{ 125 - newCategoryForm.name.length }} dari 125
+            </span>
+          </template>
+        </UFormGroup>
       </div>
 
       <UDivider class="mb-[14px]" />
@@ -284,30 +307,46 @@
     header="Ubah Kategori"
     :open="isEditCategory"
   >
-    <p class="mb-3">
+    <p class="text-md mb-3 font-lato leading-6 text-gray-800">
       Masukkan nama baru untuk kategori
       <strong>
-        {{ getCategoryLabel(categoryForm.categoryIndex) }}
+        {{ getCategoryLabel(editCategoryForm.id) }}
       </strong>
     </p>
 
-    <UForm :state="categoryForm" @submit="handleEditCategory">
-      <UFormGroup>
-        <UInput v-model="categoryForm.newCategory" />
-      </UFormGroup>
-    </UForm>
+    <UFormGroup>
+      <UInput v-model="editCategoryForm.name" />
+    </UFormGroup>
 
     <template #footer>
-      <UButton
-        type="button"
-        variant="outline"
-        @click="toggleEditCategory(categoryForm.categoryIndex)"
-      >
+      <UButton type="button" variant="outline" @click="closeEditCategory">
         Batal
       </UButton>
-      <UButton type="button" @click="handleEditCategory">
-        Ubah Kategori
+      <UButton type="button" @click="editCategory"> Ubah Kategori </UButton>
+    </template>
+  </BaseModal>
+
+  <!-- Delete Category Modal -->
+  <BaseModal
+    :modal-ui="{
+      width: 'w-[400px]',
+    }"
+    header="Hapus Kategori"
+    :open="isDeleteCategory"
+  >
+    <p class="text-md mb-3 font-lato leading-6 text-gray-800">
+      Apakah anda yakin ingin menghapus kategori
+      <strong>
+        {{ deleteCategoryForm.name }}
+      </strong>
+      ?
+    </p>
+
+    <template #footer>
+      <UButton type="button" variant="outline" @click="closeDeleteCategory">
+        Batal
       </UButton>
+      <UButton type="button" @click="deleteCategory"> Hapus Kategori </UButton>
     </template>
   </BaseModal>
 
@@ -335,6 +374,7 @@
   import { usePostStore } from '~/stores/post'
   import { validateImage } from '~/common/helpers/validation'
   import z from 'zod'
+  import { ICategory } from '~/repository/j-site/types/category'
 
   const config = useRuntimeConfig()
   const siteStore = useSiteStore()
@@ -362,6 +402,10 @@
       invalid_elements: 'div',
       images_upload_handler: handleContentImageUpload,
     },
+  })
+
+  onMounted(() => {
+    fetchCategories()
   })
 
   /* ------------------------- Post Store Data Binding ------------------------ */
@@ -541,52 +585,161 @@
 
   const isAddCategory = ref(false)
 
-  // TODO: remove this dummy category
-  const categories = reactive([
-    {
-      value: 'Pendidikan',
-    },
-    {
-      value: 'Kesehatan',
-    },
-    {
-      value: 'Sosial Politik',
-    },
-  ])
+  const isDeleteCategory = ref(false)
 
-  const categoryForm = reactive({
-    newCategory: '',
-    categoryIndex: null as number | null,
+  const isCategoryLoading = ref(true)
+
+  const categories = ref<ICategory[]>([])
+
+  async function fetchCategories() {
+    isCategoryLoading.value = true
+
+    const {
+      data: categoriesResponse,
+      status,
+      error,
+    } = await $jSiteApi.category.getCategories(
+      siteStore.siteId ?? '',
+      undefined,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      categories.value = categoriesResponse?.value?.data ?? []
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    setTimeout(() => {
+      isCategoryLoading.value = false
+    }, 300)
+  }
+
+  const editCategoryForm = reactive({
+    id: '',
+    name: '',
   })
 
-  async function toggleEditCategory(index: number | null) {
-    isEditCategory.value = !isEditCategory.value
+  function handleEditCategory(categoryId: string) {
+    isEditCategory.value = true
 
-    if (isEditCategory && index !== null) {
-      categoryForm.newCategory = categories[index].value
-      categoryForm.categoryIndex = index
-    } else {
-      categoryForm.newCategory = ''
-      categoryForm.categoryIndex = null
+    const category = getCategoryById(categoryId)
+
+    editCategoryForm.name = category?.name ?? ''
+    editCategoryForm.id = category?.id ?? ''
+  }
+
+  function closeEditCategory() {
+    isEditCategory.value = false
+    editCategoryForm.name = ''
+    editCategoryForm.id = ''
+  }
+
+  async function editCategory() {
+    isCategoryLoading.value = true
+
+    const body = {
+      name: editCategoryForm.name,
     }
-  }
 
-  function handleEditCategory() {
-    // TODO: handle edit category
-  }
+    const { status, error } = await $jSiteApi.category.updateCategory(
+      siteStore.siteId ?? '',
+      editCategoryForm?.id ?? '',
+      body,
+      { server: false },
+    )
 
-  function getCategoryLabel(index: number | null) {
-    if (index !== null) {
-      return categories[index].value
+    if (status.value === 'success') {
+      // TODO: add success toast
     }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    closeEditCategory()
+    fetchCategories()
   }
+
+  function getCategoryById(categoryId: string) {
+    return categories.value.find((category) => category.id === categoryId)
+  }
+
+  function getCategoryLabel(categoryId: string) {
+    const category = getCategoryById(categoryId)
+    return category?.name
+  }
+
+  const newCategoryForm = reactive({
+    name: '',
+  })
 
   function toggleAddCategory() {
     isAddCategory.value = !isAddCategory.value
   }
 
-  function handleAddCategory() {
-    // TODO: handle add category
+  async function handleAddCategory() {
+    const { status, error } = await $jSiteApi.category.createCategory(
+      siteStore.siteId ?? '',
+      newCategoryForm,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      // TODO: add success toast
+      newCategoryForm.name = ''
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    fetchCategories()
+  }
+
+  const deleteCategoryForm = reactive({
+    id: '',
+    name: '',
+  })
+
+  function handleDeleteCategory(categoryId: string) {
+    isDeleteCategory.value = true
+
+    const category = getCategoryById(categoryId)
+
+    deleteCategoryForm.id = category?.id ?? ''
+    deleteCategoryForm.name = category?.name ?? ''
+  }
+
+  function closeDeleteCategory() {
+    isDeleteCategory.value = false
+
+    deleteCategoryForm.id = ''
+    deleteCategoryForm.name = ''
+  }
+
+  async function deleteCategory() {
+    const { status, error } = await $jSiteApi.category.deleteCategory(
+      siteStore?.siteId ?? '',
+      deleteCategoryForm.id,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      if (postStore.form.category === deleteCategoryForm.id) {
+        postStore.setCategory('')
+      }
+      // TODO: add success toast
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    closeDeleteCategory()
+    fetchCategories()
   }
 
   const tags: string[] = reactive([])

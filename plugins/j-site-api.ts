@@ -5,6 +5,7 @@ import PageModule from '~/repository/j-site/modules/page'
 import MediaModule from '~/repository/j-site/modules/media'
 import LogoModule from '~/repository/j-site/modules/logo'
 import PostModule from '~/repository/j-site/modules/post'
+import CategoryModule from '~/repository/j-site/modules/category'
 
 interface IApiInstance {
   templates: TemplateModule
@@ -13,6 +14,7 @@ interface IApiInstance {
   media: MediaModule
   logo: LogoModule
   post: PostModule
+  category: CategoryModule
   // ...add another modules here
 }
 
@@ -44,6 +46,7 @@ export default defineNuxtPlugin(async () => {
     media: new MediaModule(apiFecther),
     logo: new LogoModule(apiFecther),
     post: new PostModule(apiFecther),
+    category: new CategoryModule(apiFecther),
     // ...add other modules here
   }
 
