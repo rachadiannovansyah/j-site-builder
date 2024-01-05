@@ -159,7 +159,7 @@
 <script lang="ts" setup>
   import { format } from 'date-fns'
   import ID from 'date-fns/locale/id'
-  import { ICategoryData } from '~/repository/j-site/types/category'
+  import { ICategory } from '~/repository/j-site/types/category'
 
   const props = defineProps({
     title: {
@@ -171,7 +171,7 @@
       default: 'Kategori',
     },
     categories: {
-      type: Array as PropType<ICategoryData[]>,
+      type: Array as PropType<ICategory[]>,
       default: () => [],
     },
     disabled: {

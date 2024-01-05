@@ -183,7 +183,7 @@
 
 <script setup lang="ts">
   import { IPostData, IMetaData } from '~/repository/j-site/types/post'
-  import { ICategoryData } from '~/repository/j-site/types/category'
+  import { ICategory } from '~/repository/j-site/types/category'
 
   definePageMeta({
     title: 'Posting',
@@ -205,7 +205,7 @@
   const filterProps = reactive({
     title: 'Filter Post' as string,
     categoryTitle: 'Kategori Post' as string,
-    categories: [] as ICategoryData[],
+    categories: [] as ICategory[],
     disabled: false as boolean,
   })
 
@@ -264,14 +264,14 @@
   }
 
   async function fetchCategory() {
-    const { data, status } = await $jSiteApi.category.getCategory(
+    const { data, status } = await $jSiteApi.category.getCategories(
       siteStore.siteId ?? '',
       { query: params },
       { server: false },
     )
 
     if (status.value === 'success') {
-      const categories = data.value?.data as ICategoryData[]
+      const categories = data.value?.data as ICategory[]
 
       categories.forEach((cat) => {
         cat.selected = false
