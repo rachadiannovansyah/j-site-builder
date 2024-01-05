@@ -4,6 +4,7 @@ export interface ICategory {
   name: string
   used_by: number
   is_deletable: boolean
+  selected?: boolean
 }
 
 export interface IMetaData {
