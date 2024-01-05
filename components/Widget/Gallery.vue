@@ -16,7 +16,10 @@
     >
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-roboto text-xl font-medium leading-8 text-green-800">
+          <h3
+            class="font-roboto text-xl font-medium leading-8 text-green-800"
+            data-cy="j-site-widget-gallery__header"
+          >
             Pengaturan Gallery
           </h3>
           <UButton
@@ -24,6 +27,7 @@
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
+            data-cy="j-site-widget-gallery__button-close"
             @click="$emit('close')"
           />
         </div>
@@ -37,7 +41,11 @@
             class="flex flex-row items-center gap-x-2"
           >
             <UCheckbox label="Select all" />
-            <UButton color="red" variant="ghost">
+            <UButton
+              color="red"
+              variant="ghost"
+              data-cy="j-site-widget-gallery__button-delete-media"
+            >
               <template #leading>
                 <NuxtIcon
                   name="common/trash"
@@ -53,6 +61,7 @@
           <UButton
             v-if="uploadedImages.length !== 0"
             variant="outline"
+            data-cy="j-site-widget-gallery__button-upload-media"
             @click="selectImage"
           >
             <template #leading>
@@ -115,7 +124,9 @@
               />
               <span class="font-lato text-sm text-gray-800">
                 Media Aktif
-                <strong>{{ uploadedImages.length }}</strong>
+                <strong data-cy="j-site-widget-gallery__counter-media">
+                  ({{ uploadedImages.length }})
+                </strong>
               </span>
             </div>
           </UBadge>
@@ -135,12 +146,14 @@
                 width="216"
                 height="173"
                 class="h-[173px] w-[216px] rounded-lg object-cover object-center"
+                :data-cy="`j-site-widget-gallery__image-${index}`"
               />
               <div class="absolute inset-0 h-full w-full p-2.5">
                 <UButton
                   square
                   color="gray"
                   variant="ghost"
+                  :data-cy="`j-site-widget-gallery__button-delete-media-${index}`"
                   @click="showDeleteConfirmation(image.id)"
                 >
                   <NuxtIcon
@@ -160,7 +173,11 @@
             title="Kamu belum memiliki media !"
             description="Kamu dapat menambahkan media melalui Pilih Media atau Upload Gambar dibawah dengan rekomendasi ukuran gambar adalah resolusi 1024 x 576 pixel (.jpg dan png) dan ukuran maksimal 2MB."
           >
-            <UButton class="mt-7" @click="selectImage">
+            <UButton
+              class="mt-7"
+              data-cy="j-site-widget-gallery__button-upload-media"
+              @click="selectImage"
+            >
               <template #leading>
                 <NuxtIcon
                   name="common/upload"
@@ -205,19 +222,33 @@
           filled
         />
         <div>
-          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+          <h3
+            class="mb-2 font-roboto text-xl font-semibold text-gray-800"
+            data-cy="j-site-modal__header"
+          >
             {{ confirmation.title }}
           </h3>
-          <p class="font-lato text-sm leading-6 text-gray-600">
+          <p
+            class="font-lato text-sm leading-6 text-gray-600"
+            data-cy="j-site-modal__body"
+          >
             {{ confirmation.body }}
           </p>
         </div>
       </div>
       <template #footer>
-        <UButton variant="outline" color="gray" @click="closeConfirmationModal">
+        <UButton
+          variant="outline"
+          color="gray"
+          data-cy="j-site-modal__button-cancel"
+          @click="closeConfirmationModal"
+        >
           Batalkan
         </UButton>
-        <UButton @click="deleteUploadedImage(confirmation.imageId)">
+        <UButton
+          data-cy="j-site-modal__button-confirm"
+          @click="deleteUploadedImage(confirmation.imageId)"
+        >
           Ya, saya yakin
         </UButton>
       </template>
@@ -228,7 +259,10 @@
       :open="imageUploadStatus === 'SUCCESS' || imageUploadStatus === 'ERROR'"
       :header="confirmation.title"
     >
-      <p class="flex items-center font-lato text-sm leading-6 text-gray-800">
+      <p
+        class="flex items-center font-lato text-sm leading-6 text-gray-800"
+        data-cy="j-site-modal__body"
+      >
         <NuxtIcon
           :name="confirmation.icon"
           class="mr-3 inline-block text-xl text-green-700"
@@ -237,7 +271,11 @@
         {{ confirmation.body }}
       </p>
       <template #footer>
-        <UButton @click="closeConfirmationModal">Saya Mengerti</UButton>
+        <UButton
+          data-cy="j-site-modal__button-confirm"
+          @click="closeConfirmationModal"
+          >Saya Mengerti</UButton
+        >
       </template>
     </BaseModal>
 
@@ -256,16 +294,27 @@
           filled
         />
         <div>
-          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+          <h3
+            class="mb-2 font-roboto text-xl font-semibold text-gray-800"
+            data-cy="j-site-modal__header"
+          >
             {{ confirmation.title }}
           </h3>
-          <p class="font-lato text-sm leading-6 text-gray-600">
+          <p
+            class="font-lato text-sm leading-6 text-gray-600"
+            data-cy="j-site-modal__body"
+          >
             {{ confirmation.body }}
           </p>
         </div>
       </div>
       <template #footer>
-        <UButton @click="closeConfirmationModal"> Saya Mengerti </UButton>
+        <UButton
+          data-cy="j-site-modal__button-confirm"
+          @click="closeConfirmationModal"
+        >
+          Saya Mengerti
+        </UButton>
       </template>
     </BaseModal>
   </UModal>
@@ -366,7 +415,6 @@
 
     formData.append('file', image)
     formData.append('caption', 'gallery')
-    formData.append('category', 'gallery')
     formData.append('setting_id', siteStore.siteId ?? '')
 
     setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)

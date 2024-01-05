@@ -43,7 +43,7 @@
             :to="navigation.link"
             class="sidebar__navigation-item mb-2 flex min-h-[50px] items-center rounded-lg p-[15px] font-lato text-sm font-bold text-white last-of-type:mb-0 hover:bg-green-700"
             :data-cy="`j-site-sidebar__button-menu-${navigation.label
-              .toLowerCase()
+              ?.toLowerCase()
               .replaceAll(' ', '-')}`"
           >
             <NuxtIcon :name="navigation.icon" filled class="text-xl" />

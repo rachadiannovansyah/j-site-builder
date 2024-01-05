@@ -1,24 +1,66 @@
 import { AsyncDataOptions } from '#app'
-import { FetchOptions } from 'ofetch'
-
-import { ICategoryResponse } from '../types/category'
 
 import FetchFactory from '../../factory'
+import { ICategoriesResponse, ICategoryRequestBody } from '../types/category'
+import { FetchOptions } from 'ofetch'
 
 class CategoryModules extends FetchFactory {
   private RESOURCE = '/v1/categories'
 
-  async getCategory(
-    id: string,
+  async getCategories(
+    settingId: string,
     fetchOptions?: FetchOptions<'json'>,
-    options?: AsyncDataOptions<ICategoryResponse>,
+    options?: AsyncDataOptions<ICategoriesResponse>,
   ) {
     return useAsyncData(() => {
-      return this.call<ICategoryResponse>(
+      return this.call<ICategoriesResponse>(
         'GET',
-        `${this.RESOURCE}/${id}`,
-        undefined, // body
+        `${this.RESOURCE}/${settingId}`,
+        undefined,
         fetchOptions,
+      )
+    }, options)
+  }
+
+  async updateCategory(
+    settingId: string,
+    categoryId: string,
+    body: ICategoryRequestBody,
+    options?: AsyncDataOptions<ICategoriesResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ICategoriesResponse>(
+        'PATCH',
+        `${this.RESOURCE}/${settingId}/${categoryId}`,
+        body,
+      )
+    }, options)
+  }
+
+  async createCategory(
+    settingId: string,
+    body: ICategoryRequestBody,
+    options?: AsyncDataOptions<ICategoriesResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ICategoriesResponse>(
+        'POST',
+        `${this.RESOURCE}/${settingId}`,
+        body,
+      )
+    }, options)
+  }
+
+  async deleteCategory(
+    settingId: string,
+    categoryId: string,
+    options?: AsyncDataOptions<ICategoriesResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<ICategoriesResponse>(
+        'DELETE',
+        `${this.RESOURCE}/${settingId}/${categoryId}`,
+        undefined,
       )
     }, options)
   }

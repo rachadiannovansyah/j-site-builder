@@ -5,7 +5,7 @@
     class="flex items-center gap-[10px]"
   >
     <span class="font-medium text-blue-gray-900">
-      {{ `${index + 1}.` }}
+      {{ item.index }}
     </span>
     <div
       class="flex h-[52px] w-full items-center justify-between rounded-xl border border-gray-300 px-4"
@@ -66,7 +66,7 @@
       </div>
       <PostItemAction>
         <ul
-          class="flex flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
+          class="flex w-[130px] flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
         >
           <li>
             <button>Lihat Detail</button>
@@ -74,17 +74,20 @@
           <li>
             <button>Ubah</button>
           </li>
-          <li>
+          <!-- Temporary hide features -->
+          <!-- <li>
             <button>Duplikat Post</button>
           </li>
           <li>
             <button>Sematkan Post</button>
-          </li>
+          </li> -->
           <li v-if="item.status === statusPost[0].status">
             <button @click="onArchivePost(item.id)">Arsipkan</button>
           </li>
           <li>
-            <button class="text-red-400">Hapus</button>
+            <button class="text-red-400" @click="onDeletePost(item.id)">
+              Hapus
+            </button>
           </li>
         </ul>
       </PostItemAction>
@@ -125,10 +128,14 @@
     },
   ]
 
-  const emit = defineEmits(['archive'])
+  const emit = defineEmits(['archive', 'delete'])
 
   function onArchivePost(id: string) {
     emit('archive', id)
+  }
+
+  function onDeletePost(id: string) {
+    emit('delete', id)
   }
 
   function formatDate(date: string) {

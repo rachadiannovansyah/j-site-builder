@@ -8,6 +8,7 @@
           v-if="hasTitle"
           size="xs"
           color="blue"
+          :data-cy="`j-site-page-builder__button-input-section-${props.sectionIndex}`"
           @click="isInputModalOpen = true"
         >
           <template #leading>
@@ -21,10 +22,20 @@
         >
           <span
             class="line-clamp-1 max-w-[150px] self-center font-lato text-[12px] font-medium leading-[23px] text-gray-900"
+            :data-cy="`j-site-page-builder__title-section-${
+              sectionTitle
+                ? sectionTitle?.toLowerCase().replaceAll(' ', '-')
+                : props.sectionIndex
+            }`"
           >
             {{ sectionTitle }}
           </span>
-          <UButton size="xs" color="blue" @click="isInputModalOpen = true">
+          <UButton
+            size="xs"
+            color="blue"
+            :data-cy="`j-site-page-builder__button-edit-section-${sectionTitle}`"
+            @click="isInputModalOpen = true"
+          >
             <template #leading>
               <NuxtIcon name="common/icon-input-text" aria-hidden="true" />
             </template>
@@ -33,7 +44,11 @@
         </div>
       </div>
       <div class="flex items-center justify-center gap-2.5">
-        <UButton size="xs" color="white">
+        <UButton
+          size="xs"
+          color="white"
+          :data-cy="`j-site-page-builder__button-clear-section-${props.sectionIndex}`"
+        >
           <template #leading>
             <NuxtIcon
               name="common/broom"
@@ -43,7 +58,11 @@
           </template>
           Kosongkan
         </UButton>
-        <UButton size="xs" color="white">
+        <UButton
+          size="xs"
+          color="white"
+          :data-cy="`j-site-page-builder__button-delete-section-${props.sectionIndex}`"
+        >
           <template #leading>
             <NuxtIcon
               name="common/trash"

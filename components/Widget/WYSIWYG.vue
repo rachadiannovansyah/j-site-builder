@@ -111,7 +111,6 @@
 
         formData.append('file', blobInfo.blob())
         formData.append('caption', 'wysiwyg')
-        formData.append('category', 'wysiwyg')
         formData.append('setting_id', siteStore.siteId ?? '')
 
         const { data: uploadResponse, status } =

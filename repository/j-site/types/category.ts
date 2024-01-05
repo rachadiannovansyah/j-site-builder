@@ -1,9 +1,9 @@
-export interface ICategoryData {
+export interface ICategory {
+  _id: string
   id: string
   name: string
-  is_deletable: boolean
   used_by: number
-  selected?: boolean
+  is_deletable: boolean
 }
 
 export interface IMetaData {
@@ -15,7 +15,11 @@ export interface IMetaData {
   total: number
 }
 
-export interface ICategoryResponse {
-  data?: ICategoryData[]
-  meta?: IMetaData
+export interface ICategoryRequestBody {
+  name: string
+}
+
+export interface ICategoriesResponse {
+  data: ICategory[]
+  meta: IMetaData
 }

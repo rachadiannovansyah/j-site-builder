@@ -39,5 +39,11 @@
   // Disable Vetur
   "vetur.validation.template": false,
   "vetur.validation.script": false,
-  "vetur.validation.style": false
+  "vetur.validation.style": false,
+  "[css][html][javascript][json][jsonc][markdown][typescript][vue]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.stylelint": "explicit"
+    }
+  }
 }

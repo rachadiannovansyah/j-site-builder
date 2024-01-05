@@ -11,6 +11,7 @@
           <div class="flex items-center justify-between">
             <h3
               class="font-roboto text-xl font-medium leading-8 text-green-800"
+              data-cy="j-site-modal__header"
             >
               {{ props.header }}
             </h3>
@@ -20,6 +21,7 @@
               variant="ghost"
               icon="i-heroicons-x-mark-20-solid"
               class="-my-1"
+              data-cy="j-site-modal__button-close"
               @click="$emit('close')"
             />
           </div>

@@ -36,9 +36,13 @@
       </template>
 
       <section
-        class="flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
+        class="showcase-form-body flex max-h-[606px] w-full flex-col gap-[10px] overflow-y-auto p-2"
       >
-        <UForm :state="state">
+        <UForm
+          :state="state"
+          :schema="stateSchema"
+          :validate-on="['change', 'blur', 'input']"
+        >
           <input
             ref="imageUploader"
             type="file"
@@ -112,7 +116,7 @@
               </div>
             </div>
           </div>
-          <UFormGroup label="Judul" name="title">
+          <UFormGroup label="Judul" name="title" :eager-validation="true">
             <UInput
               v-model="state.title"
               placeholder="Masukkan judul"
@@ -120,7 +124,11 @@
               maxlength="250"
             />
           </UFormGroup>
-          <UFormGroup label="Deskripsi" name="description">
+          <UFormGroup
+            label="Deskripsi"
+            name="description"
+            :eager-validation="true"
+          >
             <UTextarea
               v-model="state.description"
               placeholder="Masukkan deskipsi"
@@ -136,7 +144,11 @@
               Karakter
             </p>
           </UFormGroup>
-          <UFormGroup label="Link Redirect" name="link">
+          <UFormGroup
+            label="Link Redirect"
+            name="link"
+            :eager-validation="true"
+          >
             <template #hint>
               <div class="flex w-full justify-between">
                 <UToggle
@@ -160,10 +172,16 @@
           <UButton variant="ghost" color="gray" @click="onCancelForm">
             Batalkan
           </UButton>
-          <UButton v-if="!props.isEditMode" @click="onSubmitShowcase">
+          <UButton
+            v-if="!props.isEditMode"
+            :disabled="!isFormCompleted"
+            @click="onSubmitShowcase"
+          >
             Simpan
           </UButton>
-          <UButton v-else @click="onSaveShowcase"> Simpan </UButton>
+          <UButton v-else :disabled="!isFormCompleted" @click="onSaveShowcase">
+            Simpan
+          </UButton>
         </section>
       </template>
     </UCard>
@@ -206,6 +224,7 @@
 </template>
 
 <script setup lang="ts">
+  import { z as zod } from 'zod'
   import { ILogosData } from '~/repository/j-site/types/logo'
   import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
@@ -246,6 +265,25 @@
     itemId: null,
   })
 
+  const stateSchema = zod.object({
+    file: zod.object({
+      uri: zod.string().min(1, 'Isian file wajib diisi'),
+    }),
+    title: zod
+      .string()
+      .min(3, 'Isian judul minimal 3 karakter')
+      .max(250, 'Isian judul maksimal 250 karakter'),
+    description: zod
+      .string()
+      .min(3, 'Isian deskripsi minimal 3 karakter')
+      .max(500, 'Isian deskripsi maksimal 500 karakter'),
+    link: zod
+      .string()
+      .url('Isian link tidak valid')
+      .optional()
+      .or(zod.literal('')),
+  })
+
   const isActiveLink = ref(false)
   const isOpenModalSelectLogo = ref(false)
   const imageUploader = ref<HTMLInputElement | null>(null)
@@ -279,6 +317,13 @@
       }
     },
   )
+
+  const isFormCompleted = computed(() => {
+    if (isActiveLink.value) {
+      return stateSchema.safeParse(state).success && !!state.link
+    }
+    return stateSchema.safeParse(state).success
+  })
 
   function setInitialData() {
     const { file, title, description, link } = toRaw(props.data)
@@ -343,8 +388,7 @@
     const formData = new FormData()
 
     formData.append('file', image)
-    formData.append('caption', 'test')
-    formData.append('category', 'slideshow')
+    formData.append('caption', 'showcase')
     formData.append('setting_id', siteStore.siteId ?? '')
 
     setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)
@@ -481,7 +525,7 @@
   }
 
   async function onCancelForm() {
-    if (state.file.source === 'media') {
+    if (state.file.source === 'media' && !props.isEditMode) {
       await deleteUploadedImage(state.file.id)
     }
     resetForm()
@@ -523,4 +567,25 @@
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='silver' stroke-width='2' stroke-dasharray='8' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
     border-radius: 8px;
   }
+
+  /* Scroll bar stylings */
+  .showcase-form-body {
+    scrollbar-color: #bdbdbd none;
+    scrollbar-width: thin;
+  }
+  .showcase-form-body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .showcase-form-body::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  .showcase-form-body::-webkit-scrollbar-thumb {
+    background-color: #bdbdbd;
+    outline: none;
+    border-radius: 6px;
+    background-clip: padding-box;
+  }
+  /* End of scroll bar stylings */
 </style>
