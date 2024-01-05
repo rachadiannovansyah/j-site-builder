@@ -403,8 +403,7 @@
     const formData = new FormData()
 
     formData.append('file', image)
-    formData.append('caption', 'test')
-    formData.append('category', 'slideshow')
+    formData.append('caption', 'slideshow')
     formData.append('setting_id', siteStore.siteId ?? '')
 
     setModalStatus(MEDIA_UPLOAD_STATUS.UPLOADING)
