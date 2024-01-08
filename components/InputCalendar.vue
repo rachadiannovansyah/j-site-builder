@@ -45,11 +45,12 @@
 
 <script setup lang="ts">
   import { DatePicker } from 'v-calendar'
+  import type { DatePickerModel } from 'v-calendar/dist/types/src/use/datepicker.d.ts'
   import 'v-calendar/dist/style.css'
 
   const props = defineProps({
     modelValue: {
-      type: Date,
+      type: Date as PropType<DatePickerModel>,
       default: null,
     },
     label: {
