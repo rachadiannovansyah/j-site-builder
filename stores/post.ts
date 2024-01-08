@@ -56,5 +56,8 @@ export const usePostStore = defineStore('post', {
       this.form.image.uri = uri
       this.form.image.filename = filename
     },
+    pushTag({ tag }: { tag: string }) {
+      this.form.tags?.push(tag)
+    },
   },
 })

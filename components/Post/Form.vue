@@ -270,11 +270,17 @@
       </div>
 
       <!-- Tags Input Field -->
-      <UForm :state="tagForm" class="mb-2.5 mt-5" @submit="handleAddTag">
-        <UFormGroup label="Tag" hint="(Opsional)" name="tag">
-          <UInput v-model="tagForm.tag" placeholder="Masukkan Tag" />
-        </UFormGroup>
-      </UForm>
+      <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+      <UFormGroup class="mb-2.5 mt-5" label="Tag" name="tag" hint="(Opsional)">
+        <UInput
+          ref="tagInput"
+          v-model.trim="newTagForm.tag"
+          :loading="isTagLoading"
+          name="tag"
+          placeholder="Masukkan Tag"
+          @keyup.enter="handleAddTag"
+        />
+      </UFormGroup>
 
       <ul
         class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2"
@@ -375,6 +381,7 @@
   import { validateImage } from '~/common/helpers/validation'
   import z from 'zod'
   import { ICategory } from '~/repository/j-site/types/category'
+  import { ITagRequestBody } from '~/repository/j-site/types/tag'
 
   const config = useRuntimeConfig()
   const siteStore = useSiteStore()
@@ -447,6 +454,10 @@
 
   const image = computed(() => {
     return postStore.form.image
+  })
+
+  const tags = computed(() => {
+    return postStore.form.tags
   })
 
   /* ------------------------- Image Handler, Upload and Delete ------------------------ */
@@ -577,7 +588,7 @@
     }
   }
 
-  /* ---------------------------- Category and Tags --------------------------- */
+  /* ---------------------------- Category --------------------------- */
 
   const isEditCategory = ref(false)
 
@@ -740,16 +751,56 @@
     fetchCategories()
   }
 
-  const tags: string[] = reactive([])
+  /* ---------------------------------- Tags ---------------------------------- */
+  const isTagLoading = ref(false)
 
-  const tagForm = reactive({
+  const newTagForm = reactive({
     tag: '',
   })
 
-  function handleAddTag() {
-    // TODO: store tag to API
-    tags.push(tagForm.tag)
-    tagForm.tag = ''
+  const tagInput = ref()
+
+  async function handleAddTag() {
+    if (newTagForm.tag === '') return
+
+    isTagLoading.value = true
+
+    const formattedTag = newTagForm.tag.replaceAll(' ', '').toLowerCase()
+
+    const body: ITagRequestBody = {
+      name: formattedTag,
+    }
+
+    const { status, error } = await $jSiteApi.tag.createTag(
+      siteStore.siteId ?? '',
+      body,
+      { server: false },
+    )
+
+    if (status.value === 'success' && !tags.value?.includes(formattedTag)) {
+      postStore.pushTag({ tag: formattedTag })
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+    }
+
+    resetTagForm()
+    await nextTick()
+    focusTagInput()
+  }
+
+  function resetTagForm() {
+    newTagForm.tag = ''
+    isTagLoading.value = false
+  }
+
+  function focusTagInput() {
+    const element = document.querySelector(
+      `input[name="tag"]`,
+    ) as HTMLInputElement
+
+    element && element.focus()
   }
 
   function handleDeleteTag() {
