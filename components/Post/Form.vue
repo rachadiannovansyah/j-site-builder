@@ -271,16 +271,47 @@
 
       <!-- Tags Input Field -->
       <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-      <UFormGroup class="mb-2.5 mt-5" label="Tag" name="tag" hint="(Opsional)">
-        <UInput
-          ref="tagInput"
-          v-model.trim="newTagForm.tag"
-          :loading="isTagLoading"
-          name="tag"
-          placeholder="Masukkan Tag"
-          @keyup.enter="handleAddTag"
-        />
-      </UFormGroup>
+      <div class="mb-2.5 mt-5">
+        <UFormGroup label="Tag" name="tag" hint="(Opsional)">
+          <UInput
+            ref="tagInput"
+            v-model.trim="newTagForm.tag"
+            :loading="isTagLoading"
+            autocomplete="off"
+            autofill="off"
+            name="tag"
+            placeholder="Masukkan Tag"
+            @keyup.enter="handleAddTag"
+          />
+        </UFormGroup>
+
+        <!-- Tag Suggestions -->
+        <UPopover
+          :open="!!newTagForm.tag && tagSuggestions.length > 0"
+          :popper="{
+            offsetDistance: -8,
+            adaptive: true,
+            scroll: true,
+          }"
+          :ui="{
+            wrapper: 'h-0',
+          }"
+        >
+          <div />
+          <template #panel>
+            <ul class="max-h-[150px] w-[336px] overflow-y-auto p-2">
+              <li v-for="suggestion in tagSuggestions" :key="suggestion">
+                <button
+                  class="w-full rounded-sm px-2 text-start font-lato text-sm leading-6 text-gray-800 hover:bg-gray-100"
+                  @click="selectTagSuggestion(suggestion)"
+                >
+                  {{ suggestion }}
+                </button>
+              </li>
+            </ul>
+          </template>
+        </UPopover>
+      </div>
 
       <ul
         class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2"
@@ -380,6 +411,7 @@
   import { usePostStore } from '~/stores/post'
   import { validateImage } from '~/common/helpers/validation'
   import z from 'zod'
+  import debounce from 'lodash.debounce'
   import { ICategory } from '~/repository/j-site/types/category'
   import { ITagRequestBody } from '~/repository/j-site/types/tag'
 
@@ -760,6 +792,8 @@
 
   const tagInput = ref()
 
+  const tagSuggestions = ref<string[]>([])
+
   async function handleAddTag() {
     if (newTagForm.tag === '') return
 
@@ -793,6 +827,7 @@
   function resetTagForm() {
     newTagForm.tag = ''
     isTagLoading.value = false
+    tagSuggestions.value = []
   }
 
   function focusTagInput() {
@@ -806,4 +841,41 @@
   function handleDeleteTag(tag: string) {
     postStore.removeTag(tag)
   }
+
+  const getSuggestions = debounce(async (tag: string) => {
+    const { data, status, error } = await $jSiteApi.tag.getTags(
+      siteStore.siteId ?? '',
+      { params: { q: tag } },
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      tagSuggestions.value = data.value?.data.map((item) => item.name) ?? []
+    }
+
+    if (status.value === 'error') {
+      console.error(error)
+      tagSuggestions.value = []
+    }
+  }, 500)
+
+  function selectTagSuggestion(tag: string) {
+    if (!tags.value?.includes(tag)) {
+      postStore.pushTag(tag)
+    }
+
+    resetTagForm()
+  }
+
+  watch(
+    () => newTagForm.tag,
+    (value) => {
+      if (value !== '') {
+        const formattedTag = newTagForm.tag.replaceAll(' ', '').toLowerCase()
+        getSuggestions(formattedTag)
+      } else {
+        tagSuggestions.value = []
+      }
+    },
+  )
 </script>
