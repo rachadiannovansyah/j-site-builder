@@ -34,129 +34,130 @@
       </div>
     </button>
 
-    <!-- Modal Filter  -->
-    <BaseModal
-      :modal-ui="{
-        width: 'w-[400px]',
-      }"
-      :open="isModalOpen"
+    <UModal
+      :model-value="isModalOpen"
+      prevent-close
+      :ui="{ width: 'w-[400px]' }"
     >
-      <template #header>
-        <div class="flex items-center justify-between">
-          <h3
-            class="font-roboto text-[16px] font-bold leading-[26px] text-gray-800"
-          >
-            {{ props.title }}
-          </h3>
-          <UButton variant="ghost" @click="resetFilter">
-            Hapus Semua Filter
-          </UButton>
-        </div>
-      </template>
-
-      <section class="min-w-[400px]">
-        <!-- Category Select Box -->
-        <div class="mb-4 w-full">
-          <div class="mb-4 flex w-full min-w-0 items-center gap-3">
-            <h4
-              class="whitespace-nowrap font-lato text-sm leading-none text-blue-gray-700"
-            >
-              {{ props.categoryTitle }}
-            </h4>
-            <span class="w-full border border-gray-100" />
-          </div>
-
-          <div class="max-h-[400px] w-full overflow-y-auto">
-            <template v-if="props.categories.length > 0">
-              <UCheckbox
-                class="mb-3"
-                label="Pilih Semua Kategori"
-                :indeterminate="isCategoryIndeterminate"
-                :model-value="allSelected"
-                @change="toggleSelectAll"
-              />
-              <div class="flex w-full min-w-0 flex-col gap-4 pl-[28px]">
-                <UCheckbox
-                  v-for="category in props.categories"
-                  :key="category.id"
-                  :label="category.name"
-                  :value="category.id"
-                  :checked="category.selected"
-                  :model-value="category.selected"
-                  @change="onChecked(category.id)"
-                />
-              </div>
-            </template>
-            <template v-else>
-              <div
-                class="flex h-[100px] flex-col items-center justify-center gap-3"
+      <UForm :schema="formSchema" :state="filter" @submit="applyFilter">
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3
+                class="font-roboto text-[16px] font-bold leading-[26px] text-gray-800"
               >
-                <img
-                  src="@/assets/images/no-category.svg"
-                  alt="ilustrasi tampilan data kosong"
-                  width="20"
-                  height="20"
-                />
-                <p
-                  class="text-center font-lato text-[14px] font-normal leading-[16px] text-blue-gray-300"
+                {{ props.title }}
+              </h3>
+              <UButton variant="ghost" @click="resetFilter">
+                Hapus Semua Filter
+              </UButton>
+            </div>
+          </template>
+
+          <section class="min-w-[400px]">
+            <!-- Category Select Box -->
+            <div class="mb-4 w-full">
+              <div class="mb-4 flex w-full min-w-0 items-center gap-3">
+                <h4
+                  class="whitespace-nowrap font-lato text-sm leading-none text-blue-gray-700"
                 >
-                  Belum ada kategori
-                </p>
+                  {{ props.categoryTitle }}
+                </h4>
+                <span class="w-full border border-gray-100" />
               </div>
-            </template>
-          </div>
-        </div>
 
-        <!-- Date Input -->
-        <div class="w-full">
-          <div class="mb-4 flex w-full min-w-0 items-center gap-3">
-            <h4
-              class="whitespace-nowrap font-lato text-sm leading-none text-blue-gray-700"
-            >
-              Tanggal
-            </h4>
-            <span class="w-full border border-gray-100" />
-          </div>
-        </div>
+              <div class="max-h-[400px] w-full overflow-y-auto">
+                <template v-if="props.categories.length > 0">
+                  <UCheckbox
+                    class="mb-3"
+                    label="Pilih Semua Kategori"
+                    :indeterminate="isCategoryIndeterminate"
+                    :model-value="allSelected"
+                    @change="toggleSelectAll"
+                  />
+                  <div class="flex w-full min-w-0 flex-col gap-4 pl-[28px]">
+                    <UCheckbox
+                      v-for="category in props.categories"
+                      :key="category.id"
+                      :label="category.name"
+                      :value="category.id"
+                      :checked="category.selected"
+                      :model-value="category.selected"
+                      @change="onChecked(category.id)"
+                    />
+                  </div>
+                </template>
+                <template v-else>
+                  <div
+                    class="flex h-[100px] flex-col items-center justify-center gap-3"
+                  >
+                    <img
+                      src="@/assets/images/no-category.svg"
+                      alt="ilustrasi tampilan data kosong"
+                      width="20"
+                      height="20"
+                    />
+                    <p
+                      class="text-center font-lato text-[14px] font-normal leading-[16px] text-blue-gray-300"
+                    >
+                      Belum ada kategori
+                    </p>
+                  </div>
+                </template>
+              </div>
+            </div>
 
-        <div class="flex w-full flex-row gap-4">
-          <InputCalendar
-            id="start_date"
-            v-model="filter.start_date"
-            label="Tanggal Awal"
-          />
-          <InputCalendar
-            id="end_date"
-            v-model="filter.end_date"
-            label="Tanggal Akhir"
-          />
-        </div>
-      </section>
+            <!-- Date Input -->
+            <div class="w-full">
+              <div class="mb-4 flex w-full min-w-0 items-center gap-3">
+                <h4
+                  class="whitespace-nowrap font-lato text-sm leading-none text-blue-gray-700"
+                >
+                  Tanggal
+                </h4>
+                <span class="w-full border border-gray-100" />
+              </div>
+            </div>
 
-      <template #footer>
-        <UButton
-          :ui="{
-            base: 'w-[223px] justify-center',
-          }"
-          variant="outline"
-          @click="cancelFilter"
-        >
-          Batal
-        </UButton>
-        <UButton
-          :ui="{
-            base: 'w-[223px] justify-center',
-          }"
-          @click="applyFilter"
-        >
-          Terapkan
-        </UButton>
-      </template>
-    </BaseModal>
+            <div class="flex w-full flex-row gap-4">
+              <UFormGroup label="Tanggal Awal" name="start_date">
+                <InputCalendar id="start_date" v-model="filter.start_date" />
+              </UFormGroup>
+              <UFormGroup label="Tanggal Akhir" name="end_date">
+                <InputCalendar id="end_date" v-model="filter.end_date" />
+              </UFormGroup>
+            </div>
+          </section>
+
+          <template #footer>
+            <section class="flex justify-between">
+              <UButton
+                :ui="{
+                  base: 'w-[223px] justify-center',
+                }"
+                variant="outline"
+                @click="cancelFilter"
+              >
+                Batal
+              </UButton>
+              <UButton
+                :ui="{
+                  base: 'w-[223px] justify-center',
+                }"
+                type="submit"
+              >
+                Terapkan
+              </UButton>
+            </section>
+          </template>
+        </UCard>
+      </UForm>
+    </UModal>
   </section>
 </template>
 
 <script lang="ts" setup>
+  import { z } from 'zod'
   import { format } from 'date-fns'
   import ID from 'date-fns/locale/id'
   import { ICategory } from '~/repository/j-site/types/category'
@@ -189,6 +190,33 @@
     categories: [] as string[],
     start_date: null as Date | null,
     end_date: null as Date | null,
+  })
+
+  const formSchema = z.object({
+    categories: z.string().array().optional(),
+    start_date: z.coerce
+      .date()
+      .refine(
+        () => {
+          return !filter.start_date && filter.end_date ? false : true
+        },
+        { message: 'Tanggal Awal kosong' },
+      )
+      .optional(),
+    end_date: z.coerce
+      .date()
+      .refine(
+        (endDate) => {
+          if (endDate && filter.start_date) {
+            return endDate > filter.start_date
+          }
+          return true
+        },
+        {
+          message: 'Tanggal akhir harus lebih besar dari tanggal awal',
+        },
+      )
+      .optional(),
   })
 
   watch(
