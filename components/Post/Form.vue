@@ -293,7 +293,7 @@
           <span class="font-lato text-sm leading-none text-gray-600">
             {{ tag }}
           </span>
-          <button class="relative top-[1px] ml-2" @click="handleDeleteTag">
+          <button class="relative top-[1px] ml-2" @click="handleDeleteTag(tag)">
             <NuxtIcon
               name="common/close"
               aria-hidden="true"
@@ -778,7 +778,7 @@
     )
 
     if (status.value === 'success' && !tags.value?.includes(formattedTag)) {
-      postStore.pushTag({ tag: formattedTag })
+      postStore.pushTag(formattedTag)
     }
 
     if (status.value === 'error') {
@@ -803,7 +803,7 @@
     element && element.focus()
   }
 
-  function handleDeleteTag() {
-    // TODO: handle delete tag
+  function handleDeleteTag(tag: string) {
+    postStore.removeTag(tag)
   }
 </script>
