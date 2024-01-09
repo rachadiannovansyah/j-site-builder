@@ -3,7 +3,9 @@
     ref="postForm"
     :schema="schema"
     :state="form"
-    @submit="emit('submit-form')"
+    :validate-on="['submit']"
+    @submit.prevent="emit('submit-form')"
+    @keydown.enter="$event.preventDefault()"
   >
     <slot name="header"></slot>
 
@@ -141,12 +143,7 @@
         </UFormGroup>
 
         <!-- Category Radio Buttons -->
-        <UFormGroup
-          label="Kategori"
-          class="py-5"
-          name="category"
-          eager-validation
-        >
+        <UFormGroup label="Kategori" class="py-5" name="category">
           <!-- Skeletons -->
           <div
             v-if="isCategoryLoading"
@@ -236,7 +233,7 @@
             'grid-rows-[125px]': isAddCategory,
           }"
         >
-          <UFormGroup>
+          <UFormGroup :error="categoryErrorMessage">
             <template #description>
               <span class="font-lato text-xs leading-6 text-gray-600">
                 Tekan enter untuk menambahkan.
@@ -248,7 +245,7 @@
               :loading="isCategoryLoading"
               autofocus
               maxlength="125"
-              @keyup.enter="handleAddCategory"
+              @keydown.enter.prevent="handleAddCategory"
             />
 
             <template #help>
@@ -267,7 +264,7 @@
             v-if="isAddCategory"
             color="gray"
             variant="ghost"
-            @click="toggleAddCategory"
+            @click="closeAddCategorySection"
           >
             <template #leading>
               <NuxtIcon
@@ -279,7 +276,7 @@
             Batalkan
           </UButton>
 
-          <UButton v-else variant="ghost" @click="toggleAddCategory">
+          <UButton v-else variant="ghost" @click="openAddCategorySection">
             <template #leading>
               <NuxtIcon
                 name="common/plus"
@@ -303,7 +300,7 @@
               autofill="off"
               name="tag"
               placeholder="Masukkan Tag"
-              @keyup.enter="handleAddTag"
+              @keydown.enter.stop="handleAddTag"
             />
           </UFormGroup>
 
@@ -660,6 +657,8 @@
 
   const categories = ref<ICategory[]>([])
 
+  const categoryErrorMessage = ref<string>()
+
   async function fetchCategories() {
     isCategoryLoading.value = true
 
@@ -745,8 +744,14 @@
     name: '',
   })
 
-  function toggleAddCategory() {
-    isAddCategory.value = !isAddCategory.value
+  function openAddCategorySection() {
+    isAddCategory.value = true
+  }
+
+  function closeAddCategorySection() {
+    isAddCategory.value = false
+    newCategoryForm.name = ''
+    categoryErrorMessage.value = ''
   }
 
   async function handleAddCategory() {
@@ -759,10 +764,12 @@
     if (status.value === 'success') {
       // TODO: add success toast
       newCategoryForm.name = ''
+      categoryErrorMessage.value = ''
     }
 
     if (status.value === 'error') {
       console.error(error)
+      categoryErrorMessage.value = 'Kategori yang Anda masukkan sudah tersedia'
     }
 
     fetchCategories()
@@ -810,6 +817,14 @@
     closeDeleteCategory()
     fetchCategories()
   }
+
+  watch(
+    () => newCategoryForm.name,
+    (value) => {
+      if (value !== '') return
+      categoryErrorMessage.value = ''
+    },
+  )
 
   /* ---------------------------------- Tags ---------------------------------- */
   const isTagLoading = ref(false)
