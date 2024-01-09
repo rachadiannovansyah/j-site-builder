@@ -10,7 +10,7 @@ export const NAVIGATION_MENU = [
     icon: 'navigation/posting-menu-icon',
   },
   {
-    link: '/halaman/semua',
+    link: '/halaman',
     label: 'Halaman',
     icon: 'navigation/page-menu-icon',
   },
@@ -34,19 +34,27 @@ export const NAVIGATION_MENU = [
 export const PAGE_TAB_MENU = [
   {
     label: 'Semua',
-    link: '/halaman/semua',
+    type: 'semua',
+    link: '/halaman?type=semua',
+    status: '',
   },
   {
     label: 'Terbit',
-    link: '/halaman/terbit',
+    type: 'terbit',
+    link: '/halaman?type=terbit',
+    status: 'PUBLISHED',
   },
   {
     label: 'Draft',
-    link: '/halaman/draft',
+    type: 'draft',
+    link: '/halaman?type=draft',
+    status: 'DRAFT',
   },
   {
     label: 'Diarsipkan',
-    link: '/halaman/arsip',
+    type: 'arsip',
+    link: '/halaman?type=arsip',
+    status: 'ARCHIVED',
   },
 ]
 
