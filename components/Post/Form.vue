@@ -5,7 +5,7 @@
     :state="form"
     :validate-on="['submit']"
     @submit.prevent="emit('submit-form')"
-    @keydown.enter="$event.preventDefault()"
+    @keyup.enter="$event.preventDefault()"
   >
     <slot name="header"></slot>
 
@@ -289,9 +289,8 @@
         </div>
 
         <!-- Tags Input Field -->
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div class="mb-2.5 mt-5">
-          <UFormGroup label="Tag" name="tag" hint="(Opsional)">
+          <UFormGroup label="Tag" hint="(Opsional)" :error="tagErrorMessage">
             <UInput
               ref="tagInput"
               v-model.trim="newTagForm.tag"
@@ -300,7 +299,7 @@
               autofill="off"
               name="tag"
               placeholder="Masukkan Tag"
-              @keydown.enter.stop="handleAddTag"
+              @keydown.enter.prevent="handleAddTag"
             />
           </UFormGroup>
 
@@ -835,36 +834,60 @@
 
   const tagInput = ref()
 
+  const tagErrorMessage = ref<string>()
+
   const tagSuggestions = ref<string[]>([])
 
   async function handleAddTag() {
     if (newTagForm.tag === '') return
 
-    isTagLoading.value = true
+    try {
+      await validateTag(newTagForm.tag)
 
-    const formattedTag = newTagForm.tag.replaceAll(' ', '').toLowerCase()
+      const formattedTag = newTagForm.tag.replaceAll(' ', '').toLowerCase()
 
-    const body: ITagRequestBody = {
-      name: formattedTag,
+      isTagLoading.value = true
+
+      const body: ITagRequestBody = {
+        name: formattedTag,
+      }
+
+      const { status, error } = await $jSiteApi.tag.createTag(
+        siteStore.siteId ?? '',
+        body,
+        { server: false },
+      )
+
+      if (status.value === 'success') {
+        tagErrorMessage.value = ''
+
+        if (!tags.value?.includes(formattedTag)) {
+          postStore.pushTag(formattedTag)
+        }
+      }
+
+      if (status.value === 'error') {
+        console.error(error)
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.log(error.issues)
+        tagErrorMessage.value = error.issues[0].message
+      }
+    } finally {
+      resetTagForm()
+      await nextTick()
+      focusTagInput()
     }
+  }
 
-    const { status, error } = await $jSiteApi.tag.createTag(
-      siteStore.siteId ?? '',
-      body,
-      { server: false },
-    )
+  function validateTag(tag: string) {
+    const schema = z
+      .string()
+      .trim()
+      .regex(/^[a-zA-Z0-9]*$/, 'Tag tidak boleh mengandung simbol')
 
-    if (status.value === 'success' && !tags.value?.includes(formattedTag)) {
-      postStore.pushTag(formattedTag)
-    }
-
-    if (status.value === 'error') {
-      console.error(error)
-    }
-
-    resetTagForm()
-    await nextTick()
-    focusTagInput()
+    return schema.parse(tag)
   }
 
   function resetTagForm() {
