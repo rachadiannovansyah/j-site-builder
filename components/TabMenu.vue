@@ -11,7 +11,7 @@
           <button
             :class="[
               'h-full w-fit px-3 text-sm font-medium leading-5 text-green-700 focus:outline-none',
-              route.path === tab.link
+              route.query?.type === tab.type
                 ? 'border-b-[3px] border-green-700'
                 : 'text-gray-700',
             ]"
@@ -31,6 +31,7 @@
 
   interface ITab {
     label: string
+    type: string
     link: string
   }
 
