@@ -20,6 +20,7 @@
     "@nuxtjs/google-fonts": "^3.0.2",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.0",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/tinymce": "^4.6.9",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
@@ -38,7 +39,7 @@
   },
   "dependencies": {
     "@nuxt/image": "^1.1.0",
-    "@nuxt/ui": "^2.11.0",
+    "@nuxt/ui": "^2.11.1",
     "@popperjs/core": "^2.11.8",
     "@tinymce/tinymce-vue": "^5.1.1",
     "@types/js-cookie": "^3.0.5",
