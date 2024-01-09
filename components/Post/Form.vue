@@ -1,340 +1,366 @@
 <template>
-  <section class="grid grid-cols-[1fr,364px] gap-2.5">
-    <div class="grid grid-cols-1 gap-y-2.5">
+  <UForm
+    ref="postForm"
+    :schema="schema"
+    :state="form"
+    @submit="emit('submit-form')"
+  >
+    <slot name="header"></slot>
+
+    <!-- Form Body -->
+    <section class="grid grid-cols-[1fr,364px] gap-2.5">
+      <div class="grid grid-cols-1 gap-y-2.5">
+        <div class="rounded-lg bg-white p-[14px]">
+          <p
+            class="mb-[14px] font-roboto text-base font-medium leading-6 text-green-700"
+          >
+            Judul
+          </p>
+          <UFormGroup name="title">
+            <UTextarea
+              v-model="title"
+              :rows="2"
+              placeholder="Masukkan judul berita"
+              maxlength="255"
+            />
+            <template #help>
+              <span class="font-lato text-xs text-gray-600">
+                Tersisa {{ 255 - title.length }} Karakter
+              </span>
+            </template>
+          </UFormGroup>
+        </div>
+
+        <div class="rounded-lg bg-white p-[14px]">
+          <p class="font-roboto text-base font-medium leading-6 text-green-700">
+            Gambar Utama
+          </p>
+          <p class="mb-[14px] font-lato text-sm text-gray-800">
+            Ukuran maksimal file adalah 1 MB dengan resolusi 1080 x 720 . File
+            yang didukung adalah .jpg dan .png
+          </p>
+
+          <!-- Image Dropzone -->
+          <UFormGroup :error="dropzoneErrorMessages.length > 0">
+            <BaseDropzone
+              accept="image/jpeg, image/jpg, image/png, image/webp"
+              :disabled="!!image.id || isDropzoneUploading"
+              @change="handleImageChange"
+              @clear="handleDeleteImage"
+            >
+              <template
+                v-if="!!image.id && !isDropzoneUploading"
+                #preview="{ clear }"
+              >
+                <div
+                  class="mt-4 flex h-10 w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4"
+                >
+                  <span
+                    class="truncate pr-4 font-lato text-sm leading-6 text-gray-800"
+                  >
+                    {{ image?.filename }}
+                  </span>
+                  <div class="flex flex-shrink-0">
+                    <UButton
+                      title="Pratinjau gambar"
+                      variant="ghost"
+                      square
+                      size="sm"
+                      @click="togglePreviewImage"
+                    >
+                      <NuxtIcon name="common/eye" class="text-2xl" />
+                    </UButton>
+                    <UButton
+                      title="Hapus gambar"
+                      variant="ghost"
+                      square
+                      size="sm"
+                      class="ml-2"
+                      @click="clear"
+                    >
+                      <NuxtIcon name="common/close" class="text-2xl" />
+                    </UButton>
+                  </div>
+                </div>
+              </template>
+            </BaseDropzone>
+
+            <template #error>
+              <p
+                v-for="error in dropzoneErrorMessages"
+                :key="error"
+                class="font-lato text-xs leading-6 text-red-500"
+              >
+                {{ error }}
+              </p>
+            </template>
+
+            <p
+              v-show="
+                !image.id &&
+                !isDropzoneUploading &&
+                dropzoneErrorMessages.length === 0
+              "
+              class="mt-4 font-lato text-sm leading-6 text-gray-800"
+            >
+              Belum ada file terpilih
+            </p>
+
+            <p
+              v-show="isDropzoneUploading && !image.id"
+              class="mt-4 font-lato text-sm leading-6 text-gray-800"
+            >
+              Mengupload gambar...
+            </p>
+          </UFormGroup>
+
+          <UFormGroup name="image" />
+        </div>
+
+        <div class="rounded-lg bg-white p-[14px]">
+          <UFormGroup name="content">
+            <Editor v-model="content" v-bind="tinyMCEConfig" />
+          </UFormGroup>
+        </div>
+      </div>
+
       <div class="rounded-lg bg-white p-[14px]">
         <p
           class="mb-[14px] font-roboto text-base font-medium leading-6 text-green-700"
         >
-          Judul
+          Nama, Kategori dan Tag
         </p>
-        <UFormGroup>
-          <UTextarea
-            v-model="title"
-            :rows="2"
-            placeholder="Masukkan judul berita"
-            maxlength="255"
+
+        <!-- Author Input Field -->
+        <UFormGroup label="Nama Penulis" class="mb-[14px]" name="author">
+          <UInput
+            v-model="author"
+            placeholder="Masukkan Nama Penulis"
+            maxlength="150"
           />
-          <template #help>
-            <span class="font-lato text-xs text-gray-600">
-              Tersisa {{ 255 - title.length }} Karakter
-            </span>
-          </template>
         </UFormGroup>
-      </div>
 
-      <div class="rounded-lg bg-white p-[14px]">
-        <p class="font-roboto text-base font-medium leading-6 text-green-700">
-          Gambar Utama
-        </p>
-        <p class="mb-[14px] font-lato text-sm text-gray-800">
-          Ukuran maksimal file adalah 1 MB dengan resolusi 1080 x 720 . File
-          yang didukung adalah .jpg dan .png
-        </p>
-
-        <!-- Image Dropzone -->
-        <UFormGroup :error="dropzoneErrorMessages.length > 0">
-          <BaseDropzone
-            accept="image/jpeg, image/jpg, image/png, image/webp"
-            :disabled="!!image.id || isDropzoneUploading"
-            @change="handleImageChange"
-            @clear="handleDeleteImage"
+        <!-- Category Radio Buttons -->
+        <UFormGroup
+          label="Kategori"
+          class="py-5"
+          name="category"
+          eager-validation
+        >
+          <!-- Skeletons -->
+          <div
+            v-if="isCategoryLoading"
+            class="flex h-[200px] flex-col gap-2 py-5"
           >
-            <template
-              v-if="!!image.id && !isDropzoneUploading"
-              #preview="{ clear }"
+            <div
+              v-for="index in 3"
+              :key="index"
+              class="h-[42px] w-full animate-pulse bg-gray-100"
+            />
+          </div>
+
+          <!-- Options -->
+          <RadioGroup
+            v-else
+            v-model="category"
+            class="max-h-[200px] overflow-y-auto"
+          >
+            <RadioGroupOption
+              v-for="option in categories"
+              :key="option.id"
+              v-slot="{ checked }"
+              :value="option.id"
             >
-              <div
-                class="mt-4 flex h-10 w-full max-w-[400px] items-center justify-between rounded-lg border border-gray-400 px-4"
+              <li
+                class="group grid w-full cursor-pointer list-none grid-cols-[20px,1fr,auto] items-center gap-3 bg-white p-2 hover:bg-gray-50"
               >
-                <span
-                  class="truncate pr-4 font-lato text-sm leading-6 text-gray-800"
+                <!-- Radio Button -->
+                <div
+                  :class="{
+                    'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-500': true,
+                    'border-green-700': checked,
+                  }"
                 >
-                  {{ image?.filename }}
+                  <div
+                    v-show="checked"
+                    class="h-2.5 w-2.5 rounded-full bg-green-700"
+                  />
+                </div>
+
+                <span
+                  class="line-clamp-2 font-lato text-sm leading-6 text-gray-800"
+                >
+                  {{ option.name }}
                 </span>
-                <div class="flex flex-shrink-0">
+
+                <div
+                  class="flex gap-3 opacity-0 transition-opacity duration-150 ease-in group-hover:opacity-100"
+                >
                   <UButton
-                    title="Pratinjau gambar"
-                    variant="ghost"
                     square
-                    size="sm"
-                    @click="togglePreviewImage"
+                    color="gray"
+                    variant="ghost"
+                    @click.stop="handleEditCategory(option.id)"
                   >
-                    <NuxtIcon name="common/eye" class="text-2xl" />
+                    <NuxtIcon
+                      name="common/pencil"
+                      class="text-lg"
+                      filled
+                      aria-hidden="true"
+                    />
                   </UButton>
                   <UButton
-                    title="Hapus gambar"
-                    variant="ghost"
+                    color="gray"
                     square
-                    size="sm"
-                    class="ml-2"
-                    @click="clear"
+                    variant="ghost"
+                    :disabled="!option.is_deletable"
+                    @click.stop="handleDeleteCategory(option.id)"
                   >
-                    <NuxtIcon name="common/close" class="text-2xl" />
+                    <NuxtIcon
+                      name="common/trash"
+                      class="text-lg"
+                      filled
+                      aria-hidden="true"
+                    />
                   </UButton>
                 </div>
-              </div>
-            </template>
-          </BaseDropzone>
-
-          <template #error>
-            <p
-              v-for="error in dropzoneErrorMessages"
-              :key="error"
-              class="font-lato text-xs leading-6 text-red-500"
-            >
-              {{ error }}
-            </p>
-          </template>
-
-          <p
-            v-show="
-              !image.id &&
-              !isDropzoneUploading &&
-              dropzoneErrorMessages.length === 0
-            "
-            class="mt-4 font-lato text-sm leading-6 text-gray-800"
-          >
-            Belum ada file terpilih
-          </p>
-
-          <p
-            v-show="isDropzoneUploading && !image.id"
-            class="mt-4 font-lato text-sm leading-6 text-gray-800"
-          >
-            Mengupload gambar...
-          </p>
+              </li>
+            </RadioGroupOption>
+          </RadioGroup>
         </UFormGroup>
-      </div>
 
-      <div class="rounded-lg bg-white p-[14px]">
-        <Editor v-model="content" v-bind="tinyMCEConfig" />
-      </div>
-    </div>
-
-    <div class="rounded-lg bg-white p-[14px]">
-      <p
-        class="mb-[14px] font-roboto text-base font-medium leading-6 text-green-700"
-      >
-        Nama, Kategori dan Tag
-      </p>
-
-      <!-- Author Input Field -->
-      <UFormGroup label="Nama Penulis" class="mb-[14px]">
-        <UInput
-          v-model="author"
-          placeholder="Masukkan Nama Penulis"
-          maxlength="150"
-        />
-      </UFormGroup>
-
-      <!-- Category Radio Buttons -->
-      <UFormGroup label="Kategori" class="py-5">
-        <!-- Skeletons -->
+        <!-- Add Category Input Field -->
         <div
-          v-if="isCategoryLoading"
-          class="flex h-[200px] flex-col gap-2 py-5"
+          :class="{
+            'grid w-full grid-rows-[0] overflow-clip px-3 transition-all duration-150 ease-in': true,
+            'grid-rows-[125px]': isAddCategory,
+          }"
         >
-          <div
-            v-for="index in 3"
-            :key="index"
-            class="h-[42px] w-full animate-pulse bg-gray-100"
-          />
+          <UFormGroup>
+            <template #description>
+              <span class="font-lato text-xs leading-6 text-gray-600">
+                Tekan enter untuk menambahkan.
+              </span>
+            </template>
+
+            <UInput
+              v-model="newCategoryForm.name"
+              :loading="isCategoryLoading"
+              autofocus
+              maxlength="125"
+              @keyup.enter="handleAddCategory"
+            />
+
+            <template #help>
+              <span class="font-lato text-xs leading-none text-gray-400">
+                Sisa karakter: {{ 125 - newCategoryForm.name.length }} dari 125
+              </span>
+            </template>
+          </UFormGroup>
         </div>
 
-        <!-- Options -->
-        <RadioGroup
-          v-else
-          v-model="category"
-          class="max-h-[200px] overflow-y-auto"
-        >
-          <RadioGroupOption
-            v-for="option in categories"
-            :key="option.id"
-            v-slot="{ checked }"
-            :value="option.id"
+        <UDivider class="mb-[14px]" />
+
+        <!-- Add Category Button -->
+        <div class="mb-[14px] flex w-full justify-end">
+          <UButton
+            v-if="isAddCategory"
+            color="gray"
+            variant="ghost"
+            @click="toggleAddCategory"
           >
-            <li
-              class="group grid w-full cursor-pointer list-none grid-cols-[20px,1fr,auto] items-center gap-3 bg-white p-2 hover:bg-gray-50"
+            <template #leading>
+              <NuxtIcon
+                name="common/close"
+                aria-hidden="true"
+                class="text-xl"
+              />
+            </template>
+            Batalkan
+          </UButton>
+
+          <UButton v-else variant="ghost" @click="toggleAddCategory">
+            <template #leading>
+              <NuxtIcon
+                name="common/plus"
+                class="text-md text-green-600"
+                aria-hidden="true"
+              />
+            </template>
+            Tambah Kategori
+          </UButton>
+        </div>
+
+        <!-- Tags Input Field -->
+        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+        <div class="mb-2.5 mt-5">
+          <UFormGroup label="Tag" name="tag" hint="(Opsional)">
+            <UInput
+              ref="tagInput"
+              v-model.trim="newTagForm.tag"
+              :loading="isTagLoading"
+              autocomplete="off"
+              autofill="off"
+              name="tag"
+              placeholder="Masukkan Tag"
+              @keyup.enter="handleAddTag"
+            />
+          </UFormGroup>
+
+          <!-- Tag Suggestions -->
+          <UPopover
+            :open="!!newTagForm.tag && tagSuggestions.length > 0"
+            :popper="{
+              offsetDistance: -8,
+              adaptive: true,
+              scroll: true,
+            }"
+            :ui="{
+              wrapper: 'h-0',
+            }"
+          >
+            <div />
+            <template #panel>
+              <ul class="max-h-[150px] w-[336px] overflow-y-auto p-2">
+                <li v-for="suggestion in tagSuggestions" :key="suggestion">
+                  <button
+                    class="w-full rounded-sm px-2 text-start font-lato text-sm leading-6 text-gray-800 hover:bg-gray-100"
+                    @click="selectTagSuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </button>
+                </li>
+              </ul>
+            </template>
+          </UPopover>
+        </div>
+
+        <ul
+          class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2"
+        >
+          <li
+            v-for="tag in tags"
+            :key="tag"
+            class="flex min-h-5 items-center justify-center rounded-full bg-gray-200 py-1 pl-2.5 pr-1"
+          >
+            <span class="font-lato text-sm leading-none text-gray-600">
+              {{ tag }}
+            </span>
+            <button
+              class="relative top-[1px] ml-2"
+              @click="handleDeleteTag(tag)"
             >
-              <!-- Radio Button -->
-              <div
-                :class="{
-                  'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-500': true,
-                  'border-green-700': checked,
-                }"
-              >
-                <div
-                  v-show="checked"
-                  class="h-2.5 w-2.5 rounded-full bg-green-700"
-                />
-              </div>
-
-              <span
-                class="line-clamp-2 font-lato text-sm leading-6 text-gray-800"
-              >
-                {{ option.name }}
-              </span>
-
-              <div
-                class="flex gap-3 opacity-0 transition-opacity duration-150 ease-in group-hover:opacity-100"
-              >
-                <UButton
-                  square
-                  color="gray"
-                  variant="ghost"
-                  @click.stop="handleEditCategory(option.id)"
-                >
-                  <NuxtIcon
-                    name="common/pencil"
-                    class="text-lg"
-                    filled
-                    aria-hidden="true"
-                  />
-                </UButton>
-                <UButton
-                  color="gray"
-                  square
-                  variant="ghost"
-                  :disabled="!option.is_deletable"
-                  @click.stop="handleDeleteCategory(option.id)"
-                >
-                  <NuxtIcon
-                    name="common/trash"
-                    class="text-lg"
-                    filled
-                    aria-hidden="true"
-                  />
-                </UButton>
-              </div>
-            </li>
-          </RadioGroupOption>
-        </RadioGroup>
-      </UFormGroup>
-
-      <!-- Add Category Input Field -->
-      <div
-        :class="{
-          'grid w-full grid-rows-[0] overflow-clip px-3 transition-all duration-150 ease-in': true,
-          'grid-rows-[125px]': isAddCategory,
-        }"
-      >
-        <UFormGroup>
-          <template #description>
-            <span class="font-lato text-xs leading-6 text-gray-600">
-              Tekan enter untuk menambahkan.
-            </span>
-          </template>
-
-          <UInput
-            v-model="newCategoryForm.name"
-            :loading="isCategoryLoading"
-            autofocus
-            maxlength="125"
-            @keyup.enter="handleAddCategory"
-          />
-
-          <template #help>
-            <span class="font-lato text-xs leading-none text-gray-400">
-              Sisa karakter: {{ 125 - newCategoryForm.name.length }} dari 125
-            </span>
-          </template>
-        </UFormGroup>
+              <NuxtIcon
+                name="common/close"
+                aria-hidden="true"
+                class="text-xl text-gray-600"
+              />
+            </button>
+          </li>
+        </ul>
       </div>
-
-      <UDivider class="mb-[14px]" />
-
-      <!-- Add Category Button -->
-      <div class="mb-[14px] flex w-full justify-end">
-        <UButton
-          v-if="isAddCategory"
-          color="gray"
-          variant="ghost"
-          @click="toggleAddCategory"
-        >
-          <template #leading>
-            <NuxtIcon name="common/close" aria-hidden="true" class="text-xl" />
-          </template>
-          Batalkan
-        </UButton>
-
-        <UButton v-else variant="ghost" @click="toggleAddCategory">
-          <template #leading>
-            <NuxtIcon
-              name="common/plus"
-              class="text-md text-green-600"
-              aria-hidden="true"
-            />
-          </template>
-          Tambah Kategori
-        </UButton>
-      </div>
-
-      <!-- Tags Input Field -->
-      <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-      <div class="mb-2.5 mt-5">
-        <UFormGroup label="Tag" name="tag" hint="(Opsional)">
-          <UInput
-            ref="tagInput"
-            v-model.trim="newTagForm.tag"
-            :loading="isTagLoading"
-            autocomplete="off"
-            autofill="off"
-            name="tag"
-            placeholder="Masukkan Tag"
-            @keyup.enter="handleAddTag"
-          />
-        </UFormGroup>
-
-        <!-- Tag Suggestions -->
-        <UPopover
-          :open="!!newTagForm.tag && tagSuggestions.length > 0"
-          :popper="{
-            offsetDistance: -8,
-            adaptive: true,
-            scroll: true,
-          }"
-          :ui="{
-            wrapper: 'h-0',
-          }"
-        >
-          <div />
-          <template #panel>
-            <ul class="max-h-[150px] w-[336px] overflow-y-auto p-2">
-              <li v-for="suggestion in tagSuggestions" :key="suggestion">
-                <button
-                  class="w-full rounded-sm px-2 text-start font-lato text-sm leading-6 text-gray-800 hover:bg-gray-100"
-                  @click="selectTagSuggestion(suggestion)"
-                >
-                  {{ suggestion }}
-                </button>
-              </li>
-            </ul>
-          </template>
-        </UPopover>
-      </div>
-
-      <ul
-        class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2"
-      >
-        <li
-          v-for="tag in tags"
-          :key="tag"
-          class="min-h-5 flex items-center justify-center rounded-full bg-gray-200 py-1 pl-2.5 pr-1"
-        >
-          <span class="font-lato text-sm leading-none text-gray-600">
-            {{ tag }}
-          </span>
-          <button class="relative top-[1px] ml-2" @click="handleDeleteTag(tag)">
-            <NuxtIcon
-              name="common/close"
-              aria-hidden="true"
-              class="text-xl text-gray-600"
-            />
-          </button>
-        </li>
-      </ul>
-    </div>
-  </section>
+    </section>
+  </UForm>
 
   <!-- Edit Category Modal -->
   <BaseModal
@@ -410,7 +436,7 @@
   import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
   import { usePostStore } from '~/stores/post'
   import { validateImage } from '~/common/helpers/validation'
-  import z from 'zod'
+  import { z } from 'zod'
   import debounce from 'lodash.debounce'
   import { ICategory } from '~/repository/j-site/types/category'
   import { ITagRequestBody } from '~/repository/j-site/types/tag'
@@ -446,6 +472,8 @@
   onMounted(() => {
     fetchCategories()
   })
+
+  const emit = defineEmits(['submit-form'])
 
   /* ------------------------- Post Store Data Binding ------------------------ */
   const title = computed({
@@ -878,4 +906,35 @@
       }
     },
   )
+
+  /* ----------------------------- Form Validation ---------------------------- */
+
+  const form = computed(() => {
+    return postStore.form
+  })
+
+  const schema = z.object({
+    title: z
+      .string({ required_error: 'Judul berita tidak boleh kosong ' })
+      .trim()
+      .min(3, 'Judul berita harus lebih dari 3 karakter'),
+    image: z
+      .object({
+        id: z.string(),
+        uri: z.string(),
+        filename: z.string(),
+      })
+      .refine(
+        (data) => {
+          return data.uri !== ''
+        },
+        { message: 'Gambar tidak boleh kosong' },
+      ),
+    content: z.string().trim().min(1, 'Konten tidak boleh kosong'),
+    author: z
+      .string()
+      .trim()
+      .min(1, 'Nama penulis harus lebih dari 3 karakter'),
+    category: z.string().trim().min(1, 'Kategori tidak boleh kosong'),
+  })
 </script>
