@@ -61,18 +61,26 @@ export const PAGE_TAB_MENU = [
 export const POST_TAB_MENU = [
   {
     label: 'Semua',
-    link: '/posting/semua',
+    type: 'semua',
+    link: '/posting?type=semua',
+    status: '',
   },
   {
     label: 'Terbit',
-    link: '/posting/terbit',
+    type: 'terbit',
+    link: '/posting?type=terbit',
+    status: 'PUBLISHED',
   },
   {
     label: 'Draft',
-    link: '/posting/draft',
+    type: 'draft',
+    link: '/posting?type=draft',
+    status: 'DRAFT',
   },
   {
     label: 'Diarsipkan',
-    link: '/posting/arsip',
+    type: 'arsip',
+    link: '/posting?type=arsip',
+    status: 'ARCHIVED',
   },
 ]

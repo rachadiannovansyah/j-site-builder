@@ -1,187 +1,195 @@
 <template>
-  <section
-    class="flex h-fit w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
-  >
-    <div class="mb-8 flex items-start justify-between sm:flex-wrap">
-      <div class="flex gap-8">
-        <SearchBar
-          placeholder="Cari Postingan"
-          class="max-w-[181px]"
-          @input="onSearch($event)"
-        />
-        <FilterBar v-bind="filterProps" @submit:filter="submitFilter($event)" />
-      </div>
-      <UButton
-        v-if="post.data.length !== 0"
-        data-cy="j-site-post__button-create-new-post"
-      >
-        <template #leading>
-          <NuxtIcon
-            name="common/plus"
-            class="text-lg text-white"
-            aria-hidden="true"
-          />
-        </template>
-        Membuat Post
-      </UButton>
-    </div>
+  <div class="h-full w-full">
+    <TabMenu v-if="!isPostForm" :tabs="POST_TAB_MENU" />
+
     <section
-      v-if="loadingData"
-      class="flex h-full w-full flex-col rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
+      class="flex h-fit w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
     >
-      <LoadingListSkeleton />
-    </section>
-    <section v-else>
-      <div
-        v-if="post.data.length === 0"
-        class="flex h-full w-full flex-col items-center justify-center"
-      >
-        <NoData
-          title="Kamu belum memiliki Post !"
-          description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
-      Post yang menakjubkan!"
-        >
-          <UButton data-cy="j-site-post__button-create-new-post">
-            <template #leading>
-              <NuxtIcon
-                name="common/plus"
-                class="text-lg text-white"
-                aria-hidden="true"
-              />
-            </template>
-            Membuat Post
-          </UButton>
-        </NoData>
-      </div>
-
-      <div v-else class="flow-root">
-        <ul role="list" class="flex flex-col gap-3">
-          <PostList
-            :data="post.data"
-            @archive="onArchivePost($event)"
-            @delete="onDeletePost($event)"
+      <div class="mb-8 flex items-start justify-between sm:flex-wrap">
+        <div class="flex gap-8">
+          <SearchBar
+            placeholder="Cari Postingan"
+            class="max-w-[181px]"
+            @input="onSearch($event)"
           />
-        </ul>
-        <BasePagination
-          class="mt-4"
-          :limit="params.limit"
-          :total-rows="post.meta?.total"
-          :limit-options="['10', '15', '20']"
-          :current-page="post.meta?.page"
-          :total-page="post.meta?.last_page"
-          @change-limit="setParamsLimit"
-          @change-page="setParamsPage"
-          @previous-page="onPreviousPage"
-          @next-page="onNextPage"
-        />
+          <FilterBar
+            v-bind="filterProps"
+            @submit:filter="submitFilter($event)"
+          />
+        </div>
+        <UButton
+          v-if="post.data.length !== 0"
+          data-cy="j-site-post__button-create-new-post"
+        >
+          <template #leading>
+            <NuxtIcon
+              name="common/plus"
+              class="text-lg text-white"
+              aria-hidden="true"
+            />
+          </template>
+          Membuat Post
+        </UButton>
       </div>
+      <section
+        v-if="loadingData"
+        class="flex h-full w-full flex-col rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
+      >
+        <LoadingListSkeleton />
+      </section>
+      <section v-else>
+        <div
+          v-if="post.data.length === 0"
+          class="flex h-full w-full flex-col items-center justify-center"
+        >
+          <NoData
+            title="Kamu belum memiliki Post !"
+            description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
+      Post yang menakjubkan!"
+          >
+            <UButton data-cy="j-site-post__button-create-new-post">
+              <template #leading>
+                <NuxtIcon
+                  name="common/plus"
+                  class="text-lg text-white"
+                  aria-hidden="true"
+                />
+              </template>
+              Membuat Post
+            </UButton>
+          </NoData>
+        </div>
+
+        <div v-else class="flow-root">
+          <ul role="list" class="flex flex-col gap-3">
+            <PostList
+              :data="post.data"
+              @archive="onArchivePost($event)"
+              @delete="onDeletePost($event)"
+            />
+          </ul>
+          <BasePagination
+            class="mt-4"
+            :limit="params.limit"
+            :total-rows="post.meta?.total"
+            :limit-options="['10', '15', '20']"
+            :current-page="post.meta?.page"
+            :total-page="post.meta?.last_page"
+            @change-limit="setParamsLimit"
+            @change-page="setParamsPage"
+            @previous-page="onPreviousPage"
+            @next-page="onNextPage"
+          />
+        </div>
+      </section>
     </section>
-  </section>
 
-  <!-- Archive Post Confirmation -->
-  <BaseModal
-    :open="postActionStatus === POST_STATUS.ARCHIVE"
-    with-close-button
-    button-position="right"
-    :header="confirmation.title"
-    @close="closeConfirmationModal"
-  >
-    <div class="flex items-start p-3">
-      <p class="font-lato text-sm leading-6 text-gray-600">
-        {{ confirmation.body }}
-      </p>
-    </div>
-    <template #footer>
-      <UButton variant="outline" color="gray" @click="closeConfirmationModal">
-        Tidak
-      </UButton>
-      <UButton @click="actionArchivePost()"> Ya, Arsipkan </UButton>
-    </template>
-  </BaseModal>
-
-  <!-- Delete Post Confirmation -->
-  <BaseModal
-    :open="postActionStatus === POST_STATUS.DELETE"
-    with-close-button
-    button-position="right"
-    @close="closeConfirmationModal"
-  >
-    <div class="flex items-start">
-      <NuxtIcon
-        name="common/trash-circle"
-        class="mr-4 inline-block flex-shrink-0 text-5xl"
-        aria-hidden="true"
-        filled
-      />
-      <div>
-        <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
-          {{ confirmation.title }}
-        </h3>
+    <!-- Archive Post Confirmation -->
+    <BaseModal
+      :open="postActionStatus === POST_STATUS.ARCHIVE"
+      with-close-button
+      button-position="right"
+      :header="confirmation.title"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-start p-3">
         <p class="font-lato text-sm leading-6 text-gray-600">
           {{ confirmation.body }}
         </p>
       </div>
-    </div>
-    <template #footer>
-      <UButton variant="outline" color="gray" @click="closeConfirmationModal">
-        Batalkan
-      </UButton>
-      <UButton @click="actionDeletePost()"> Ya, saya yakin </UButton>
-    </template>
-  </BaseModal>
+      <template #footer>
+        <UButton variant="outline" color="gray" @click="closeConfirmationModal">
+          Tidak
+        </UButton>
+        <UButton @click="actionArchivePost()"> Ya, Arsipkan </UButton>
+      </template>
+    </BaseModal>
 
-  <!-- Progress -->
-  <ProgressModal
-    :open="postActionStatus === POST_STATUS.LOADING"
-    :value="postLoadingProgress"
-    :title="confirmation.title"
-    :message="confirmation.body"
-  />
+    <!-- Delete Post Confirmation -->
+    <BaseModal
+      :open="postActionStatus === POST_STATUS.DELETE"
+      with-close-button
+      button-position="right"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-start">
+        <NuxtIcon
+          name="common/trash-circle"
+          class="mr-4 inline-block flex-shrink-0 text-5xl"
+          aria-hidden="true"
+          filled
+        />
+        <div>
+          <h3 class="mb-2 font-roboto text-xl font-semibold text-gray-800">
+            {{ confirmation.title }}
+          </h3>
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ confirmation.body }}
+          </p>
+        </div>
+      </div>
+      <template #footer>
+        <UButton variant="outline" color="gray" @click="closeConfirmationModal">
+          Batalkan
+        </UButton>
+        <UButton @click="actionDeletePost()"> Ya, saya yakin </UButton>
+      </template>
+    </BaseModal>
 
-  <!-- Error / Success Modal -->
-  <BaseModal
-    :open="
-      postActionStatus === POST_STATUS.SUCCESS ||
-      postActionStatus === POST_STATUS.ERROR
-    "
-    :header="modal.title"
-    button-position="center"
-    :with-close-button="true"
-    :modal-ui="{
-      width: 'sm:max-w-[533px]',
-    }"
-    @close="closeConfirmationModal"
-  >
-    <div class="flex items-center justify-center gap-2">
-      <div class="flex h-full w-[18px] items-center justify-center">
-        <NuxtIcon
-          v-if="postActionStatus === POST_STATUS.SUCCESS"
-          name="common/check-circle"
-          class="text-base text-green-700"
-          aria-hidden="true"
-        />
-        <NuxtIcon
-          v-else
-          name="common/warning-triangle"
-          class="text-base text-red-600"
-          aria-hidden="true"
-        />
+    <!-- Progress -->
+    <ProgressModal
+      :open="postActionStatus === POST_STATUS.LOADING"
+      :value="postLoadingProgress"
+      :title="confirmation.title"
+      :message="confirmation.body"
+    />
+
+    <!-- Error / Success Modal -->
+    <BaseModal
+      :open="
+        postActionStatus === POST_STATUS.SUCCESS ||
+        postActionStatus === POST_STATUS.ERROR
+      "
+      :header="modal.title"
+      button-position="center"
+      :with-close-button="true"
+      :modal-ui="{
+        width: 'sm:max-w-[533px]',
+      }"
+      @close="closeConfirmationModal"
+    >
+      <div class="flex items-center justify-center gap-2">
+        <div class="flex h-full w-[18px] items-center justify-center">
+          <NuxtIcon
+            v-if="postActionStatus === POST_STATUS.SUCCESS"
+            name="common/check-circle"
+            class="text-base text-green-700"
+            aria-hidden="true"
+          />
+          <NuxtIcon
+            v-else
+            name="common/warning-triangle"
+            class="text-base text-red-600"
+            aria-hidden="true"
+          />
+        </div>
+        <div class="h-full w-full grow flex-col">
+          <p class="font-lato text-sm leading-6 text-gray-600">
+            {{ modal.message }}
+          </p>
+        </div>
       </div>
-      <div class="h-full w-full grow flex-col">
-        <p class="font-lato text-sm leading-6 text-gray-600">
-          {{ modal.message }}
-        </p>
-      </div>
-    </div>
-    <template #footer>
-      <BaseButton variant="primary" @click="onPostActionDone">
-        Saya Mengerti
-      </BaseButton>
-    </template>
-  </BaseModal>
+      <template #footer>
+        <BaseButton variant="primary" @click="onPostActionDone">
+          Saya Mengerti
+        </BaseButton>
+      </template>
+    </BaseModal>
+  </div>
 </template>
 
 <script setup lang="ts">
+  import { POST_TAB_MENU } from '~/common/constant/navigation'
   import { IPostData, IMetaData } from '~/repository/j-site/types/post'
   import { ICategory } from '~/repository/j-site/types/category'
 
@@ -200,6 +208,7 @@
 
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
+  const route = useRoute()
 
   const loadingData = ref(true)
   const filterProps = reactive({
@@ -239,6 +248,47 @@
     title: '',
     message: '',
   })
+
+  const isPostForm = computed(() => {
+    return route.path.includes('buat') || route.path.includes('ubah')
+  })
+
+  onMounted(async () => {
+    if (route.path === '/posting') {
+      await navigateTo({
+        path: '/posting',
+        query: {
+          type: 'semua',
+        },
+      })
+    }
+    fetchDataPost()
+    fetchCategory()
+  })
+
+  watch(
+    () => route.query?.type,
+    (value) => {
+      const findMenu = POST_TAB_MENU.find((menu) => {
+        return menu.type === value
+      })
+
+      params.status = findMenu?.status || ''
+
+      clearParams()
+      fetchDataPost()
+    },
+    { immediate: true },
+  )
+
+  function clearParams() {
+    params.page = 1
+    params.q = ''
+    params.limit = 10
+    params.start_date = ''
+    params.end_date = ''
+    params.categories = []
+  }
 
   async function fetchDataPost() {
     loadingData.value = true
@@ -284,11 +334,6 @@
     setParams(value)
     fetchDataPost()
   }
-
-  onMounted(() => {
-    fetchDataPost()
-    fetchCategory()
-  })
 
   interface ISetConfirmation {
     title: string
