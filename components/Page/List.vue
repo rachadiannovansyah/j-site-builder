@@ -1,7 +1,7 @@
 <template>
   <li
-    v-for="(item, index) in props.data"
-    :key="index"
+    v-for="item in props.data"
+    :key="item.id"
     class="flex items-center gap-[10px]"
   >
     <span class="font-medium text-blue-gray-900">
