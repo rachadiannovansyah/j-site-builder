@@ -64,7 +64,7 @@
           </div>
         </span>
       </div>
-      <PostItemAction>
+      <PopupItemAction>
         <ul
           class="flex w-[130px] flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
         >
@@ -74,23 +74,16 @@
           <li>
             <button>Ubah</button>
           </li>
-          <!-- Temporary hide features -->
-          <!-- <li>
-            <button>Duplikat Post</button>
-          </li>
-          <li>
-            <button>Sematkan Post</button>
-          </li> -->
           <li v-if="item.status === statusPost[0].status">
             <button @click="onArchivePost(item.id)">Arsipkan</button>
           </li>
-          <li>
+          <li v-if="item.status === statusPost[1].status">
             <button class="text-red-400" @click="onDeletePost(item.id)">
               Hapus
             </button>
           </li>
         </ul>
-      </PostItemAction>
+      </PopupItemAction>
     </div>
   </li>
 </template>
