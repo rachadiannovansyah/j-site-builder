@@ -376,6 +376,7 @@
     fetchCategories()
   }
 
+  // Reset error message when new category input empty
   watch(
     () => newCategoryForm.name,
     (value) => {
