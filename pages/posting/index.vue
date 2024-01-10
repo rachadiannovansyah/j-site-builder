@@ -282,9 +282,10 @@
 
   async function fetchDataPost() {
     loadingData.value = true
+    const { categories, ...rest } = params
     const { data: responseData } = await $jSiteApi.post.getPostList(
       siteStore.siteId ?? '',
-      { query: params },
+      { query: { 'categories[]': [...categories], ...rest } },
       { server: false },
     )
 
