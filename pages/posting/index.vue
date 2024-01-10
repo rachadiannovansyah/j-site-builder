@@ -275,26 +275,17 @@
 
       params.status = findMenu?.status || ''
 
-      clearParams()
       fetchDataPost()
     },
     { immediate: true },
   )
 
-  function clearParams() {
-    params.page = 1
-    params.q = ''
-    params.limit = 10
-    params.start_date = ''
-    params.end_date = ''
-    params.categories = []
-  }
-
   async function fetchDataPost() {
     loadingData.value = true
+    const { categories, ...rest } = params
     const { data: responseData } = await $jSiteApi.post.getPostList(
       siteStore.siteId ?? '',
-      { query: params },
+      { query: { 'categories[]': [...categories], ...rest } },
       { server: false },
     )
 
@@ -307,6 +298,8 @@
         ...item,
         index: index + Number(metaData?.from),
       }))
+    } else {
+      post.data = postData
     }
 
     post.meta = metaData
