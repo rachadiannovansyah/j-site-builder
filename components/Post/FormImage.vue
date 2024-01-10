@@ -195,15 +195,13 @@
     }
   }
 
-  function resetDropzone() {
-    postStore.setImage({ id: '', uri: '', filename: '' })
-  }
-
   const isPreviewImage = ref(false)
 
   function togglePreviewImage() {
     isPreviewImage.value = !isPreviewImage.value
   }
-</script>
 
-<style lang="scss" scoped></style>
+  function resetDropzone() {
+    postStore.setImage({ id: '', uri: '', filename: '' })
+  }
+</script>
