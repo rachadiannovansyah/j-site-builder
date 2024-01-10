@@ -21,13 +21,17 @@
     >
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-roboto text-xl font-medium leading-8 text-green-800">
+          <h3
+            class="font-roboto text-xl font-medium leading-8 text-green-800"
+            data-cy="j-site-widget-showcase__header"
+          >
             Pengaturan Showcase
           </h3>
           <UButton
             color="gray"
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
+            data-cy="j-site-widget-showcase__button-close"
             @click="$emit('close')"
           />
         </div>
@@ -37,6 +41,7 @@
             variant="solid"
             label="Tambah"
             icon="i-heroicons-plus-20-solid"
+            data-cy="j-site-widget-showcase__button-add"
             @click="addItemShowcase"
           />
         </div>
@@ -59,15 +64,18 @@
                 :alt="item?.title || ''"
                 width="72"
                 height="78"
+                :data-cy="`j-site-widget-showcase__image-${index}`"
               />
             </div>
             <p
               class="line-clamp-1 h-[24px] font-roboto text-base font-medium text-gray-800"
+              :data-cy="`j-site-widget-showcase__title-${index}`"
             >
               {{ item.title }}
             </p>
             <button
               class="absolute left-3 top-3"
+              :data-cy="`j-site-widget-showcase__button-delete-${index}`"
               @click="showDeleteConfirmation(item, index)"
             >
               <NuxtIcon
@@ -78,6 +86,7 @@
             </button>
             <button
               class="absolute right-3 top-3"
+              :data-cy="`j-site-widget-showcase__button-edit-${index}`"
               @click="editItemShowcase(item, index)"
             >
               <NuxtIcon

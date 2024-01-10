@@ -22,7 +22,10 @@
     >
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-roboto text-xl font-medium leading-8 text-green-800">
+          <h3
+            class="font-roboto text-xl font-medium leading-8 text-green-800"
+            data-cy="j-site-widget-showcase__form-header"
+          >
             {{ props.isEditMode ? 'Edit' : 'Tambahkan' }} Item
           </h3>
           <UButton
@@ -30,6 +33,7 @@
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
+            data-cy="j-site-widget-showcase__form-button-close"
             @click="$emit('close')"
           />
         </div>
@@ -75,7 +79,12 @@
                 <NuxtImg :src="state.file.uri" width="150" height="150" />
               </div>
               <div class="absolute right-3 top-3">
-                <UButton color="primary" variant="ghost" @click="removeFile">
+                <UButton
+                  color="primary"
+                  variant="ghost"
+                  data-cy="j-site-widget-showcase__form-button-remove-file"
+                  @click="removeFile"
+                >
                   <NuxtIcon
                     name="common/trash"
                     aria-hidden="true"
@@ -91,7 +100,16 @@
               placeholder="Masukkan judul"
               color="gray"
               maxlength="250"
+              data-cy="j-site-widget-showcase__form-input-title"
             />
+            <template #error="{ error }">
+              <span
+                class="dark:text-red-400' text-red-600"
+                data-cy="j-site-widget-showcase__form-error-message-title"
+              >
+                {{ error }}
+              </span>
+            </template>
           </UFormGroup>
           <UFormGroup
             label="Deskripsi"
@@ -104,7 +122,16 @@
               color="gray"
               :rows="4"
               maxlength="500"
+              data-cy="j-site-widget-showcase-input-description"
             />
+            <template #error="{ error }">
+              <span
+                class="dark:text-red-400' text-red-600"
+                data-cy="j-site-widget-showcase__form-error-message-description"
+              >
+                {{ error }}
+              </span>
+            </template>
             <p class="py-2 text-right font-lato text-xs text-gray-600">
               Tersisa
               <span class="text-gray-800">{{
@@ -124,6 +151,7 @@
                   v-model="isActiveLink"
                   color="primary"
                   class="right-0"
+                  data-cy="j-site-widget-showcase__form-toggle-link"
                 />
               </div>
             </template>
@@ -132,18 +160,25 @@
               :disabled="!isActiveLink"
               placeholder="contoh: https://"
               color="gray"
+              data-cy="j-site-widget-showcase__form-input-link"
             />
           </UFormGroup>
         </UForm>
       </section>
       <template #footer>
         <section class="flex justify-between">
-          <UButton variant="ghost" color="gray" @click="onCancelForm">
+          <UButton
+            variant="ghost"
+            color="gray"
+            data-cy="j-site-widget-showcase__form-button-cancel"
+            @click="onCancelForm"
+          >
             Batalkan
           </UButton>
           <UButton
             v-if="!props.isEditMode"
             :disabled="!isFormCompleted"
+            data-cy="j-site-widget-showcase__form-button-submit"
             @click="onSubmitShowcase"
           >
             Simpan

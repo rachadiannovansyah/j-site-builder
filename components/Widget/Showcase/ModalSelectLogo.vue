@@ -26,7 +26,10 @@
     >
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-roboto text-xl font-medium leading-8 text-green-800">
+          <h3
+            class="font-roboto text-xl font-medium leading-8 text-green-800"
+            data-cy="j-site-widget-showcase__modal-select-logo-header"
+          >
             Pilih Logo
           </h3>
           <UButton
@@ -34,13 +37,18 @@
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
+            data-cy="j-site-widget-showcase__modal-select-logo-button-close"
             @click="$emit('close')"
           />
         </div>
       </template>
 
       <section class="flex max-h-[458px] w-full flex-col gap-6">
-        <SearchBar placeholder="Cari Logo" @input="onSearch($event)" />
+        <SearchBar
+          placeholder="Cari Logo"
+          data-cy-suffix="showcase__modal-select-logo-input-search-logo"
+          @input="onSearch($event)"
+        />
         <RadioGroup v-model="selectedLogo">
           <div
             v-if="logos.data && logos.data.length > 0"
@@ -65,6 +73,7 @@
                     alt="Portal Jabar Logo"
                     width="72"
                     height="78"
+                    :data-cy="`j-site-widget-showcase__modal-select-logo-image-${index}`"
                   />
                 </div>
               </button>
@@ -88,6 +97,7 @@
         <section class="flex justify-end">
           <UButton
             :disabled="Object.keys(selectedLogo).length === 0"
+            data-cy="j-site-widget-showcase__modal-select-logo-button-submit"
             @click="onSelectedLogo"
           >
             Pilih Logo
