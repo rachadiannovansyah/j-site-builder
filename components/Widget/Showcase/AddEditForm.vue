@@ -105,7 +105,7 @@
             <template #error="{ error }">
               <span
                 class="dark:text-red-400' text-red-600"
-                data-cy="j-site-widget-agenda__form-error-message-title"
+                data-cy="j-site-widget-showcase__form-error-message-title"
               >
                 {{ error }}
               </span>
@@ -127,7 +127,7 @@
             <template #error="{ error }">
               <span
                 class="dark:text-red-400' text-red-600"
-                data-cy="j-site-widget-agenda__form-error-message-description"
+                data-cy="j-site-widget-showcase__form-error-message-description"
               >
                 {{ error }}
               </span>
