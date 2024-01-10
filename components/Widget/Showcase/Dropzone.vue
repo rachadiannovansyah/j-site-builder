@@ -14,6 +14,7 @@
       <div class="mt-4 flex gap-[15px]">
         <button
           class="flex flex-col items-center justify-center gap-3"
+          data-cy="j-site-widget-showcase__form-button-upload-file"
           @click="onChooseFile"
         >
           <img
@@ -28,6 +29,7 @@
         </button>
         <button
           class="flex flex-col items-center justify-center gap-3"
+          data-cy="j-site-widget-showcase__form-button-select-logo"
           @click="onSelectLogo"
         >
           <img
