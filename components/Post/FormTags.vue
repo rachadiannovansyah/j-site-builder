@@ -1,5 +1,6 @@
 <template>
   <div class="mb-2.5 mt-5">
+    <!-- Tag Input Field -->
     <UFormGroup label="Tag" hint="(Opsional)" :error="tagErrorMessage">
       <UInput
         ref="tagInput"
@@ -41,6 +42,7 @@
     </UPopover>
   </div>
 
+  <!-- Selected Tags -->
   <ul class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2">
     <li
       v-for="tag in tags"
@@ -128,19 +130,8 @@
     }
   }
 
-  function validateTag(tag: string) {
-    const schema = z
-      .string()
-      .trim()
-      .regex(/^[a-zA-Z0-9]*$/, 'Tag tidak boleh mengandung simbol')
-
-    return schema.parse(tag)
-  }
-
-  function resetTagForm() {
-    newTagForm.tag = ''
-    isTagLoading.value = false
-    tagSuggestions.value = []
+  function handleDeleteTag(tag: string) {
+    postStore.removeTag(tag)
   }
 
   function focusTagInput() {
@@ -151,8 +142,13 @@
     element && element.focus()
   }
 
-  function handleDeleteTag(tag: string) {
-    postStore.removeTag(tag)
+  function validateTag(tag: string) {
+    const schema = z
+      .string()
+      .trim()
+      .regex(/^[a-zA-Z0-9]*$/, 'Tag tidak boleh mengandung simbol')
+
+    return schema.parse(tag)
   }
 
   const getSuggestions = debounce(async (tag: string) => {
@@ -178,6 +174,12 @@
     }
 
     resetTagForm()
+  }
+
+  function resetTagForm() {
+    newTagForm.tag = ''
+    isTagLoading.value = false
+    tagSuggestions.value = []
   }
 
   // Fetch tag suggestions on user input
