@@ -971,7 +971,7 @@
     author: z
       .string()
       .trim()
-      .min(1, 'Nama penulis harus lebih dari 3 karakter'),
+      .min(3, 'Nama penulis harus lebih dari 3 karakter'),
     category: z.string().trim().min(1, 'Kategori tidak boleh kosong'),
   })
 </script>
