@@ -13,9 +13,7 @@
     <section class="grid grid-cols-[1fr,364px] gap-2.5">
       <div class="grid grid-cols-1 gap-y-2.5">
         <PostFormTitle />
-
         <PostFormImage />
-
         <PostFormContent />
       </div>
 
@@ -25,15 +23,7 @@
         >
           Nama, Kategori dan Tag
         </p>
-
-        <!-- Author Input Field -->
-        <UFormGroup label="Nama Penulis" class="mb-[14px]" name="author">
-          <UInput
-            v-model="author"
-            placeholder="Masukkan Nama Penulis"
-            maxlength="150"
-          />
-        </UFormGroup>
+        <PostFormAuthor />
 
         <!-- Category Radio Buttons -->
         <UFormGroup label="Kategori" class="py-5" name="category">
@@ -322,15 +312,6 @@
   const emit = defineEmits(['submit-form'])
 
   /* ------------------------- Post Store Data Binding ------------------------ */
-
-  const author = computed({
-    get() {
-      return postStore.form.author
-    },
-    set(value) {
-      postStore.setAuthor(value)
-    },
-  })
 
   const category = computed({
     get() {
