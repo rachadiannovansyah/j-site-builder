@@ -17,19 +17,21 @@
             @submit:filter="submitFilter($event)"
           />
         </div>
-        <UButton
-          v-if="post.data.length !== 0"
-          data-cy="j-site-post__button-create-new-post"
-        >
-          <template #leading>
-            <NuxtIcon
-              name="common/plus"
-              class="text-lg text-white"
-              aria-hidden="true"
-            />
-          </template>
-          Membuat Post
-        </UButton>
+        <NuxtLink to="/posting/buat">
+          <UButton
+            v-if="post.data.length !== 0"
+            data-cy="j-site-post__button-create-new-post"
+          >
+            <template #leading>
+              <NuxtIcon
+                name="common/plus"
+                class="text-lg text-white"
+                aria-hidden="true"
+              />
+            </template>
+            Membuat Post
+          </UButton>
+        </NuxtLink>
       </div>
       <section
         v-if="loadingData"
@@ -47,16 +49,18 @@
             description="Tenang saja, kita siap membantu kamu memulainya dengan informasi konten
       Post yang menakjubkan!"
           >
-            <UButton data-cy="j-site-post__button-create-new-post">
-              <template #leading>
-                <NuxtIcon
-                  name="common/plus"
-                  class="text-lg text-white"
-                  aria-hidden="true"
-                />
-              </template>
-              Membuat Post
-            </UButton>
+            <NuxtLink to="/posting/buat">
+              <UButton data-cy="j-site-post__button-create-new-post">
+                <template #leading>
+                  <NuxtIcon
+                    name="common/plus"
+                    class="text-lg text-white"
+                    aria-hidden="true"
+                  />
+                </template>
+                Membuat Post
+              </UButton>
+            </NuxtLink>
           </NoData>
         </div>
 
