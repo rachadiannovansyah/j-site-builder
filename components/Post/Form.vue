@@ -9,7 +9,6 @@
   >
     <slot name="header"></slot>
 
-    <!-- Form Body -->
     <section class="grid grid-cols-[1fr,364px] gap-2.5">
       <div class="grid grid-cols-1 gap-y-2.5">
         <PostFormTitle />
@@ -32,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-  import { usePostStore } from '~/stores/post'
   import { z } from 'zod'
 
   const postStore = usePostStore()
