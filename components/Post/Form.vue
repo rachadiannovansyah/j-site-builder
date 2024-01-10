@@ -871,7 +871,6 @@
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.log(error.issues)
         tagErrorMessage.value = error.issues[0].message
       }
     } finally {
