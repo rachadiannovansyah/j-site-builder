@@ -219,7 +219,7 @@
   }
 
   const onSuccessStorePage = async () => {
-    await navigateTo({ path: '/halaman/semua' })
+    await navigateTo({ path: '/halaman' })
   }
 
   const setLoadingProgress = (value: number) => {
