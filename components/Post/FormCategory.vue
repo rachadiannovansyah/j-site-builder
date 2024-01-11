@@ -10,6 +10,22 @@
       />
     </div>
 
+    <!-- Empty State -->
+    <div
+      v-else-if="isCategoriesEmpty && !isCategoryLoading"
+      class="flex h-[150px] flex-col items-center justify-center"
+    >
+      <NuxtIcon
+        name="common/category"
+        class="mb-2.5 text-2xl"
+        aria-hidden="true"
+        filled
+      />
+      <p class="font-lato text-sm leading-6 text-gray-400">
+        Belum ada Kategori
+      </p>
+    </div>
+
     <!-- Options -->
     <RadioGroup v-else v-model="category" class="max-h-[200px] overflow-y-auto">
       <RadioGroupOption
@@ -214,6 +230,10 @@
   const isCategoryLoading = ref(true)
 
   const categories = ref<ICategory[]>([])
+
+  const isCategoriesEmpty = computed(() => {
+    return categories.value.length === 0
+  })
 
   const categoryErrorMessage = ref<string>()
 
