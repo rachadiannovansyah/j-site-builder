@@ -46,7 +46,6 @@
   }
 
   function handlePublish() {
-    console.log('publish!')
     // TODO: add save as published handler
   }
 
