@@ -1,7 +1,12 @@
 <template>
   <div class="mb-2.5 mt-5">
     <!-- Tag Input Field -->
-    <UFormGroup label="Tag" hint="(Opsional)" :error="tagErrorMessage">
+    <UFormGroup
+      label="Tag"
+      hint="(Opsional)"
+      :error="tagErrorMessage"
+      name="tags"
+    >
       <UInput
         ref="tagInput"
         v-model.trim="newTagForm.tag"
@@ -10,7 +15,7 @@
         autofill="off"
         name="tag"
         placeholder="Masukkan Tag"
-        @keydown.enter.prevent="handleAddTag"
+        @keyup.enter.stop="handleAddTag"
       />
     </UFormGroup>
 

@@ -1,6 +1,6 @@
 <template>
   <PostForm @submit-form="handlePublish">
-    <template #header>
+    <template #header="{ valid }">
       <nav class="mb-[14px] flex items-center justify-between py-[14px]">
         <UButton variant="outline" @click="goBack">
           <template #leading>
@@ -24,7 +24,7 @@
             </template>
             Simpan ke Draft
           </UButton>
-          <UButton type="submit">
+          <UButton type="submit" :disabled="!valid">
             <template #leading>
               <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
             </template>
