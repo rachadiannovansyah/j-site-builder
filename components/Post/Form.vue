@@ -5,8 +5,8 @@
     :state="form"
     :validate-on="['submit', 'blur']"
     @submit="emit('submit-form')"
-    @keydown.enter.prevent="$event.preventDefault()"
-    @keyup.enter.prevent="$event.preventDefault()"
+    @keydown.enter="$event.preventDefault()"
+    @keyup.enter="$event.preventDefault()"
   >
     <slot name="header" :valid="valid"></slot>
 
