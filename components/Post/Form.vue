@@ -3,11 +3,12 @@
     ref="postForm"
     :schema="schema"
     :state="form"
-    :validate-on="['submit']"
-    @submit.prevent="emit('submit-form')"
-    @keyup.enter="$event.preventDefault()"
+    :validate-on="['submit', 'blur']"
+    @submit="emit('submit-form')"
+    @keydown.enter.prevent="$event.preventDefault()"
+    @keyup.enter.prevent="$event.preventDefault()"
   >
-    <slot name="header"></slot>
+    <slot name="header" :valid="valid"></slot>
 
     <section class="grid grid-cols-[1fr,364px] gap-2.5">
       <div class="grid grid-cols-1 gap-y-2.5">
@@ -32,6 +33,7 @@
 
 <script setup lang="ts">
   import { z } from 'zod'
+  import debounce from 'lodash.debounce'
 
   const postStore = usePostStore()
 
@@ -60,9 +62,21 @@
     author: z
       .string()
       .trim()
-      .min(3, 'Nama penulis harus lebih dari 3 karakter'),
+      .min(3, 'Nama penulis harus lebih dari 3 karakter')
+      .regex(/^[a-zA-Z]*$/, 'Nama tidak boleh mengandung simbol atau angka'),
     category: z.string().trim().min(1, 'Kategori tidak boleh kosong'),
   })
 
+  const valid = ref(false)
+
   const emit = defineEmits(['submit-form'])
+
+  // Check valid status when form change
+  watch(
+    form,
+    debounce(() => {
+      valid.value = schema.safeParse(form.value).success
+    }, 500),
+    { immediate: true, deep: true },
+  )
 </script>

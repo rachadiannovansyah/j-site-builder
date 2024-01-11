@@ -81,7 +81,7 @@
       'grid-rows-[125px]': isAddCategory,
     }"
   >
-    <UFormGroup :error="categoryErrorMessage">
+    <UFormGroup :error="categoryErrorMessage" name="new-category">
       <template #description>
         <span class="font-lato text-xs leading-6 text-gray-600">
           Tekan enter untuk menambahkan.
@@ -93,7 +93,7 @@
         :loading="isCategoryLoading"
         autofocus
         maxlength="125"
-        @keydown.enter.prevent="handleAddCategory"
+        @keyup.enter.stop="handleAddCategory"
       />
 
       <template #help>
