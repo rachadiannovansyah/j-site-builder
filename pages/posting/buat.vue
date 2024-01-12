@@ -2,7 +2,7 @@
   <PostForm @submit-form="openPublishConfirmation">
     <template #header="{ valid }">
       <nav class="mb-[14px] flex items-center justify-between py-[14px]">
-        <UButton variant="outline" @click="goBack">
+        <UButton variant="outline" @click="$router.back">
           <template #leading>
             <NuxtIcon
               name="common/arrow-left"
@@ -235,9 +235,5 @@
 
       console.error(error)
     }
-  }
-
-  function goBack() {
-    // TODO: handle router go back
   }
 </script>
