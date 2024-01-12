@@ -25,3 +25,14 @@ export interface IPostsResponse {
   data?: IPostData[]
   meta?: IMetaData
 }
+
+export type IFormStatus = 'DRAFT' | 'PUBLISHED'
+
+export interface IPostBodyRequest {
+  content: string
+  author: string
+  category: string | null
+  image: string
+  tags: string[]
+  status: IFormStatus | null
+}
