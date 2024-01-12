@@ -2,7 +2,7 @@ import { AsyncDataOptions } from '#app'
 import { FetchOptions } from 'ofetch'
 
 import FetchFactory from '../../factory'
-import { IPostsResponse } from '../types/post'
+import { IPostsResponse, IPostBodyRequest } from '../types/post'
 
 class PostModules extends FetchFactory {
   private RESOURCE = '/v1/posts'
@@ -18,6 +18,20 @@ class PostModules extends FetchFactory {
         `${this.RESOURCE}/${id}`,
         undefined, // body
         fetchOptions,
+      )
+    }, options)
+  }
+
+  async createPost(
+    idSetting: string,
+    body: IPostBodyRequest,
+    options?: AsyncDataOptions<IPostsResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPostsResponse>(
+        'POST',
+        `${this.RESOURCE}/${idSetting}`,
+        body,
       )
     }, options)
   }
