@@ -1,3 +1,5 @@
+import { IFormStatus } from '~/repository/j-site/types/post'
+
 type IForm = {
   title: string
   image: {
@@ -11,8 +13,6 @@ type IForm = {
   tags: null | string[]
   status: null | IFormStatus
 }
-
-type IFormStatus = 'DRAFT' | 'PUBLISHED'
 
 export const usePostStore = defineStore('post', {
   state: () => ({
@@ -62,6 +62,22 @@ export const usePostStore = defineStore('post', {
     removeTag(tag: string) {
       if (this.form.tags?.includes(tag)) {
         this.form.tags = this.form.tags?.filter((item) => item !== tag)
+      }
+    },
+    setStatus(status: IFormStatus) {
+      this.form.status = status
+    },
+    generateFormData({ status }: { status: IFormStatus }) {
+      this.setStatus(status)
+
+      return {
+        title: this.form.title,
+        image: this.form.image.uri,
+        content: this.form.content,
+        author: this.form.author,
+        category: this.form.category ? this.form.category : null,
+        tags: this.form.tags ? [...this.form.tags] : [],
+        status: this.form.status,
       }
     },
   },
