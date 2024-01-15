@@ -37,39 +37,24 @@
           <p class="font-base font-lato font-medium text-gray-800">
             Pilih Kombinasi
           </p>
-          <RadioGroup v-model="selectedPostType" class="flex gap-4">
-            <RadioGroupOption
+          <div class="flex gap-4">
+            <div
               v-for="(type, index) in POST_SORT_TYPE"
               :key="index"
-              v-slot="{ checked }"
-              :value="type.value"
+              class="flex h-[54px] w-[200px] items-center justify-between rounded-[27px] border border-gray-300 bg-white py-1.5 pl-3 pr-4 focus:outline-none"
             >
-              <div
-                :class="{
-                  'flex h-[54px] w-[200px] rounded-[27px] border border-gray-300 bg-white px-3 py-1.5 focus:outline-none': true,
-                  'cursor-pointer ring-1 ring-green-700': checked,
-                }"
+              <label
+                class="text-left font-lato text-sm font-medium text-gray-900"
               >
-                <div class="flex w-full items-center justify-between">
-                  <RadioGroupLabel
-                    class="text-left font-lato text-sm font-medium text-gray-900"
-                  >
-                    {{ type.label }}
-                  </RadioGroupLabel>
-                  <div
-                    v-if="checked"
-                    class="flex h-[22px] w-[22px] items-center justify-center"
-                  >
-                    <NuxtIcon
-                      name="common/check-circle"
-                      class="text-lg text-green-700"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-              </div>
-            </RadioGroupOption>
-          </RadioGroup>
+                {{ type.label }}
+              </label>
+              <UCheckbox
+                :v-model="postType.views"
+                name="Terpopuler"
+                @change="onCheckedPostType(type.value)"
+              />
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col gap-3 px-12">
@@ -206,9 +191,14 @@
     },
   ]
 
-  const selectedPostType = ref('')
+  const selectedPostType = reactive([] as string[])
   const selectedPostFormat = ref('')
   const selectedPostPreview = ref('')
+
+  const postType = reactive({
+    views: false as boolean,
+    published_at: false as boolean,
+  })
 
   const props = defineProps({
     open: {
@@ -232,8 +222,31 @@
     { immediate: true },
   )
 
+  watch(
+    selectedPostType,
+    (value) => {
+      console.log('selectedPostType', toRaw(value))
+    },
+    { immediate: true },
+  )
+
   function setPostPreview(value: string) {
     selectedPostPreview.value = value
+  }
+
+  function onCheckedPostType(type: string) {
+    if (type === 'views') {
+      postType.views = !postType.views
+    } else {
+      postType.published_at = !postType.published_at
+    }
+
+    const find = selectedPostType.findIndex((element) => element === type)
+    if (find < 0) {
+      selectedPostType.push(String(type))
+    } else {
+      selectedPostType.splice(find, 1)
+    }
   }
 </script>
 
