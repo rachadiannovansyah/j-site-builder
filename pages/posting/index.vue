@@ -215,26 +215,28 @@
   const route = useRoute()
 
   const loadingData = ref(true)
-  const filterProps = reactive({
-    title: 'Filter Post' as string,
-    categoryTitle: 'Kategori Post' as string,
-    categories: [] as ICategory[],
-    disabled: false as boolean,
-  })
 
   const post = reactive({
     data: [] as IPostData[],
     meta: null as null | IMetaData,
   })
 
-  let params = reactive({
+  const params = reactive({
     page: 1 as string | number,
     limit: 10 as string | number,
     q: '' as string,
     status: '' as string,
-    start_date: '' as string,
-    end_date: '' as string,
+    start_date: null as string | null,
+    end_date: null as string | null,
     categories: [] as string[],
+  })
+
+  const filterProps = reactive({
+    title: 'Filter Post' as string,
+    categoryTitle: 'Kategori Post' as string,
+    categories: [] as ICategory[],
+    disabled: false as boolean,
+    params: params as object,
   })
 
   const postActionStatus = ref(POST_STATUS.NONE)
@@ -269,7 +271,6 @@
     fetchDataPost()
     fetchCategory()
   })
-
   watch(
     () => route.query?.type,
     (value) => {
@@ -390,9 +391,14 @@
     fetchDataPost()
   }
 
-  function setParams(parameters: object) {
-    const newParams = { ...params, ...parameters }
-    params = { ...newParams }
+  function setParams(parameters: {
+    categories?: string[] | null
+    start_date?: string | null
+    end_date?: string | null
+  }) {
+    params.categories = parameters.categories ?? []
+    params.start_date = parameters.start_date ?? null
+    params.end_date = parameters.end_date ?? null
   }
 
   function onPreviousPage() {

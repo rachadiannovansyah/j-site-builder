@@ -145,6 +145,7 @@
                   base: 'w-[223px] justify-center',
                 }"
                 type="submit"
+                :disabled="!isFormCompleted"
               >
                 Terapkan
               </UButton>
@@ -158,7 +159,7 @@
 
 <script lang="ts" setup>
   import { z } from 'zod'
-  import { format } from 'date-fns'
+  import { format, parse } from 'date-fns'
   import ID from 'date-fns/locale/id'
   import { ICategory } from '~/repository/j-site/types/category'
 
@@ -178,6 +179,14 @@
     disabled: {
       type: Boolean,
       default: true,
+    },
+    params: {
+      type: Object,
+      default: () => ({
+        categories: [],
+        start_date: null,
+        end_date: null,
+      }),
     },
   })
 
@@ -206,9 +215,9 @@
     end_date: z.coerce
       .date()
       .refine(
-        (endDate) => {
-          if (endDate && filter.start_date) {
-            return endDate > filter.start_date
+        () => {
+          if (filter.end_date && filter.start_date) {
+            return filter.end_date > filter.start_date
           }
           return true
         },
@@ -228,6 +237,10 @@
       allSelected.value = selectedCategories.length === props.categories.length
     },
   )
+
+  const isFormCompleted = computed(() => {
+    return formSchema.safeParse(filter).success
+  })
 
   const isCategoryIndeterminate = computed(() => {
     const selectedCategories = props.categories.filter(
@@ -283,8 +296,21 @@
   }
 
   function cancelFilter() {
-    showFilterModal()
-    resetFilter()
+    isModalOpen.value = false
+
+    // Mutate selected checkbox to match the params
+    for (const category of props.categories) {
+      const existsInFilter = props.params.categories?.includes(category.id)
+      category.selected = existsInFilter
+    }
+
+    filter.categories = props.params.categories
+    filter.start_date = props.params.start_date
+      ? parse(props.params.start_date, 'yyyy-MM-dd', new Date())
+      : null
+    filter.end_date = props.params.end_date
+      ? parse(props.params.end_date, 'yyyy-MM-dd', new Date())
+      : null
   }
 
   function updateFilterCount() {
