@@ -164,14 +164,26 @@
     </p>
 
     <UFormGroup>
-      <UInput v-model="editCategoryForm.name" />
+      <UInput v-model.trim="editCategoryForm.name" maxlength="125" />
+
+      <template #help>
+        <span class="font-lato text-xs leading-none text-gray-400">
+          Sisa karakter: {{ 125 - editCategoryForm.name.length }} dari 125
+        </span>
+      </template>
     </UFormGroup>
 
     <template #footer>
       <UButton type="button" variant="outline" @click="closeEditCategory">
         Batal
       </UButton>
-      <UButton type="button" @click="editCategory"> Ubah Kategori </UButton>
+      <UButton
+        type="button"
+        :disabled="editCategoryForm.name.length === 0"
+        @click="editCategory"
+      >
+        Ubah Kategori
+      </UButton>
     </template>
   </BaseModal>
 
