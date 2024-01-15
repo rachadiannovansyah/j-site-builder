@@ -27,7 +27,11 @@
     </div>
 
     <!-- Options -->
-    <RadioGroup v-else v-model="category" class="max-h-[200px] overflow-y-auto">
+    <RadioGroup
+      v-else
+      v-model="category"
+      class="custom-scrollbar max-h-[200px] overflow-y-auto"
+    >
       <RadioGroupOption
         v-for="option in categories"
         :key="option.id"
