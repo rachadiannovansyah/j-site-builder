@@ -145,7 +145,7 @@
         postStore.setImage({
           id,
           uri: file.uri,
-          filename: file.filename,
+          filename: file.originalname,
         })
       }
     } catch (error) {
