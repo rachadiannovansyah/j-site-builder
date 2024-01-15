@@ -152,7 +152,7 @@
     const schema = z
       .string()
       .trim()
-      .regex(/^[a-zA-Z0-9]*$/, 'Tag tidak boleh mengandung simbol')
+      .regex(/^[a-zA-Z0-9\s]*$/, 'Tag tidak boleh mengandung simbol')
 
     return schema.parse(tag)
   }
