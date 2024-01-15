@@ -63,7 +63,7 @@
       .string()
       .trim()
       .min(3, 'Nama penulis harus lebih dari 3 karakter')
-      .regex(/^[a-zA-Z]*$/, 'Nama tidak boleh mengandung simbol atau angka'),
+      .regex(/^[a-zA-Z\s]*$/, 'Nama tidak boleh mengandung simbol atau angka'),
     category: z.string().trim().min(1, 'Kategori tidak boleh kosong'),
   })
 
