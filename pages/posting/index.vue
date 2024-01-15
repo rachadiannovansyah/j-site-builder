@@ -399,6 +399,7 @@
     params.categories = parameters.categories ?? []
     params.start_date = parameters.start_date ?? null
     params.end_date = parameters.end_date ?? null
+    params.page = 1
   }
 
   function onPreviousPage() {
@@ -413,6 +414,7 @@
 
   function onSearch(query: string) {
     params.q = query
+    params.page = 1
     fetchDataPost()
   }
 
