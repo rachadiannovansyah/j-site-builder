@@ -59,7 +59,11 @@
       >
         Ya, simpan ke draf
       </UButton>
-      <UButton v-show="modal.status === 'PUBLISH'" type="button">
+      <UButton
+        v-show="modal.status === 'PUBLISH'"
+        type="button"
+        @click="saveAsPublished"
+      >
         Ya, simpan post
       </UButton>
     </template>
@@ -228,6 +232,48 @@
         setModal({
           status: 'ERROR',
           title: 'Gagal Simpan ke Draf',
+          message:
+            'Mohon maaf, post yang Anda submit gagal disimpan. Mohon coba beberapa saat lagi.',
+        })
+      }, 500)
+
+      console.error(error)
+    }
+  }
+
+  async function saveAsPublished() {
+    const body = postStore.generateFormData({ status: 'PUBLISHED' })
+
+    setSubmitProgress(50)
+    setModal({
+      status: 'LOADING',
+      title: 'Menyimpan Post',
+      message: 'Mohon tunggu, penyimpanan post sedang diproses.',
+    })
+
+    const { status, error } = await $jSiteApi.post.createPost(
+      siteStore.siteId ?? '',
+      body,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      setSubmitProgress(100)
+
+      setTimeout(() => {
+        setModal({
+          status: 'SUCCESS',
+          title: 'Berhasil!',
+          message: 'Post yang Anda buat berhasil disimpan.',
+        })
+      }, 500)
+    }
+
+    if (status.value === 'error') {
+      setTimeout(() => {
+        setModal({
+          status: 'ERROR',
+          title: 'Gagal Simpan Post',
           message:
             'Mohon maaf, post yang Anda submit gagal disimpan. Mohon coba beberapa saat lagi.',
         })
