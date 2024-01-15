@@ -5,7 +5,7 @@
     </p>
     <p class="mb-[14px] font-lato text-sm text-gray-800">
       Ukuran maksimal file adalah 1 MB dengan resolusi 1080 x 720 . File yang
-      didukung adalah .jpg dan .png
+      didukung adalah .jpg, .png dan .webp
     </p>
 
     <!-- Image Dropzone -->
@@ -145,7 +145,7 @@
         postStore.setImage({
           id,
           uri: file.uri,
-          filename: file.filename,
+          filename: file.originalname,
         })
       }
     } catch (error) {

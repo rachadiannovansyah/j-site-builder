@@ -9,7 +9,7 @@
       <UTextarea
         v-model="title"
         :rows="2"
-        placeholder="Masukkan judul berita"
+        placeholder="Masukkan judul post"
         maxlength="255"
       />
       <template #help>

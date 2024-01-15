@@ -52,11 +52,12 @@
     <li
       v-for="tag in tags"
       :key="tag"
-      class="flex min-h-5 items-center justify-center rounded-full bg-gray-200 py-1 pl-2.5 pr-1"
+      class="flex min-h-5 max-w-[300px] items-center justify-center rounded-full bg-gray-200 py-1 pl-2.5 pr-1"
+      :title="tag"
     >
-      <span class="font-lato text-sm leading-none text-gray-600">
+      <p class="truncate font-lato text-sm leading-none text-gray-600">
         {{ tag }}
-      </span>
+      </p>
       <button class="relative top-[1px] ml-2" @click="handleDeleteTag(tag)">
         <NuxtIcon
           name="common/close"
@@ -151,7 +152,7 @@
     const schema = z
       .string()
       .trim()
-      .regex(/^[a-zA-Z0-9]*$/, 'Tag tidak boleh mengandung simbol')
+      .regex(/^[a-zA-Z0-9]*$/, 'Tag tidak boleh mengandung simbol dan spasi')
 
     return schema.parse(tag)
   }

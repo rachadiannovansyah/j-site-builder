@@ -29,7 +29,7 @@
                 aria-hidden="true"
               />
             </template>
-            Membuat Post
+            Buat Post Baru
           </UButton>
         </NuxtLink>
       </div>
@@ -58,7 +58,7 @@
                     aria-hidden="true"
                   />
                 </template>
-                Membuat Post
+                Buat Post Baru
               </UButton>
             </NuxtLink>
           </NoData>
