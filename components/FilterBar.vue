@@ -39,7 +39,12 @@
       prevent-close
       :ui="{ width: 'w-[600px]' }"
     >
-      <UForm :schema="formSchema" :state="filter" @submit="applyFilter">
+      <UForm
+        ref="filterForm"
+        :schema="formSchema"
+        :state="filter"
+        @submit="applyFilter"
+      >
         <UCard>
           <template #header>
             <div class="flex items-center justify-between">
@@ -200,6 +205,7 @@
     start_date: null as Date | null,
     end_date: null as Date | null,
   })
+  const filterForm = ref()
 
   const formSchema = z.object({
     categories: z.string().array().optional(),
@@ -216,7 +222,21 @@
       .date()
       .refine(
         () => {
-          if (filter.end_date && filter.start_date) {
+          if (filter.start_date !== null) {
+            // Check if end_date is required when start_date is not null
+            return filter.end_date !== null
+          }
+          // If start_date is null, no validation needed for end_date
+          return true
+        },
+        {
+          message: 'Tanggal Akhir kosong',
+        },
+      )
+      .refine(
+        () => {
+          if (filter.start_date !== null && filter.end_date !== null) {
+            // Additional validation to ensure end_date > start_date
             return filter.end_date > filter.start_date
           }
           return true
@@ -224,8 +244,7 @@
         {
           message: 'Tanggal akhir harus lebih besar dari tanggal awal',
         },
-      )
-      .optional(),
+      ),
   })
 
   watch(
@@ -238,7 +257,17 @@
     },
   )
 
+  watch(filter, async () => {
+    try {
+      await nextTick()
+      await filterForm.value.validate()
+    } catch (error) {
+      console.error(error)
+    }
+  })
   const isFormCompleted = computed(() => {
+    console.log(formSchema.safeParse(filter))
+
     return formSchema.safeParse(filter).success
   })
 
