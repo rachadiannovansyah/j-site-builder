@@ -266,8 +266,6 @@
     }
   })
   const isFormCompleted = computed(() => {
-    console.log(formSchema.safeParse(filter))
-
     return formSchema.safeParse(filter).success
   })
 
