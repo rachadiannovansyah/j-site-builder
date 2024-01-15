@@ -37,7 +37,7 @@
     <UModal
       :model-value="isModalOpen"
       prevent-close
-      :ui="{ width: 'w-[400px]' }"
+      :ui="{ width: 'w-[600px]' }"
     >
       <UForm :schema="formSchema" :state="filter" @submit="applyFilter">
         <UCard>
