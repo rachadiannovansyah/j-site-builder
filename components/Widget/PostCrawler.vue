@@ -39,7 +39,7 @@
           </p>
           <div class="flex gap-4">
             <div
-              v-for="(type, index) in POST_SORT_TYPE"
+              v-for="(type, index) in postType"
               :key="index"
               class="flex h-[54px] w-[200px] items-center justify-between rounded-[27px] border border-gray-300 bg-white py-1.5 pl-3 pr-4 focus:outline-none"
             >
@@ -49,7 +49,9 @@
                 {{ type.label }}
               </label>
               <UCheckbox
-                :v-model="postType.views"
+                :value="type.value"
+                :model-value="type.selected"
+                :checked="type.selected"
                 name="Terpopuler"
                 @change="onCheckedPostType(type.value)"
               />
@@ -62,7 +64,7 @@
             Pilih Format Tampilan
           </p>
           <RadioGroup
-            v-model="selectedPostFormat"
+            v-model="form.selectedPostFormat"
             class="flex justify-center gap-4"
           >
             <RadioGroupOption
@@ -101,10 +103,10 @@
         <div
           :class="{
             'flex max-h-[311px] w-full min-w-0 items-center justify-center rounded-[14px] border border-gray-400 bg-[#F9F9F9] p-2.5 px-6': true,
-            'bg-white': selectedPostFormat,
+            'bg-white': form.selectedPostFormat,
           }"
         >
-          <template v-if="selectedPostFormat">
+          <template v-if="form.selectedPostFormat">
             <div
               class="widget-post-crawler__preview flex max-h-[294px] w-full overflow-y-auto pt-4"
             >
@@ -146,7 +148,7 @@
           <UButton variant="ghost" color="gray" @click="$emit('close')">
             Batal
           </UButton>
-          <UButton> Simpan </UButton>
+          <UButton @click="onSave"> Simpan </UButton>
         </section>
       </template>
     </UCard>
@@ -160,16 +162,6 @@
     RadioGroupOption,
   } from '@headlessui/vue'
 
-  const POST_SORT_TYPE = [
-    {
-      label: 'Terpopuler',
-      value: 'views',
-    },
-    {
-      label: 'Terupdate',
-      value: 'published_at',
-    },
-  ]
   const POST_FORMAT_DISPLAY = [
     {
       label: 'Thumbnail View',
@@ -191,41 +183,53 @@
     },
   ]
 
-  const selectedPostType = reactive([] as string[])
-  const selectedPostFormat = ref('')
+  const form = reactive({
+    selectedPostType: [] as string[],
+    selectedPostFormat: '',
+  })
   const selectedPostPreview = ref('')
 
-  const postType = reactive({
-    views: false as boolean,
-    published_at: false as boolean,
-  })
+  const postType = reactive([
+    {
+      label: 'Terpopuler',
+      value: 'views',
+      selected: false as boolean,
+    },
+    {
+      label: 'Terupdate',
+      value: 'published_at',
+      selected: false as boolean,
+    },
+  ])
 
   const props = defineProps({
     open: {
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
 
-  defineEmits(['close'])
+  const pageStore = usePageStore()
+
+  const emit = defineEmits(['close'])
 
   watch(
-    selectedPostFormat,
+    () => form.selectedPostFormat,
     (value) => {
       if (value) {
         const findPost = POST_FORMAT_DISPLAY.find(
-          ({ value }) => value === selectedPostFormat.value,
+          ({ value }) => value === form.selectedPostFormat,
         )
         setPostPreview(findPost?.preview || '')
       }
-    },
-    { immediate: true },
-  )
-
-  watch(
-    selectedPostType,
-    (value) => {
-      console.log('selectedPostType', toRaw(value))
     },
     { immediate: true },
   )
@@ -236,18 +240,68 @@
 
   function onCheckedPostType(type: string) {
     if (type === 'views') {
-      postType.views = !postType.views
+      postType[0].selected = !postType[0].selected
     } else {
-      postType.published_at = !postType.published_at
+      postType[1].selected = !postType[1].selected
     }
 
-    const find = selectedPostType.findIndex((element) => element === type)
+    const find = form.selectedPostType.findIndex((element) => element === type)
     if (find < 0) {
-      selectedPostType.push(String(type))
+      form.selectedPostType.push(String(type))
     } else {
-      selectedPostType.splice(find, 1)
+      form.selectedPostType.splice(find, 1)
     }
   }
+
+  function onSave() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        sort_by: form.selectedPostType,
+        format: form.selectedPostFormat,
+      },
+    })
+    emit('close')
+  }
+
+  const currentStorePayload = computed(() => {
+    return pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+  })
+
+  /**
+   * Sync local state `form` with `pageStore` payload.
+   * This is to avoid unmatch data between local state and pageStore state.
+   */
+  function syncFormData() {
+    form.selectedPostType = currentStorePayload.value?.sort_by ?? []
+    form.selectedPostFormat = currentStorePayload.value?.format ?? ''
+    if (form.selectedPostType.length > 0) {
+      form.selectedPostType.map((type) => {
+        if (type === 'views') {
+          postType[0].selected = true
+        } else {
+          postType[1].selected = true
+        }
+      })
+    }
+  }
+
+  const isOpen = computed(() => {
+    return props.open
+  })
+
+  watch(isOpen, function (open) {
+    if (!open) {
+      // wait for modal transition to finish
+      setTimeout(() => {
+        syncFormData()
+      }, 300)
+    }
+  })
 </script>
 
 <style scoped>
