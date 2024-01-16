@@ -146,6 +146,7 @@
         return menu.type === value
       })
       params.status = findMenu?.status || ''
+      params.page = 1
       fetchDataPages()
     },
     { immediate: true },
