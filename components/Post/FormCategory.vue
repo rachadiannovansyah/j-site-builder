@@ -167,7 +167,7 @@
       </strong>
     </p>
 
-    <UFormGroup>
+    <UFormGroup name="edit-category">
       <UInput v-model.trim="editCategoryForm.name" maxlength="125" />
 
       <template #help>
