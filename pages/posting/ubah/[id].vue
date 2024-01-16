@@ -28,7 +28,7 @@
             </template>
             Simpan ke Draft
           </UButton>
-          <UButton type="submit" :disabled="!valid">
+          <UButton type="submit" :disabled="!valid || !isPostModified">
             <template #leading>
               <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
             </template>
@@ -134,6 +134,7 @@
 
 <script setup lang="ts">
   import { IPostResponse } from '~/repository/j-site/types/post'
+  import isEqual from 'lodash.isequal'
 
   definePageMeta({
     title: 'Posting',
@@ -198,6 +199,10 @@
     originalPost.tags = postData.data.tags
     originalPost.status = postData.data.status
   }
+
+  const isPostModified = computed(() => {
+    return !isEqual(originalPost, postStore.form)
+  })
 
   onMounted(() => {
     setInitialData()
