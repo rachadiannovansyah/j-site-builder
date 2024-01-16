@@ -156,7 +156,7 @@
       "
       :header="modal.title"
       button-position="center"
-      :with-close-button="true"
+      :with-close-button="false"
       :modal-ui="{
         width: 'sm:max-w-[533px]',
       }"
@@ -171,7 +171,7 @@
             aria-hidden="true"
           />
           <NuxtIcon
-            v-else
+            v-else-if="postActionStatus === POST_STATUS.ERROR"
             name="common/warning-triangle"
             class="text-base text-red-600"
             aria-hidden="true"
@@ -279,6 +279,7 @@
       })
 
       params.status = findMenu?.status || ''
+      params.page = 1
 
       fetchDataPost()
     },
