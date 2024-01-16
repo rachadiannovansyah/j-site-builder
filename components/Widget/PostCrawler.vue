@@ -37,39 +37,26 @@
           <p class="font-base font-lato font-medium text-gray-800">
             Pilih Kombinasi
           </p>
-          <RadioGroup v-model="selectedPostType" class="flex gap-4">
-            <RadioGroupOption
-              v-for="(type, index) in POST_SORT_TYPE"
+          <div class="flex gap-4">
+            <div
+              v-for="(type, index) in postType"
               :key="index"
-              v-slot="{ checked }"
-              :value="type.value"
+              class="flex h-[54px] w-[200px] items-center justify-between rounded-[27px] border border-gray-300 bg-white py-1.5 pl-3 pr-4 focus:outline-none"
             >
-              <div
-                :class="{
-                  'flex h-[54px] w-[200px] rounded-[27px] border border-gray-300 bg-white px-3 py-1.5 focus:outline-none': true,
-                  'cursor-pointer ring-1 ring-green-700': checked,
-                }"
+              <label
+                class="text-left font-lato text-sm font-medium text-gray-900"
               >
-                <div class="flex w-full items-center justify-between">
-                  <RadioGroupLabel
-                    class="text-left font-lato text-sm font-medium text-gray-900"
-                  >
-                    {{ type.label }}
-                  </RadioGroupLabel>
-                  <div
-                    v-if="checked"
-                    class="flex h-[22px] w-[22px] items-center justify-center"
-                  >
-                    <NuxtIcon
-                      name="common/check-circle"
-                      class="text-lg text-green-700"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-              </div>
-            </RadioGroupOption>
-          </RadioGroup>
+                {{ type.label }}
+              </label>
+              <UCheckbox
+                :value="type.value"
+                :model-value="type.selected"
+                :checked="type.selected"
+                name="Terpopuler"
+                @change="onCheckedPostType(type.value)"
+              />
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col gap-3 px-12">
@@ -77,7 +64,7 @@
             Pilih Format Tampilan
           </p>
           <RadioGroup
-            v-model="selectedPostFormat"
+            v-model="form.selectedPostFormat"
             class="flex justify-center gap-4"
           >
             <RadioGroupOption
@@ -116,10 +103,10 @@
         <div
           :class="{
             'flex max-h-[311px] w-full min-w-0 items-center justify-center rounded-[14px] border border-gray-400 bg-[#F9F9F9] p-2.5 px-6': true,
-            'bg-white': selectedPostFormat,
+            'bg-white': form.selectedPostFormat,
           }"
         >
-          <template v-if="selectedPostFormat">
+          <template v-if="form.selectedPostFormat">
             <div
               class="widget-post-crawler__preview flex max-h-[294px] w-full overflow-y-auto pt-4"
             >
@@ -161,7 +148,7 @@
           <UButton variant="ghost" color="gray" @click="$emit('close')">
             Batal
           </UButton>
-          <UButton> Simpan </UButton>
+          <UButton @click="onSave"> Simpan </UButton>
         </section>
       </template>
     </UCard>
@@ -175,16 +162,6 @@
     RadioGroupOption,
   } from '@headlessui/vue'
 
-  const POST_SORT_TYPE = [
-    {
-      label: 'Terpopuler',
-      value: 'views',
-    },
-    {
-      label: 'Terupdate',
-      value: 'published_at',
-    },
-  ]
   const POST_FORMAT_DISPLAY = [
     {
       label: 'Thumbnail View',
@@ -206,25 +183,50 @@
     },
   ]
 
-  const selectedPostType = ref('')
-  const selectedPostFormat = ref('')
+  const form = reactive({
+    selectedPostType: [] as string[],
+    selectedPostFormat: '',
+  })
   const selectedPostPreview = ref('')
+
+  const postType = reactive([
+    {
+      label: 'Terpopuler',
+      value: 'views',
+      selected: false as boolean,
+    },
+    {
+      label: 'Terupdate',
+      value: 'published_at',
+      selected: false as boolean,
+    },
+  ])
 
   const props = defineProps({
     open: {
       type: Boolean,
       default: false,
     },
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
   })
 
-  defineEmits(['close'])
+  const pageStore = usePageStore()
+
+  const emit = defineEmits(['close'])
 
   watch(
-    selectedPostFormat,
+    () => form.selectedPostFormat,
     (value) => {
       if (value) {
         const findPost = POST_FORMAT_DISPLAY.find(
-          ({ value }) => value === selectedPostFormat.value,
+          ({ value }) => value === form.selectedPostFormat,
         )
         setPostPreview(findPost?.preview || '')
       }
@@ -235,6 +237,71 @@
   function setPostPreview(value: string) {
     selectedPostPreview.value = value
   }
+
+  function onCheckedPostType(type: string) {
+    if (type === 'views') {
+      postType[0].selected = !postType[0].selected
+    } else {
+      postType[1].selected = !postType[1].selected
+    }
+
+    const find = form.selectedPostType.findIndex((element) => element === type)
+    if (find < 0) {
+      form.selectedPostType.push(String(type))
+    } else {
+      form.selectedPostType.splice(find, 1)
+    }
+  }
+
+  function onSave() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        sort_by: form.selectedPostType,
+        format: form.selectedPostFormat,
+      },
+    })
+    emit('close')
+  }
+
+  const currentStorePayload = computed(() => {
+    return pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+  })
+
+  /**
+   * Sync local state `form` with `pageStore` payload.
+   * This is to avoid unmatch data between local state and pageStore state.
+   */
+  function syncFormData() {
+    form.selectedPostType = currentStorePayload.value?.sort_by ?? []
+    form.selectedPostFormat = currentStorePayload.value?.format ?? ''
+    if (form.selectedPostType.length > 0) {
+      form.selectedPostType.map((type) => {
+        if (type === 'views') {
+          postType[0].selected = true
+        } else {
+          postType[1].selected = true
+        }
+      })
+    }
+  }
+
+  const isOpen = computed(() => {
+    return props.open
+  })
+
+  watch(isOpen, function (open) {
+    if (!open) {
+      // wait for modal transition to finish
+      setTimeout(() => {
+        syncFormData()
+      }, 300)
+    }
+  })
 </script>
 
 <style scoped>
