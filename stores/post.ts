@@ -1,4 +1,4 @@
-import { IFormStatus } from '~/repository/j-site/types/post'
+import { IFormStatus, IPostResponse } from '~/repository/j-site/types/post'
 
 type IForm = {
   title: string
@@ -79,6 +79,17 @@ export const usePostStore = defineStore('post', {
         tags: this.form.tags ? [...this.form.tags] : [],
         status: this.form.status,
       }
+    },
+    setInitialData(postData: IPostResponse) {
+      this.form.title = postData.data.title
+      this.form.image.uri = postData.data.image
+      this.form.image.id = postData.data.image
+      this.form.image.filename = postData.data.image
+      this.form.content = postData.data.content
+      this.form.author = postData.data.author
+      this.form.category = postData.data.category.id
+      this.form.tags = postData.data.tags
+      this.form.status = postData.data.status
     },
   },
 })
