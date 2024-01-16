@@ -14,15 +14,15 @@
         <p
           class="max-w-[500px] truncate text-sm font-medium text-blue-gray-800"
         >
-          {{ item.title }}
+          {{ item.title || '-' }}
         </p>
         <span
           class="max-w-[120px] truncate rounded-lg bg-gray-50 px-3 py-0.5 text-xs font-semibold text-gray-600"
         >
-          {{ item.category.name }}
+          {{ item.category?.name || '-' }}
         </span>
         <span class="rounded-lg bg-gray-100 px-3 py-0.5 text-xs text-gray-600">
-          {{ formatDate(item.updated_at) }}
+          {{ item.updated_at ? formatDate(item.updated_at) : '-' }}
         </span>
         <span
           v-if="item.status"
@@ -37,7 +37,7 @@
               class="text-base"
               aria-hidden="true"
             />
-            <p>{{ statusPost[0].label }}</p>
+            <p>{{ statusPost[0].label || '-' }}</p>
           </div>
           <div
             v-else-if="item.status === statusPost[1].status"
@@ -49,7 +49,7 @@
               aria-hidden="true"
               filled
             />
-            <p>{{ statusPost[1].label }}</p>
+            <p>{{ statusPost[1].label || '-' }}</p>
           </div>
           <div
             v-else
@@ -60,7 +60,7 @@
               class="text-base"
               aria-hidden="true"
             />
-            <p>{{ statusPost[2].label }}</p>
+            <p>{{ statusPost[2].label || '-' }}</p>
           </div>
         </span>
       </div>
