@@ -237,7 +237,7 @@
         () => {
           if (filter.start_date !== null && filter.end_date !== null) {
             // Additional validation to ensure end_date > start_date
-            return filter.end_date > filter.start_date
+            return filter.end_date >= filter.start_date
           }
           return true
         },
