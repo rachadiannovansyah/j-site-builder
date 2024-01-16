@@ -72,9 +72,7 @@
             <button>Lihat Detail</button>
           </li>
           <li>
-            <NuxtLink :to="`/posting/ubah/${item.id}`">
-              <button>Ubah</button>
-            </NuxtLink>
+            <NuxtLink :to="`/posting/ubah/${item.id}`"> Ubah </NuxtLink>
           </li>
           <li v-if="item.status === statusPost[0].status">
             <button @click="onArchivePost(item.id)">Arsipkan</button>
