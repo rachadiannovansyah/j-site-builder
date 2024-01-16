@@ -17,7 +17,6 @@
           {{ item.title }}
         </p>
         <span
-          v-if="item.category?.name"
           class="max-w-[120px] truncate rounded-lg bg-gray-50 px-3 py-0.5 text-xs font-semibold text-gray-600"
         >
           {{ item.category.name }}
