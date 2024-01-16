@@ -50,10 +50,16 @@
         </div>
       </div>
       <div class="h-full w-full grow flex-col">
-        <h1 class="font-roboto text-xl font-medium leading-7 text-gray-900">
+        <h1
+          class="font-roboto text-xl font-medium leading-7 text-gray-900"
+          data-cy="page-builder__modal-title"
+        >
           {{ modal.title }}
         </h1>
-        <span class="font-lato text-sm leading-6 text-gray-600">
+        <span
+          class="font-lato text-sm leading-6 text-gray-600"
+          data-cy="page-builder__modal-message"
+        >
           {{ modal.message }}
         </span>
       </div>
@@ -62,6 +68,7 @@
       <UButton
         v-if="modal.status === MODAL_STATE.CANCEL_CONFIRMATION"
         variant="outline"
+        data-cy="page-builder__button-back-and-draft-page"
         @click="actionDraftPage"
       >
         Kembali dan simpan draft
@@ -70,11 +77,14 @@
         v-if="modal.status === MODAL_STATE.CANCEL_CONFIRMATION"
         to="/halaman"
       >
-        <UButton> Ya, saya yakin </UButton>
+        <UButton data-cy="page-builder__button-confirmation">
+          Ya, saya yakin
+        </UButton>
       </NuxtLink>
       <BaseButton
         v-if="modal.status !== MODAL_STATE.CANCEL_CONFIRMATION"
         variant="secondary"
+        data-cy="page-builder__button-cancel"
         @click="onCancel"
       >
         Batalkan
@@ -82,6 +92,7 @@
       <BaseButton
         v-if="modal.status === MODAL_STATE.STATUS_DRAFT"
         variant="primary"
+        data-cy="page-builder__button-draft-page"
         @click="actionDraftPage()"
       >
         Iya, saya yakin
@@ -89,6 +100,7 @@
       <BaseButton
         v-if="modal.status === MODAL_STATE.STATUS_PUBLISH"
         variant="primary"
+        data-cy="page-builder__button-publish-page"
         @click="actionPublishPage()"
       >
         Iya, saya yakin
@@ -133,13 +145,20 @@
         />
       </div>
       <div class="h-full w-full grow flex-col">
-        <p class="font-lato text-sm leading-6 text-gray-600">
+        <p
+          class="font-lato text-sm leading-6 text-gray-600"
+          data-cy="page-builder__modal-message"
+        >
           {{ modal.message }}
         </p>
       </div>
     </div>
     <template #footer>
-      <BaseButton variant="primary" @click="onSuccessStorePage">
+      <BaseButton
+        variant="primary"
+        data-cy="page-builder__button-store-page"
+        @click="onSuccessStorePage"
+      >
         Saya Mengerti
       </BaseButton>
     </template>
