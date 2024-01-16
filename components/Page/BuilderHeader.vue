@@ -11,8 +11,13 @@
         alt="Portal Jabar Logo"
         width="35"
         height="36"
+        data-cy="page-builder-header__logo-image"
       />
-      <h1 v-show="isOpen" class="font-lato text-xl font-bold text-gray-900">
+      <h1
+        v-show="isOpen"
+        class="font-lato text-xl font-bold text-gray-900"
+        data-cy="page-builder-header__logo-name"
+      >
         J-Site
       </h1>
       <UButton
@@ -21,6 +26,7 @@
         size="sm"
         color="gray"
         class="rotate-90"
+        data-cy="page-builder-header__button-toggle-header"
         @click="toggleOpenHeader"
       >
         <NuxtIcon
@@ -45,12 +51,17 @@
         <span
           v-else
           class="rounded-lg bg-[#F7F7F9] px-2 py-1.5 text-xs text-[#788896]"
+          data-cy="page-builder-header__domain-site"
         >
           {{ domain }}
         </span>
       </div>
       <div class="flex items-center justify-center gap-4">
-        <UButton variant="ghost" @click="$emit('back')">
+        <UButton
+          variant="ghost"
+          data-cy="page-builder-header__button-back"
+          @click="$emit('back')"
+        >
           <template #leading>
             <NuxtIcon
               name="common/arrow-left"
@@ -60,17 +71,30 @@
           </template>
           Kembali ke Halaman
         </UButton>
-        <UButton variant="ghost" color="primary" @click="$emit('draft')">
+        <UButton
+          variant="ghost"
+          color="primary"
+          data-cy="page-builder-header__button-save-draft"
+          @click="$emit('draft')"
+        >
           Simpan Draft
         </UButton>
         <!-- TODO: update preview feature -->
-        <UButton variant="outline" disabled @click="$emit('preview')">
+        <UButton
+          variant="outline"
+          disabled
+          data-cy="page-builder-header__button-preview"
+          @click="$emit('preview')"
+        >
           Pratinjau
           <template #trailing>
             <NuxtIcon name="common/eye" class="text-xl" aria-hidden="true" />
           </template>
         </UButton>
-        <UButton @click="$emit('publish')">
+        <UButton
+          data-cy="page-builder-header__button-save-publish"
+          @click="$emit('publish')"
+        >
           <template #leading>
             <NuxtIcon name="common/plane" class="text-xl" aria-hidden="true" />
           </template>
@@ -81,6 +105,7 @@
           color="gray"
           class="-rotate-90"
           size="sm"
+          data-cy="page-builder-header__button-toggle-header"
           @click="toggleOpenHeader"
         >
           <NuxtIcon
