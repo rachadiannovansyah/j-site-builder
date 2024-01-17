@@ -4,6 +4,7 @@
       v-model="author"
       placeholder="Masukkan Nama Penulis"
       maxlength="150"
+      data-cy="post-form__author-section__input-text"
     />
   </UFormGroup>
 </template>
