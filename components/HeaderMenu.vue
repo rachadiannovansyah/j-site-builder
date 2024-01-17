@@ -1,5 +1,5 @@
 <template>
-  <Menu v-slot="{ open }" as="div" class="w-fit">
+  <Menu v-slot="{ open }" as="div" class="z-50 w-fit">
     <div class="mr-2 grid grid-cols-[34px,_minmax(0,_1fr)] gap-4">
       <!-- @todo: change this user avatar to be dynamic -->
       <img
