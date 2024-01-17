@@ -129,6 +129,10 @@
   const siteStore = useSiteStore()
   const { $jSiteApi } = useNuxtApp()
 
+  onBeforeUnmount(() => {
+    postStore.$reset()
+  })
+
   interface IModalConfirmation {
     status:
       | 'NONE'
