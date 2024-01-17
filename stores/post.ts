@@ -82,9 +82,9 @@ export const usePostStore = defineStore('post', {
     },
     setInitialData(postData: IPostResponse) {
       this.form.title = postData.data.title
-      this.form.image.uri = postData.data.image
-      this.form.image.id = postData.data.image
-      this.form.image.filename = postData.data.image
+      this.form.image.uri = postData.data.image.uri
+      this.form.image.id = postData.data.image.filename
+      this.form.image.filename = postData.data.image.originalname
       this.form.content = postData.data.content
       this.form.author = postData.data.author
       this.form.category = postData.data.category.id

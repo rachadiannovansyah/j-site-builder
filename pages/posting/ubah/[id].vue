@@ -1,5 +1,5 @@
 <template>
-  <PostForm @submit-form="openPublishConfirmation">
+  <PostForm @submit-form="openUpdateConfirmation">
     <template #header="{ valid }">
       <nav class="mb-[14px] flex items-center justify-between py-[14px]">
         <UButton variant="outline" @click="$router.back">
@@ -15,6 +15,7 @@
 
         <div class="flex gap-x-[14px]">
           <UButton
+            v-if="postStore.form.status !== 'PUBLISHED'"
             variant="outline"
             type="button"
             @click="openSaveAsDraftConfirmation"
@@ -39,9 +40,9 @@
     </template>
   </PostForm>
 
-  <!-- Confirmation Modal for Save as Draft and Publish -->
+  <!-- Confirmation Modal for Save as Draft and Update -->
   <BaseModal
-    :open="modal.status === 'SAVE_AS_DRAFT' || modal.status === 'PUBLISH'"
+    :open="modal.status === 'SAVE_AS_DRAFT' || modal.status === 'UPDATE'"
     :header="modal.title"
     button-position="right"
   >
@@ -60,9 +61,9 @@
         Ya, simpan ke draf
       </UButton>
       <UButton
-        v-show="modal.status === 'PUBLISH'"
+        v-show="modal.status === 'UPDATE'"
         type="button"
-        @click="saveAsPublished"
+        @click="updatePost"
       >
         Ya, simpan post
       </UButton>
@@ -190,9 +191,9 @@
 
   function setOriginalPost(postData: IPostResponse) {
     originalPost.title = postData.data.title
-    originalPost.image.id = postData.data.image
-    originalPost.image.uri = postData.data.image
-    originalPost.image.filename = postData.data.image
+    originalPost.image.id = postData.data.image.filename
+    originalPost.image.uri = postData.data.image.uri
+    originalPost.image.filename = postData.data.image.originalname
     originalPost.content = postData.data.content
     originalPost.author = postData.data.author
     originalPost.category = postData.data.category.id
@@ -212,7 +213,7 @@
     status:
       | 'NONE'
       | 'SAVE_AS_DRAFT'
-      | 'PUBLISH'
+      | 'UPDATE'
       | 'LOADING'
       | 'SUCCESS'
       | 'ERROR'
@@ -243,11 +244,11 @@
     })
   }
 
-  function openPublishConfirmation() {
+  function openUpdateConfirmation() {
     setModal({
-      status: 'PUBLISH',
-      title: 'Simpan Post',
-      message: 'Apakah Anda ingin menyimpan Post ini?',
+      status: 'UPDATE',
+      title: 'Perbaharui Post',
+      message: 'Apakah Anda ingin memperbaharui Post ini?',
     })
   }
 
@@ -270,6 +271,7 @@
   }
 
   async function saveAsDraft() {
+    const postId = route.params.id.toString()
     const body = postStore.generateFormData({ status: 'DRAFT' })
 
     if (!body.title) {
@@ -289,8 +291,9 @@
       message: 'Mohon tunggu, penyimpanan post ke Draf sedang diproses.',
     })
 
-    const { status, error } = await $jSiteApi.post.createPost(
+    const { status, error } = await $jSiteApi.post.updatePost(
       siteStore.siteId ?? '',
+      postId,
       body,
       { server: false },
     )
@@ -321,7 +324,7 @@
     }
   }
 
-  async function saveAsPublished() {
+  async function updatePost() {
     const body = postStore.generateFormData({ status: 'PUBLISHED' })
 
     setSubmitProgress(50)

@@ -47,7 +47,14 @@ export interface IPostResponse {
     }
     content: string
     id: string
-    image: string
+    image: {
+      filename: string
+      mimetype: string
+      originalname: string
+      path: string
+      size: number
+      uri: string
+    }
     status: IFormStatus
     tags: string[]
     title: string
