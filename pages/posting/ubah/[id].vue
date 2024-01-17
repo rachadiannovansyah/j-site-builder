@@ -15,7 +15,7 @@
 
         <div class="flex gap-x-[14px]">
           <UButton
-            v-if="postStore.form.status !== 'PUBLISHED'"
+            v-if="postStore.form.status === 'DRAFT'"
             variant="outline"
             type="button"
             @click="openSaveAsDraftConfirmation"
@@ -136,6 +136,7 @@
 <script setup lang="ts">
   import { IPostResponse } from '~/repository/j-site/types/post'
   import isEqual from 'lodash.isequal'
+  import debounce from 'lodash.debounce'
 
   definePageMeta({
     title: 'Posting',
@@ -146,20 +147,6 @@
   const { $jSiteApi } = useNuxtApp()
   const route = useRoute()
 
-  const originalPost = reactive({
-    title: '',
-    image: {
-      id: '',
-      uri: '',
-      filename: '',
-    },
-    content: '',
-    author: '',
-    category: '',
-    tags: [''],
-    status: '',
-  })
-
   async function setInitialData() {
     const postId = route.params.id.toString()
 
@@ -167,9 +154,7 @@
       data: postData,
       status,
       error,
-    } = await $jSiteApi.post.getPostById(siteStore?.siteId ?? '', postId, {
-      server: false,
-    })
+    } = await $jSiteApi.post.getPostById(siteStore?.siteId ?? '', postId)
 
     if (status.value === 'success') {
       if (postData.value) {
@@ -189,6 +174,26 @@
     }
   }
 
+  onMounted(() => {
+    setInitialData()
+  })
+
+  const originalPost = {
+    title: '',
+    image: {
+      id: '',
+      uri: '',
+      filename: '',
+    },
+    content: '',
+    author: '',
+    category: '',
+    tags: [''],
+    status: '',
+  }
+
+  const isPostModified = ref(false)
+
   function setOriginalPost(postData: IPostResponse) {
     originalPost.title = postData.data.title
     originalPost.image.id = postData.data.image.filename
@@ -197,17 +202,9 @@
     originalPost.content = postData.data.content
     originalPost.author = postData.data.author
     originalPost.category = postData.data.category.id
-    originalPost.tags = postData.data.tags
+    originalPost.tags = [...postData.data.tags]
     originalPost.status = postData.data.status
   }
-
-  const isPostModified = computed(() => {
-    return !isEqual(originalPost, postStore.form)
-  })
-
-  onMounted(() => {
-    setInitialData()
-  })
 
   interface IModalConfirmation {
     status:
@@ -325,17 +322,19 @@
   }
 
   async function updatePost() {
+    const postId = route.params.id.toString()
     const body = postStore.generateFormData({ status: 'PUBLISHED' })
 
     setSubmitProgress(50)
     setModal({
       status: 'LOADING',
-      title: 'Menyimpan Post',
+      title: 'Memperbaharui Post',
       message: 'Mohon tunggu, penyimpanan post sedang diproses.',
     })
 
-    const { status, error } = await $jSiteApi.post.createPost(
+    const { status, error } = await $jSiteApi.post.updatePost(
       siteStore.siteId ?? '',
+      postId,
       body,
       { server: false },
     )
@@ -347,7 +346,7 @@
         setModal({
           status: 'SUCCESS',
           title: 'Berhasil!',
-          message: 'Post yang Anda buat berhasil disimpan.',
+          message: 'Post yang Anda perbaharui berhasil disimpan.',
         })
       }, 500)
     }
@@ -356,13 +355,27 @@
       setTimeout(() => {
         setModal({
           status: 'ERROR',
-          title: 'Gagal Simpan Post',
+          title: 'Gagal Perbaharui Post',
           message:
-            'Mohon maaf, post yang Anda submit gagal disimpan. Mohon coba beberapa saat lagi.',
+            'Mohon maaf, post yang Anda perbaharui gagal disimpan. Mohon coba beberapa saat lagi.',
         })
       }, 500)
 
       console.error(error)
     }
   }
+
+  /**
+   * Watch form state and deterimine if user already
+   * made changes compared to the original post
+   */
+  watch(
+    postStore.form,
+    debounce((formState) => {
+      isPostModified.value = !isEqual(originalPost, formState)
+    }, 500),
+    {
+      deep: true,
+    },
+  )
 </script>
