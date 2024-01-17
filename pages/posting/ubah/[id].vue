@@ -65,7 +65,7 @@
         type="button"
         @click="updatePost"
       >
-        Ya, simpan post
+        Ya, perbaharui post
       </UButton>
     </template>
   </BaseModal>
