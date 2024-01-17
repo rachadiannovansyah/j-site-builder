@@ -2,7 +2,7 @@
   <PostForm @submit-form="openUpdateConfirmation">
     <template #header="{ valid }">
       <nav class="mb-[14px] flex items-center justify-between py-[14px]">
-        <UButton variant="outline" @click="$router.back">
+        <UButton variant="outline" @click="handleGoBack">
           <template #leading>
             <NuxtIcon
               name="common/arrow-left"
@@ -131,6 +131,32 @@
       </UButton>
     </template>
   </BaseModal>
+
+  <!-- Exit/Leave Confirmation -->
+  <BaseModal
+    :open="modal.status === 'LEAVING'"
+    :header="modal.title"
+    button-position="center"
+  >
+    <p class="mb-4 flex items-center">
+      <NuxtIcon
+        name="common/warning-triangle"
+        class="mr-3 inline-block text-xl text-yellow-500"
+        aria-hidden="true"
+      />
+      <span class="text-md font-lato leading-6 text-gray-700">
+        {{ modal.message }}
+      </span>
+    </p>
+    <template #footer>
+      <UButton variant="outline" type="button" @click="closeModal">
+        Batal
+      </UButton>
+      <UButton type="button" @click="navigateTo('/posting')">
+        Ya, batalkan perubahan
+      </UButton>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -176,7 +202,16 @@
 
   onMounted(() => {
     setInitialData()
+    window.addEventListener('beforeunload', beforeUnloadHandler)
   })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', beforeUnloadHandler)
+  })
+
+  function beforeUnloadHandler(event: Event) {
+    event.preventDefault()
+  }
 
   const originalPost = {
     title: '',
@@ -215,6 +250,7 @@
       | 'SUCCESS'
       | 'ERROR'
       | 'NOT_FOUND'
+      | 'LEAVING'
     title: string
     message: string
     progress?: number
@@ -363,6 +399,20 @@
 
       console.error(error)
     }
+  }
+
+  async function handleGoBack() {
+    if (isPostModified.value) {
+      setModal({
+        status: 'LEAVING',
+        title: 'Membatalkan Perubahan',
+        message: 'Apakah Anda yakin ingin membatalkan perubahan?',
+      })
+
+      return
+    }
+
+    return await navigateTo('/posting')
   }
 
   /**
