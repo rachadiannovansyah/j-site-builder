@@ -18,6 +18,7 @@
           size="sm"
           :square="true"
           :ui="{ variant: { outline: 'ring-gray-300' } }"
+          data-cy="page-builder-aside__button-toggle"
           @click="toggleOpenSide"
         >
           <NuxtIcon
@@ -29,6 +30,7 @@
         <h1
           v-show="isOpen"
           class="font-roboto text-base font-medium text-green-700"
+          data-cy="page-builder-aside__header"
         >
           Atribut
         </h1>
@@ -39,11 +41,17 @@
         <BaseInput
           :model-value="title"
           label="Judul Page"
+          data-cy="page-builder-aside__title"
           @update:model-value="pageStore.setPageTitle($event)"
         />
       </div>
       <div class="flex w-full flex-col gap-1">
-        <BaseInput :model-value="lastUpdate" label="Update Terakhir" disabled />
+        <BaseInput
+          :model-value="lastUpdate"
+          label="Update Terakhir"
+          disabled
+          data-cy="page-builder-aside__last-update"
+        />
       </div>
     </div>
   </aside>
