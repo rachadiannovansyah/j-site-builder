@@ -48,6 +48,7 @@ export interface IPostResponse {
     content: string
     id: string
     image: {
+      id: string
       filename: string
       mimetype: string
       originalname: string

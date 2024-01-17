@@ -231,7 +231,7 @@
 
   function setOriginalPost(postData: IPostResponse) {
     originalPost.title = postData.data.title
-    originalPost.image.id = postData.data.image.filename
+    originalPost.image.id = postData.data.image.id
     originalPost.image.uri = postData.data.image.uri
     originalPost.image.filename = postData.data.image.originalname
     originalPost.content = postData.data.content
