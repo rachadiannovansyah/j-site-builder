@@ -207,6 +207,7 @@
 
   onBeforeUnmount(() => {
     window.removeEventListener('beforeunload', beforeUnloadHandler)
+    postStore.$reset()
   })
 
   function beforeUnloadHandler(event: Event) {
