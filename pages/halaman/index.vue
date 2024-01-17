@@ -6,7 +6,11 @@
     >
       <div class="mb-8 flex items-start justify-between sm:flex-wrap">
         <div class="flex gap-8">
-          <SearchBar placeholder="Cari Halaman" class="max-w-[181px]" />
+          <SearchBar
+            placeholder="Cari Halaman"
+            class="max-w-[181px]"
+            @input="onSearch($event)"
+          />
           <FilterBar />
         </div>
         <UButton
@@ -229,6 +233,12 @@
 
   function onNextPage() {
     params.page = Number(params.page) + 1
+    fetchDataPages()
+  }
+
+  function onSearch(query: string) {
+    params.q = query
+    params.page = 1
     fetchDataPages()
   }
 </script>
