@@ -196,6 +196,7 @@
   import { POST_TAB_MENU } from '~/common/constant/navigation'
   import { IPostData, IMetaData } from '~/repository/j-site/types/post'
   import { ICategory } from '~/repository/j-site/types/category'
+  import debounce from 'lodash.debounce'
 
   definePageMeta({
     title: 'Posting',
@@ -413,11 +414,11 @@
     fetchDataPost()
   }
 
-  function onSearch(query: string) {
+  const onSearch = debounce((query: string) => {
     params.q = query
     params.page = 1
     fetchDataPost()
-  }
+  }, 500)
 
   async function onArchivePost(id: string) {
     postActionStatus.value = POST_STATUS.ARCHIVE
