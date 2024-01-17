@@ -2,7 +2,11 @@
   <PostForm @submit-form="openUpdateConfirmation">
     <template #header="{ valid }">
       <nav class="mb-[14px] flex items-center justify-between py-[14px]">
-        <UButton variant="outline" @click="handleGoBack">
+        <UButton
+          variant="outline"
+          data-cy="post-form__back-button"
+          @click="handleGoBack"
+        >
           <template #leading>
             <NuxtIcon
               name="common/arrow-left"
@@ -18,6 +22,7 @@
             v-if="postStore.form.status === 'DRAFT'"
             variant="outline"
             type="button"
+            data-cy="post-form__save-as-draft-button"
             @click="openSaveAsDraftConfirmation"
           >
             <template #leading>
@@ -29,7 +34,11 @@
             </template>
             Simpan ke Draft
           </UButton>
-          <UButton type="submit" :disabled="!valid || !isPostModified">
+          <UButton
+            type="submit"
+            :disabled="!valid || !isPostModified"
+            data-cy="post-form__update-button"
+          >
             <template #leading>
               <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
             </template>
@@ -46,16 +55,25 @@
     :header="modal.title"
     button-position="right"
   >
-    <p class="text-md mb-4 font-lato leading-6 text-gray-700">
+    <p
+      class="text-md mb-4 font-lato leading-6 text-gray-700"
+      data-cy="post-form__confirmation-modal__message"
+    >
       {{ modal.message }}
     </p>
     <template #footer>
-      <UButton variant="outline" type="button" @click="closeModal">
+      <UButton
+        variant="outline"
+        type="button"
+        data-cy="post-form__confirmation-modal__cancel-button"
+        @click="closeModal"
+      >
         Batal
       </UButton>
       <UButton
         v-show="modal.status === 'SAVE_AS_DRAFT'"
         type="button"
+        data-cy="post-form__confirmation-modal__save-as-draft-button"
         @click="saveAsDraft"
       >
         Ya, simpan ke draf
@@ -63,6 +81,7 @@
       <UButton
         v-show="modal.status === 'UPDATE'"
         type="button"
+        data-cy="post-form__confirmation-modal__update-button"
         @click="updatePost"
       >
         Ya, perbaharui post
@@ -101,7 +120,10 @@
         class="mr-3 inline-block text-xl text-yellow-500"
         aria-hidden="true"
       />
-      <span class="text-md font-lato leading-6 text-gray-700">
+      <span
+        class="text-md font-lato leading-6 text-gray-700"
+        data-cy="post-form__alert-modal__message"
+      >
         {{ modal.message }}
       </span>
     </p>
@@ -109,6 +131,7 @@
       <UButton
         v-show="modal.status === 'ERROR'"
         type="button"
+        data-cy="post-form__alert-modal__confirm-button"
         @click="closeModal"
       >
         Saya Mengerti
@@ -117,6 +140,7 @@
       <UButton
         v-show="modal.status === 'NOT_FOUND'"
         type="button"
+        data-cy="post-form__alert-modal__confirm-button"
         @click="navigateTo('/posting')"
       >
         Saya Mengerti
@@ -125,6 +149,7 @@
       <UButton
         v-show="modal.status === 'SUCCESS'"
         type="button"
+        data-cy="post-form__alert-modal__confirm-button"
         @click="navigateTo('/posting')"
       >
         Saya Mengerti
@@ -144,15 +169,27 @@
         class="mr-3 inline-block text-xl text-yellow-500"
         aria-hidden="true"
       />
-      <span class="text-md font-lato leading-6 text-gray-700">
+      <span
+        class="text-md font-lato leading-6 text-gray-700"
+        data-cy="post-form__leaving-modal__message"
+      >
         {{ modal.message }}
       </span>
     </p>
     <template #footer>
-      <UButton variant="outline" type="button" @click="closeModal">
+      <UButton
+        variant="outline"
+        type="button"
+        data-cy="post-form__leaving-modal__cancel-button"
+        @click="closeModal"
+      >
         Batal
       </UButton>
-      <UButton type="button" @click="navigateTo('/posting')">
+      <UButton
+        type="button"
+        data-cy="post-form__leaving-modal__leave-button"
+        @click="navigateTo('/posting')"
+      >
         Ya, batalkan perubahan
       </UButton>
     </template>
