@@ -96,6 +96,7 @@
 </template>
 
 <script setup lang="ts">
+  import debounce from 'lodash.debounce'
   import { PAGE_TAB_MENU } from '~/common/constant/navigation'
   import { IMetaData, IPageDataExtended } from '~/repository/j-site/types/page'
 
@@ -236,9 +237,9 @@
     fetchDataPages()
   }
 
-  function onSearch(query: string) {
+  const onSearch = debounce((query: string) => {
     params.q = query
     params.page = 1
     fetchDataPages()
-  }
+  }, 500)
 </script>
