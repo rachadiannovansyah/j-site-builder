@@ -1,7 +1,11 @@
 <template>
   <div class="rounded-lg bg-white p-[14px]">
     <UFormGroup name="content">
-      <Editor v-model="content" v-bind="tinyMCEConfig" />
+      <Editor
+        v-model="content"
+        v-bind="tinyMCEConfig"
+        data-cy="post-form__content-section__editor"
+      />
     </UFormGroup>
   </div>
 </template>
