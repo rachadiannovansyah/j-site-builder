@@ -36,3 +36,30 @@ export interface IPostBodyRequest {
   tags: string[]
   status: IFormStatus | null
 }
+
+export interface IPostResponse {
+  data: {
+    author: string
+    category: {
+      id: string
+      is_deletable: boolean
+      name: string
+    }
+    content: string
+    id: string
+    image: {
+      id: string
+      filename: string
+      mimetype: string
+      originalname: string
+      path: string
+      size: number
+      uri: string
+    }
+    status: IFormStatus
+    tags: string[]
+    title: string
+    updated_at: string
+    _id: string
+  }
+}
