@@ -20,6 +20,7 @@
       <div class="rounded-lg bg-white p-[14px]">
         <p
           class="mb-[14px] font-roboto text-base font-medium leading-6 text-green-700"
+          data-cy="post-form__author-section__title"
         >
           Nama, Kategori dan Tag
         </p>
