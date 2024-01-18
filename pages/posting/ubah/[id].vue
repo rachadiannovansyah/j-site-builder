@@ -232,12 +232,12 @@
 
   function setOriginalPost(postData: IPostResponse) {
     originalPost.title = postData.data.title
-    originalPost.image.id = postData.data.image.id
-    originalPost.image.uri = postData.data.image.uri
-    originalPost.image.filename = postData.data.image.originalname
+    originalPost.image.id = postData.data.image?.id ?? ''
+    originalPost.image.uri = postData.data.image?.uri ?? ''
+    originalPost.image.filename = postData.data.image?.originalname ?? ''
     originalPost.content = postData.data.content
     originalPost.author = postData.data.author
-    originalPost.category = postData.data.category.id
+    originalPost.category = postData.data.category?.id ?? ''
     originalPost.tags = [...postData.data.tags]
     originalPost.status = postData.data.status
   }
