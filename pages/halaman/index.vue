@@ -2,7 +2,7 @@
   <div class="h-full w-full">
     <TabMenu v-if="route.path !== '/halaman/buat'" :tabs="PAGE_TAB_MENU" />
     <section
-      class="flex h-full w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
+      class="flex h-fit w-full flex-col gap-4 rounded-lg bg-white bg-pattern-content bg-right-top bg-no-repeat px-3.5 py-7"
     >
       <div class="mb-8 flex items-start justify-between sm:flex-wrap">
         <div class="flex gap-8">
@@ -141,7 +141,6 @@
     }
 
     pageStore.$reset()
-    fetchDataPages()
   })
 
   watch(
