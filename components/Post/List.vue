@@ -69,9 +69,6 @@
           class="flex w-[130px] flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
         >
           <li>
-            <button>Lihat Detail</button>
-          </li>
-          <li>
             <NuxtLink :to="`/posting/ubah/${item.id}`"> Ubah </NuxtLink>
           </li>
           <li v-if="item.status === statusPost[0].status">
