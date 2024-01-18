@@ -29,21 +29,23 @@
             </template>
             Simpan ke Draft
           </UButton>
+
           <UButton
-            v-if="postStore.form.status === 'PUBLISHED'"
+            v-if="postStore.form.status === 'DRAFT'"
             type="submit"
             :disabled="!valid || !isPostModified"
           >
             <template #leading>
               <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
             </template>
-            Perbaharui Post
+            Terbitkan Post
           </UButton>
+
           <UButton v-else type="submit" :disabled="!valid || !isPostModified">
             <template #leading>
               <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
             </template>
-            Terbitkan Post
+            Perbaharui Post
           </UButton>
         </div>
       </nav>
