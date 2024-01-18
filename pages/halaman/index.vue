@@ -141,7 +141,6 @@
     }
 
     pageStore.$reset()
-    fetchDataPages()
   })
 
   watch(
