@@ -29,11 +29,21 @@
             </template>
             Simpan ke Draft
           </UButton>
-          <UButton type="submit" :disabled="!valid || !isPostModified">
+          <UButton
+            v-if="postStore.form.status === 'PUBLISHED'"
+            type="submit"
+            :disabled="!valid || !isPostModified"
+          >
             <template #leading>
               <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
             </template>
             Perbaharui Post
+          </UButton>
+          <UButton v-else type="submit" :disabled="!valid || !isPostModified">
+            <template #leading>
+              <NuxtIcon name="common/file" aria-hidden="true" class="text-xl" />
+            </template>
+            Terbitkan Post
           </UButton>
         </div>
       </nav>
@@ -61,10 +71,13 @@
         Ya, simpan ke draf
       </UButton>
       <UButton
-        v-show="modal.status === 'UPDATE'"
+        v-if="modal.status === 'UPDATE' && postStore.form.status === 'DRAFT'"
         type="button"
-        @click="updatePost"
+        @click="publishPost"
       >
+        Ya, simpan post
+      </UButton>
+      <UButton v-else type="button" @click="updatePost">
         Ya, perbaharui post
       </UButton>
     </template>
@@ -279,7 +292,15 @@
   }
 
   function openUpdateConfirmation() {
-    setModal({
+    if (postStore.form.status === 'DRAFT') {
+      return setModal({
+        status: 'UPDATE',
+        title: 'Simpan Post',
+        message: 'Apakah Anda ingin menyimpan Post ini?',
+      })
+    }
+
+    return setModal({
       status: 'UPDATE',
       title: 'Perbaharui Post',
       message: 'Apakah Anda ingin memperbaharui Post ini?',
@@ -358,6 +379,56 @@
     }
   }
 
+  /**
+   * Update post data from status 'DRAFT' to status 'PUBLISHED'
+   */
+  async function publishPost() {
+    const postId = route.params.id.toString()
+    const body = postStore.generateFormData({ status: 'PUBLISHED' })
+
+    setSubmitProgress(50)
+    setModal({
+      status: 'LOADING',
+      title: 'Menyimpan Post',
+      message: 'Mohon tunggu, penyimpanan post sedang diproses.',
+    })
+
+    const { status, error } = await $jSiteApi.post.updatePost(
+      siteStore.siteId ?? '',
+      postId,
+      body,
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      setSubmitProgress(100)
+
+      setTimeout(() => {
+        setModal({
+          status: 'SUCCESS',
+          title: 'Berhasil!',
+          message: 'Post yang Anda buat berhasil disimpan.',
+        })
+      }, 500)
+    }
+
+    if (status.value === 'error') {
+      setTimeout(() => {
+        setModal({
+          status: 'ERROR',
+          title: 'Gagal Simpan Post',
+          message:
+            'Mohon maaf, post yang Anda submit gagal disimpan. Mohon coba beberapa saat lagi.',
+        })
+      }, 500)
+
+      console.error(error)
+    }
+  }
+
+  /**
+   * Update post data that already being PUBLISHED
+   */
   async function updatePost() {
     const postId = route.params.id.toString()
     const body = postStore.generateFormData({ status: 'PUBLISHED' })
