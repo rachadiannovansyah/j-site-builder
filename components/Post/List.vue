@@ -64,7 +64,7 @@
           </div>
         </span>
       </div>
-      <PopupItemAction>
+      <PopupItemAction v-if="item.status !== statusPost[2].status">
         <ul
           class="flex w-[130px] flex-col gap-3 p-4 font-lato text-sm font-medium text-gray-700"
         >
