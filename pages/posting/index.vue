@@ -269,7 +269,6 @@
         },
       })
     }
-    fetchDataPost()
     fetchCategory()
   })
   watch(
