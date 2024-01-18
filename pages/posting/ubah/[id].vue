@@ -101,7 +101,9 @@
         Ya, simpan post
       </UButton>
       <UButton
-        v-else
+        v-if="
+          modal.status === 'UPDATE' && postStore.form.status === 'PUBLISHED'
+        "
         type="button"
         data-cy="post-form__confirmation-modal__update-button"
         @click="updatePost"
