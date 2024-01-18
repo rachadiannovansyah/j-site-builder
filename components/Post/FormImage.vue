@@ -1,9 +1,15 @@
 <template>
   <div class="rounded-lg bg-white p-[14px]">
-    <p class="font-roboto text-base font-medium leading-6 text-green-700">
+    <p
+      class="font-roboto text-base font-medium leading-6 text-green-700"
+      data-cy="post-form__image-section__title"
+    >
       Gambar Utama
     </p>
-    <p class="mb-[14px] font-lato text-sm text-gray-800">
+    <p
+      class="mb-[14px] font-lato text-sm text-gray-800"
+      data-cy="post-form__image-section__description"
+    >
       Ukuran maksimal file adalah 1 MB dengan resolusi 1080 x 720 . File yang
       didukung adalah .jpg, .png dan .webp
     </p>
@@ -13,6 +19,7 @@
       <BaseDropzone
         accept="image/jpeg, image/jpg, image/png, image/webp"
         :disabled="!!image.id || isDropzoneUploading"
+        data-cy="post-form__image-section__dropzone"
         @change="handleImageChange"
         @clear="handleDeleteImage"
       >
@@ -25,6 +32,7 @@
           >
             <span
               class="truncate pr-4 font-lato text-sm leading-6 text-gray-800"
+              data-cy="post-form__image-preview__filename"
             >
               {{ image?.filename }}
             </span>
@@ -34,6 +42,7 @@
                 variant="ghost"
                 square
                 size="sm"
+                data-cy="post-form__image-preview__preview-button"
                 @click="togglePreviewImage"
               >
                 <NuxtIcon name="common/eye" class="text-2xl" />
@@ -44,6 +53,7 @@
                 square
                 size="sm"
                 class="ml-2"
+                data-cy="post-form__image-preview__delete-button"
                 @click="clear"
               >
                 <NuxtIcon name="common/close" class="text-2xl" />
@@ -58,6 +68,7 @@
           v-for="error in dropzoneErrorMessages"
           :key="error"
           class="font-lato text-xs leading-6 text-red-500"
+          data-cy="post-form__image-section__dropzone-error-text"
         >
           {{ error }}
         </p>
@@ -69,6 +80,7 @@
           !isDropzoneUploading &&
           dropzoneErrorMessages.length === 0
         "
+        data-cy="post-form__image-section__dropzone-empty-text"
         class="mt-4 font-lato text-sm leading-6 text-gray-800"
       >
         Belum ada file terpilih
@@ -77,6 +89,7 @@
       <p
         v-show="isDropzoneUploading && !image.id"
         class="mt-4 font-lato text-sm leading-6 text-gray-800"
+        data-cy="post-form__image-section__dropzone-uploading-text"
       >
         Mengupload gambar...
       </p>
@@ -98,7 +111,13 @@
     />
 
     <template #footer>
-      <UButton type="button" @click="togglePreviewImage"> Tutup </UButton>
+      <UButton
+        type="button"
+        data-cy="post-form__image-preview-modal__close-button"
+        @click="togglePreviewImage"
+      >
+        Tutup
+      </UButton>
     </template>
   </BaseModal>
 </template>

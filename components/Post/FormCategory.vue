@@ -2,7 +2,11 @@
   <!-- Category Radio Buttons -->
   <UFormGroup label="Kategori" class="py-5" name="category">
     <!-- Skeletons -->
-    <div v-if="isCategoryLoading" class="flex h-[200px] flex-col gap-2 py-5">
+    <div
+      v-if="isCategoryLoading"
+      class="flex h-[200px] flex-col gap-2 py-5"
+      data-cy="post-form__category-section__skeletons"
+    >
       <div
         v-for="index in 3"
         :key="index"
@@ -21,7 +25,10 @@
         aria-hidden="true"
         filled
       />
-      <p class="font-lato text-sm leading-6 text-gray-400">
+      <p
+        class="font-lato text-sm leading-6 text-gray-400"
+        data-cy="post-form__category-section__empty-state"
+      >
         Belum ada Kategori
       </p>
     </div>
@@ -31,6 +38,7 @@
       v-else
       v-model="category"
       class="custom-scrollbar max-h-[200px] overflow-y-auto"
+      data-cy="post-form__category-radio-group"
     >
       <RadioGroupOption
         v-for="option in categories"
@@ -40,6 +48,7 @@
       >
         <li
           class="group grid w-full cursor-pointer list-none grid-cols-[20px,1fr,auto] items-center gap-3 bg-white p-2 hover:bg-gray-50"
+          data-cy="post-form__category-radio-button"
         >
           <!-- Radio Button -->
           <div
@@ -54,7 +63,10 @@
             />
           </div>
 
-          <span class="line-clamp-2 font-lato text-sm leading-6 text-gray-800">
+          <span
+            class="line-clamp-2 font-lato text-sm leading-6 text-gray-800"
+            data-cy="post-form__category-option__label"
+          >
             {{ option.name }}
           </span>
 
@@ -65,6 +77,7 @@
               square
               color="gray"
               variant="ghost"
+              data-cy="post-form__category-option__edit-button"
               @click.stop="handleEditCategory(option.id)"
             >
               <NuxtIcon
@@ -79,6 +92,7 @@
               square
               variant="ghost"
               :disabled="!option.is_deletable"
+              data-cy="post-form__category-option__delete-button"
               @click.stop="handleDeleteCategory(option.id)"
             >
               <NuxtIcon
@@ -103,7 +117,10 @@
   >
     <UFormGroup :error="categoryErrorMessage" name="new-category">
       <template #description>
-        <span class="font-lato text-xs leading-6 text-gray-600">
+        <span
+          class="font-lato text-xs leading-6 text-gray-600"
+          data-cy="post-form__new-category__helper-text"
+        >
           Tekan enter untuk menambahkan.
         </span>
       </template>
@@ -113,11 +130,15 @@
         :loading="isCategoryLoading"
         autofocus
         maxlength="125"
+        data-cy="post-form__new-category__input-text"
         @keyup.enter.stop="handleAddCategory"
       />
 
       <template #help>
-        <span class="font-lato text-xs leading-none text-gray-400">
+        <span
+          class="font-lato text-xs leading-none text-gray-400"
+          data-cy="post-form__new-category__remaining-chars"
+        >
           Sisa karakter: {{ 125 - newCategoryForm.name.length }} dari 125
         </span>
       </template>
@@ -132,6 +153,7 @@
       v-if="isAddCategory"
       color="gray"
       variant="ghost"
+      data-cy="post-form__new-category__collapse-section-button"
       @click="closeAddCategorySection"
     >
       <template #leading>
@@ -140,7 +162,12 @@
       Batalkan
     </UButton>
 
-    <UButton v-else variant="ghost" @click="openAddCategorySection">
+    <UButton
+      v-else
+      variant="ghost"
+      data-cy="post-form__new-category__expand-section-button"
+      @click="openAddCategorySection"
+    >
       <template #leading>
         <NuxtIcon
           name="common/plus"
@@ -160,7 +187,10 @@
     header="Ubah Kategori"
     :open="isEditCategory"
   >
-    <p class="text-md mb-3 font-lato leading-6 text-gray-800">
+    <p
+      class="text-md mb-3 font-lato leading-6 text-gray-800"
+      data-cy="post-form__edit-category-modal__message"
+    >
       Masukkan nama baru untuk kategori
       <strong>
         {{ getCategoryLabel(editCategoryForm.id) }}
@@ -168,22 +198,35 @@
     </p>
 
     <UFormGroup name="edit-category">
-      <UInput v-model.trim="editCategoryForm.name" maxlength="125" />
+      <UInput
+        v-model.trim="editCategoryForm.name"
+        maxlength="125"
+        data-cy="post-form__edit-category-modal__input-text"
+      />
 
       <template #help>
-        <span class="font-lato text-xs leading-none text-gray-400">
+        <span
+          class="font-lato text-xs leading-none text-gray-400"
+          data-cy="post-form__edit-category-modal__remaining-chars"
+        >
           Sisa karakter: {{ 125 - editCategoryForm.name.length }} dari 125
         </span>
       </template>
     </UFormGroup>
 
     <template #footer>
-      <UButton type="button" variant="outline" @click="closeEditCategory">
+      <UButton
+        type="button"
+        variant="outline"
+        data-cy="post-form__edit-category-modal__close-button"
+        @click="closeEditCategory"
+      >
         Batal
       </UButton>
       <UButton
         type="button"
         :disabled="editCategoryForm.name.length === 0"
+        data-cy="post-form__edit-category-modal__update-button"
         @click="editCategory"
       >
         Ubah Kategori
@@ -199,7 +242,10 @@
     header="Hapus Kategori"
     :open="isDeleteCategory"
   >
-    <p class="text-md mb-3 font-lato leading-6 text-gray-800">
+    <p
+      class="text-md mb-3 font-lato leading-6 text-gray-800"
+      data-cy="post-form__delete-category-modal__message"
+    >
       Apakah anda yakin ingin menghapus kategori
       <strong>
         {{ deleteCategoryForm.name }}
@@ -208,10 +254,21 @@
     </p>
 
     <template #footer>
-      <UButton type="button" variant="outline" @click="closeDeleteCategory">
+      <UButton
+        type="button"
+        variant="outline"
+        data-cy="post-form__delete-category-modal__cancel-button"
+        @click="closeDeleteCategory"
+      >
         Batal
       </UButton>
-      <UButton type="button" @click="deleteCategory"> Hapus Kategori </UButton>
+      <UButton
+        type="button"
+        data-cy="post-form__delete-category-modal__delete-button"
+        @click="deleteCategory"
+      >
+        Hapus Kategori
+      </UButton>
     </template>
   </BaseModal>
 </template>

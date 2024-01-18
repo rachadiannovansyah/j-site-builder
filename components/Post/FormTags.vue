@@ -15,6 +15,7 @@
         autofill="off"
         name="tag"
         placeholder="Masukkan Tag"
+        data-cy="post-form__tag-section__input-text"
         @keyup.enter.stop="handleAddTag"
       />
     </UFormGroup>
@@ -30,13 +31,18 @@
       :ui="{
         wrapper: 'h-0',
       }"
+      data-cy="post-form__tag-section__suggestion-popover"
     >
       <div />
       <template #panel>
-        <ul class="max-h-[150px] w-[336px] overflow-y-auto p-2">
+        <ul
+          class="max-h-[150px] w-[336px] overflow-y-auto p-2"
+          data-cy="post-form__tag-section__suggestion-container"
+        >
           <li v-for="suggestion in tagSuggestions" :key="suggestion">
             <button
               class="w-full rounded-sm px-2 text-start font-lato text-sm leading-6 text-gray-800 hover:bg-gray-100"
+              data-cy="post-form__tag-section__suggestion-item"
               @click="selectTagSuggestion(suggestion)"
             >
               {{ suggestion }}
@@ -48,17 +54,28 @@
   </div>
 
   <!-- Selected Tags -->
-  <ul class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2">
+  <ul
+    class="flex min-h-[34px] w-full flex-wrap gap-1 rounded-lg border p-2"
+    data-cy="post-form__selected-tags"
+  >
     <li
       v-for="tag in tags"
       :key="tag"
       class="flex min-h-5 max-w-[300px] items-center justify-center rounded-full bg-gray-200 py-1 pl-2.5 pr-1"
+      data-cy="post-form__selected-tags__item"
       :title="tag"
     >
-      <p class="truncate font-lato text-sm leading-none text-gray-600">
+      <p
+        class="truncate font-lato text-sm leading-none text-gray-600"
+        data-cy="post-form__selected-tags__item-label"
+      >
         {{ tag }}
       </p>
-      <button class="relative top-[1px] ml-2" @click="handleDeleteTag(tag)">
+      <button
+        class="relative top-[1px] ml-2"
+        data-cy="post-form__selected-tags__delete-button"
+        @click="handleDeleteTag(tag)"
+      >
         <NuxtIcon
           name="common/close"
           aria-hidden="true"
