@@ -82,12 +82,12 @@ export const usePostStore = defineStore('post', {
     },
     setInitialData(postData: IPostResponse) {
       this.form.title = postData.data.title
-      this.form.image.uri = postData.data.image.uri
-      this.form.image.id = postData.data.image.id
-      this.form.image.filename = postData.data.image.originalname
+      this.form.image.uri = postData.data.image?.uri ?? ''
+      this.form.image.id = postData.data.image?.id ?? ''
+      this.form.image.filename = postData.data.image?.originalname ?? ''
       this.form.content = postData.data.content
       this.form.author = postData.data.author
-      this.form.category = postData.data.category.id
+      this.form.category = postData.data.category?.id ?? ''
       this.form.tags = postData.data.tags
       this.form.status = postData.data.status
     },
