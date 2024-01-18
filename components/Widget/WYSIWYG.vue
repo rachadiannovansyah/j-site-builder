@@ -14,13 +14,13 @@
       <template #header>
         <div class="flex items-center justify-between">
           <h3
-            data-cy="Wysiwyg__title"
+            data-cy="wysiwyg__title"
             class="font-roboto text-xl font-medium leading-8 text-green-800"
           >
             Buat Konten
           </h3>
           <UButton
-            data-cy="Wysiwyg__close-button"
+            data-cy="wysiwyg__close-button"
             color="gray"
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
@@ -37,7 +37,7 @@
       <template #footer>
         <section class="flex justify-between">
           <UButton
-            data-cy="Wysiwyg__cancel-button"
+            data-cy="wysiwyg__cancel-button"
             variant="ghost"
             color="gray"
             type="button"
@@ -45,7 +45,7 @@
           >
             Batalkan
           </UButton>
-          <UButton data-cy="Wysiwyg__save-button" type="button" @click="onSave">
+          <UButton data-cy="wysiwyg__save-button" type="button" @click="onSave">
             Simpan
           </UButton>
         </section>
