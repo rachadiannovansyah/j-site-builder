@@ -4,12 +4,12 @@ type IBuilderConfigStatus = 'DRAFT' | 'PUBLISHED'
 export const usePageStore = defineStore('page', {
   state: () => ({
     builderConfig: {
-      type: null as null | string,
-      templateId: null as null | string,
-      title: null as null | string,
+      type: '' as string,
+      templateId: '' as string,
+      title: '' as string,
       status: null as null | IBuilderConfigStatus,
-      domain: null as null | string,
-      lastUpdate: null as null | string,
+      domain: '' as string,
+      lastUpdate: '' as string,
       sections: [] as ITemplateSection[],
       category: null as null | string,
     },

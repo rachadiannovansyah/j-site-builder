@@ -151,11 +151,16 @@
     </UCard>
 
     <UCard v-if="error">
-      <ModalTitle class="flex justify-between"> Mohon Maaf! </ModalTitle>
-      <ModalBody>
-        <p>Terjadi Kesalahan</p>
-      </ModalBody>
-      <ModalFooter position="center">
+      <template #header>
+        <h3
+          class="font-roboto text-xl font-medium leading-8 text-green-800"
+          data-cy="j-site-page-template__header"
+        >
+          Mohon Maaf!
+        </h3>
+      </template>
+      <p>Terjadi Kesalahan</p>
+      <template #footer>
         <BaseButton
           variant="secondary"
           data-cy="j-site-page-template__button-close-modal"
@@ -163,7 +168,7 @@
         >
           Tutup
         </BaseButton>
-      </ModalFooter>
+      </template>
     </UCard>
   </UModal>
 </template>
@@ -217,7 +222,8 @@
       return pageStore.builderConfig.templateId
     },
     set(value) {
-      pageStore.setPageTemplate(value)
+      const setValue = value ? value.toString() : ''
+      pageStore.setPageTemplate(setValue)
     },
   })
 
