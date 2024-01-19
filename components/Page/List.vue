@@ -70,10 +70,12 @@
             <button>Ubah</button>
           </li>
           <li v-if="item.status === statusPage[0].status">
-            <button>Arsipkan</button>
+            <button @click="onArchivePage(item.id)">Arsipkan</button>
           </li>
           <li v-if="item.status === statusPage[1].status">
-            <button class="text-red-400">Hapus</button>
+            <button class="text-red-400" @click="onDeletePage(item.id)">
+              Hapus
+            </button>
           </li>
         </ul>
       </PopupItemAction>
@@ -116,5 +118,15 @@
 
   function formatDate(date: string) {
     return format(new Date(date), 'dd/MM/yyyy', { locale: ID })
+  }
+
+  const emit = defineEmits(['archive', 'delete'])
+
+  function onArchivePage(id: string) {
+    emit('archive', id)
+  }
+
+  function onDeletePage(id: string) {
+    emit('delete', id)
   }
 </script>
