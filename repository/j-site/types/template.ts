@@ -28,6 +28,7 @@ export interface ITemplateData {
   sections: ITemplateSection[]
   created_at: string
   updated_at: string
+  category: string
 }
 
 export type ITemplatesResponse = {

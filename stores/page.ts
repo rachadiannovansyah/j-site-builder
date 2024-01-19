@@ -11,6 +11,7 @@ export const usePageStore = defineStore('page', {
       domain: null as null | string,
       lastUpdate: null as null | string,
       sections: [] as ITemplateSection[],
+      category: null as null | string,
     },
   }),
   getters: {
@@ -28,6 +29,9 @@ export const usePageStore = defineStore('page', {
   actions: {
     setPageType(value: string) {
       this.builderConfig.type = value
+    },
+    setPageCategory(value: string) {
+      this.builderConfig.category = value
     },
     setPageTemplate(value: string) {
       this.builderConfig.templateId = value
