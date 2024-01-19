@@ -257,6 +257,7 @@
         title: pageStore.builderConfig?.title ?? '',
         status: 'DRAFT',
         sections: toRaw(pageStore.builderConfig?.sections),
+        category: pageStore.builderConfig?.category ?? '',
       },
       { server: false },
     )
