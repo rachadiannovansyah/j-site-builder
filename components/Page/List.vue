@@ -66,14 +66,14 @@
           <li>
             <button>Pratinjau</button>
           </li>
-          <li>
+          <li v-if="item.status !== statusPage[2].status">
             <button>Ubah</button>
           </li>
-          <li>
-            <button>Duplikasi Page</button>
-          </li>
-          <li>
+          <li v-if="item.status === statusPage[0].status">
             <button>Arsipkan</button>
+          </li>
+          <li v-if="item.status === statusPage[1].status">
+            <button class="text-red-400">Hapus</button>
           </li>
         </ul>
       </PopupItemAction>
