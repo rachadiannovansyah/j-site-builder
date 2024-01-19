@@ -2,6 +2,7 @@ export interface IPageData {
   title: string
   status: string
   sections: unknown[]
+  category: string
 }
 
 export interface IPageResponse {

@@ -209,6 +209,7 @@
 
   watch(template, () => {
     pageStore.setBuilderSections(toRaw(template.value?.data?.sections || []))
+    pageStore.setPageCategory(toRaw(template.value?.data?.category || ''))
   })
 
   const backToPage = () => {
@@ -256,6 +257,7 @@
         title: pageStore.builderConfig?.title ?? '',
         status: 'DRAFT',
         sections: toRaw(pageStore.builderConfig?.sections),
+        category: pageStore.builderConfig?.category ?? '',
       },
       { server: false },
     )
