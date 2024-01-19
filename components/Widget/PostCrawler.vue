@@ -37,23 +37,46 @@
           <p class="font-base font-lato font-medium text-gray-800">
             Pilih Kombinasi
           </p>
-          <div class="flex gap-4">
+          <div class="flex justify-between">
+            <div class="flex gap-4">
+              <div
+                v-for="(type, index) in postType"
+                :key="index"
+                class="flex h-[54px] w-[200px] items-center justify-between rounded-[27px] border border-gray-300 bg-white py-1.5 pl-3 pr-4 focus:outline-none"
+              >
+                <label
+                  class="text-left font-lato text-sm font-medium text-gray-900"
+                >
+                  {{ type.label }}
+                </label>
+                <UCheckbox
+                  :value="type.value"
+                  :model-value="type.selected"
+                  :checked="type.selected"
+                  name="Terpopuler"
+                  @change="onCheckedPostType(type.value)"
+                />
+              </div>
+            </div>
             <div
-              v-for="(type, index) in postType"
-              :key="index"
-              class="flex h-[54px] w-[200px] items-center justify-between rounded-[27px] border border-gray-300 bg-white py-1.5 pl-3 pr-4 focus:outline-none"
+              class="flex h-[54px] w-[125px] items-center justify-between rounded-[27px] border border-gray-300 bg-white py-1.5 pl-3 pr-4 focus:outline-none"
             >
+              <NuxtIcon
+                name="common/pin"
+                aria-hidden="true"
+                class="text-[18px] text-black"
+              />
               <label
                 class="text-left font-lato text-sm font-medium text-gray-900"
               >
-                {{ type.label }}
+                Pinned
               </label>
               <UCheckbox
-                :value="type.value"
-                :model-value="type.selected"
-                :checked="type.selected"
-                name="Terpopuler"
-                @change="onCheckedPostType(type.value)"
+                name="Pinned Post"
+                :value="form.isPinnedPost"
+                :model-value="form.isPinnedPost"
+                :checked="form.isPinnedPost"
+                @change="onCheckPinnedPost()"
               />
             </div>
           </div>
@@ -186,6 +209,7 @@
   const form = reactive({
     selectedPostType: [] as string[],
     selectedPostFormat: '',
+    isPinnedPost: false as boolean,
   })
   const selectedPostPreview = ref('')
 
@@ -253,13 +277,18 @@
     }
   }
 
+  function onCheckPinnedPost() {
+    form.isPinnedPost = !form.isPinnedPost
+  }
+
   function onSave() {
     pageStore.setWidgetPayload({
       sectionIndex: props.sectionIndex,
       widgetIndex: props.widgetIndex,
       payload: {
-        sort_by: form.selectedPostType,
-        format: form.selectedPostFormat,
+        sorts: form.selectedPostType,
+        display: form.selectedPostFormat,
+        sort_with_pinned: form.isPinnedPost,
       },
     })
     emit('close')
@@ -277,8 +306,10 @@
    * This is to avoid unmatch data between local state and pageStore state.
    */
   function syncFormData() {
-    form.selectedPostType = currentStorePayload.value?.sort_by ?? []
-    form.selectedPostFormat = currentStorePayload.value?.format ?? ''
+    form.selectedPostType = currentStorePayload.value?.sorts ?? []
+    form.selectedPostFormat = currentStorePayload.value?.display ?? ''
+    form.isPinnedPost = currentStorePayload.value?.sort_with_pinned ?? false
+
     if (form.selectedPostType.length > 0) {
       form.selectedPostType.map((type) => {
         if (type === 'views') {
