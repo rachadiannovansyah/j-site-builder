@@ -60,7 +60,11 @@ export const usePageStore = defineStore('page', {
       widgetIndex: number
       payload: object
     }) {
+      const originalPayload =
+        this.builderConfig.sections[sectionIndex].widgets[widgetIndex].payload
+
       this.builderConfig.sections[sectionIndex].widgets[widgetIndex].payload = {
+        ...originalPayload,
         ...payload,
       }
     },
