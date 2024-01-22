@@ -27,6 +27,8 @@
       <!-- Popup Setup Layout (Grid/Row) -->
       <PageBuilderWidgetSelectorLayout
         v-if="props.widget === 'Showcase' || props.widget === 'Gallery'"
+        :section-index="props.sectionIndex"
+        :widget-index="props.widgetIndex"
       />
     </div>
     <p class="mb-8 text-center font-lato text-sm leading-6 text-gray-500">

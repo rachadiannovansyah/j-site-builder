@@ -1,47 +1,61 @@
 <template>
-  <UPopover class="mb-3" :open="openWidgetLayoutOption">
-    <UButton
-      color="white"
-      trailing-icon="i-heroicons-chevron-down-20-solid"
-      @click="toggleOpenModal"
-    >
+  <USelectMenu
+    v-model="selectedWidgetLayout"
+    :options="widgetLayoutOption"
+    selected-icon=""
+    size="xl"
+    :ui="{
+      rounded: 'rounded-lg',
+    }"
+  >
+    <template #leading>
       <NuxtIcon
-        :name="selectedWidgetLayout.icon"
+        :name="getWidgetLayoutOptionIcon(selectedWidgetLayout)"
         class="text-2xl text-[#424242]"
         aria-hidden="true"
         filled
       />
-      {{ selectedWidgetLayout.label }}
-    </UButton>
-    <template #panel>
-      <div class="px-3 py-2">
-        <ul class="flex flex-col divide-y divide-solid">
-          <li
-            v-for="option in widgetLayoutOption"
-            :key="option.id"
-            class="flex cursor-pointer items-center gap-[10px] px-3 py-2"
-            @click="onSelectWidgetLayout(option)"
-          >
-            <div class="h-6 w-6">
-              <NuxtIcon
-                :name="option.icon"
-                class="text-2xl"
-                aria-hidden="true"
-                filled
-              />
-            </div>
-            <p class="font-inter text-sm font-medium text-gray-700">
-              {{ option.label }}
-            </p>
-          </li>
-        </ul>
+    </template>
+    <template #label>
+      <span class="font-roboto text-base font-normal capitalize">
+        {{ selectedWidgetLayout }}
+      </span>
+    </template>
+    <template #option="{ option }">
+      <div class="flex h-6 w-6 items-center gap-2">
+        <NuxtIcon
+          :name="option.icon"
+          class="text-2xl text-[#424242]"
+          aria-hidden="true"
+          filled
+        />
+        <p class="font-inter text-sm font-medium text-gray-700">
+          {{ option.label }}
+        </p>
       </div>
     </template>
-  </UPopover>
+  </USelectMenu>
 </template>
 
 <script setup lang="ts">
-  const widgetLayoutOption = [
+  const props = defineProps({
+    sectionIndex: {
+      type: Number,
+      default: null,
+    },
+    widgetIndex: {
+      type: Number,
+      default: null,
+    },
+  })
+
+  interface IWidgetLayout {
+    id: string
+    label: string
+    icon: string
+  }
+
+  const widgetLayoutOption: IWidgetLayout[] = [
     {
       id: 'grid',
       label: 'Grid',
@@ -53,24 +67,40 @@
       icon: 'widget/layout-option-row',
     },
   ]
-  const selectedWidgetLayout = ref(widgetLayoutOption[0])
-  const openWidgetLayoutOption = ref(false)
 
-  const emit = defineEmits<{
-    (e: 'select', val: object): void
-  }>()
+  const pageStore = usePageStore()
 
-  function onSelectWidgetLayout(option: {
-    id: string
-    label: string
-    icon: string
-  }) {
-    emit('select', option)
-    selectedWidgetLayout.value = option
-    toggleOpenModal()
-  }
+  onMounted(() => {
+    if (!selectedWidgetLayout.value) {
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: {
+          display: widgetLayoutOption[0].id,
+        },
+      })
+    }
+  })
 
-  function toggleOpenModal() {
-    openWidgetLayoutOption.value = !openWidgetLayoutOption.value
+  const selectedWidgetLayout = computed({
+    get() {
+      return pageStore.builderConfig.sections[props.sectionIndex].widgets[
+        props.widgetIndex
+      ].payload?.display
+    },
+    set(value) {
+      pageStore.setWidgetPayload({
+        sectionIndex: props.sectionIndex,
+        widgetIndex: props.widgetIndex,
+        payload: {
+          display: value.id,
+        },
+      })
+    },
+  })
+
+  function getWidgetLayoutOptionIcon(id: string) {
+    const option = widgetLayoutOption.find((option) => option.id === id)
+    return option?.icon || ''
   }
 </script>
