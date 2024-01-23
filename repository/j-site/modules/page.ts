@@ -31,7 +31,6 @@ class PageModules extends FetchFactory {
   async getPageById(
     idSetting: string,
     idPage: string,
-    fetchOptions?: FetchOptions<'json'>,
     options?: AsyncDataOptions<IPageDetailResponse>,
   ) {
     return useAsyncData(() => {
@@ -39,7 +38,6 @@ class PageModules extends FetchFactory {
         'GET',
         `${this.RESOURCE}/${idSetting}/${idPage}`,
         undefined, // body
-        fetchOptions,
       )
     }, options)
   }
