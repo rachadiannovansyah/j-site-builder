@@ -2,7 +2,12 @@ import { AsyncDataOptions } from '#app'
 import { FetchOptions } from 'ofetch'
 
 import FetchFactory from '../../factory'
-import { IPageResponse, IPageData, IPagesResponse } from '../types/page'
+import {
+  IPageResponse,
+  IPageData,
+  IPagesResponse,
+  IPagePreviewResponse,
+} from '../types/page'
 
 class PageModules extends FetchFactory {
   private RESOURCE = '/v1/pages'
@@ -29,6 +34,20 @@ class PageModules extends FetchFactory {
   ) {
     return useAsyncData(() => {
       return this.call<IPageResponse>('POST', `${this.RESOURCE}/${id}`, body)
+    }, options)
+  }
+
+  async storePreview(
+    idSetting: string,
+    body?: IPageData,
+    options?: AsyncDataOptions<IPagePreviewResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPagePreviewResponse>(
+        'POST',
+        `${this.RESOURCE}/${idSetting}/previews`,
+        body,
+      )
     }, options)
   }
 }
