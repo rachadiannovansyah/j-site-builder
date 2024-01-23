@@ -7,6 +7,7 @@ import {
   IPageData,
   IPagesResponse,
   IPageDetailResponse,
+  IPagePreviewResponse,
 } from '../types/page'
 
 class PageModules extends FetchFactory {
@@ -50,6 +51,20 @@ class PageModules extends FetchFactory {
   ) {
     return useAsyncData(() => {
       return this.call<IPageResponse>('POST', `${this.RESOURCE}/${id}`, body)
+    }, options)
+  }
+
+  async storePreview(
+    idSetting: string,
+    body?: IPageData,
+    options?: AsyncDataOptions<IPagePreviewResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPagePreviewResponse>(
+        'POST',
+        `${this.RESOURCE}/${idSetting}/previews`,
+        body,
+      )
     }, options)
   }
 }

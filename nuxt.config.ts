@@ -32,6 +32,7 @@ export default defineNuxtConfig({
       portalJabarCMSBaseURL: process.env.NUXT_PUBLIC_PORTAL_JABAR_CMS_BASE_URL,
       jSiteApiURL: process.env.NUXT_PUBLIC_J_SITE_API_URL,
       tinyMceApiKey: process.env.NUXT_PUBLIC_TINY_MCE_API_KEY,
+      pageTokenSecret: process.env.NUXT_PUBLIC_PAGE_TOKEN_SECRET,
     },
   },
 })
