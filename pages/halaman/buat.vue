@@ -5,6 +5,7 @@
       @back="backToPage"
       @draft="toggleDraftModal"
       @publish="togglePublishModal"
+      @preview="handlePreview"
     />
     <div class="flex h-full w-full justify-between gap-4 px-1 py-4">
       <PageBuilderContent :loading="fetchTemplateLoading" />
@@ -303,5 +304,41 @@
   const actionPublishPage = async () => {
     // TODO: update publish page function
     modal.status = MODAL_STATE.NONE
+  }
+
+  async function handlePreview() {
+    const body = pageStore.generatePageData({ status: 'DRAFT' })
+    const { data, status, error } = await $jSiteApi.page.storePreview(
+      siteStore.siteId ?? '',
+      body,
+      { server: false },
+    )
+
+    if (status.value === 'success' && data.value) {
+      const { preview_link: previewLink } = data.value
+      openPreviewOnNewTab(previewLink)
+    }
+
+    if (status.value === 'error') {
+      modal.status = MODAL_STATE.ERROR
+      modal.title = 'Gagal!'
+      modal.message =
+        'Mohon maaf, gagal menampilkan preview. Mohon coba beberapa saat lagi'
+
+      console.error(error)
+    }
+  }
+
+  const windowObjectReference = ref<Window | null>(null)
+
+  function openPreviewOnNewTab(url: string) {
+    if (
+      windowObjectReference.value === null ||
+      windowObjectReference.value?.closed
+    ) {
+      windowObjectReference.value = window.open(url, 'j-site-preview')
+    } else {
+      windowObjectReference.value.focus()
+    }
   }
 </script>

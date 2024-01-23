@@ -79,10 +79,8 @@
         >
           Simpan Draft
         </UButton>
-        <!-- TODO: update preview feature -->
         <UButton
           variant="outline"
-          disabled
           data-cy="page-builder-header__button-preview"
           @click="$emit('preview')"
         >

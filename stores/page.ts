@@ -90,5 +90,14 @@ export const usePageStore = defineStore('page', {
     }) {
       this.builderConfig.sections[sectionIndex].description = description
     },
+    generatePageData({ status }: { status: IBuilderConfigStatus }) {
+      return {
+        title: this.builderConfig.title,
+        status: status,
+        page_token: this.builderConfig.pageToken,
+        sections: [...this.builderConfig.sections],
+        category: this.builderConfig.category ?? '',
+      }
+    },
   },
 })
