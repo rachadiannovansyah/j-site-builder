@@ -42,7 +42,9 @@
       status,
       error,
       pending,
-    } = await $jSiteApi.page.getPageById(siteStore?.siteId ?? '', pageId)
+    } = await $jSiteApi.page.getPageById(siteStore?.siteId ?? '', pageId, {
+      server: false,
+    })
 
     if (status.value === 'success') {
       const { data } = dataPage.value ?? {}
