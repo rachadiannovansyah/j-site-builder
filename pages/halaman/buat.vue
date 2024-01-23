@@ -183,9 +183,14 @@
     window.removeEventListener('beforeunload', beforeUnloadHandler)
   })
 
+  const config = useRuntimeConfig()
+
   function generatePageToken() {
     if (!pageStore.builderConfig.pageToken) {
-      const pageToken = aes.encrypt(new Date().toString(), 'staging').toString()
+      const pageToken = aes
+        .encrypt(new Date().toString(), config.public.pageTokenSecret)
+        .toString()
+
       pageStore.setPageToken(pageToken)
     }
   }
