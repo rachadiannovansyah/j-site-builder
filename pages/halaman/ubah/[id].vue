@@ -49,8 +49,10 @@
 
       pageStore.setPageTitle(data?.title ?? '')
       pageStore.setPageStatus(data?.status || 'DRAFT')
-      pageStore.setPageLastUpdate(formatDate(data?.updated_at) ?? '')
-      pageStore.setBuilderSections(toRaw(data?.sections) ?? [])
+      pageStore.setPageLastUpdate(
+        data?.updated_at ? formatDate(data.updated_at) : '',
+      )
+      pageStore.setBuilderSections(data?.sections ?? [])
     }
 
     if (status.value === 'error') {
