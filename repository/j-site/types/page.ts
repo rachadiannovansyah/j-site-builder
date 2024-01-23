@@ -35,3 +35,8 @@ export interface IPagesResponse {
   data?: IPageDataExtended[]
   meta?: IMetaData
 }
+
+export interface IPageDetailResponse {
+  data?: IPageDataExtended
+  meta?: IMetaData
+}

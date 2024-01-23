@@ -2,7 +2,12 @@ import { AsyncDataOptions } from '#app'
 import { FetchOptions } from 'ofetch'
 
 import FetchFactory from '../../factory'
-import { IPageResponse, IPageData, IPagesResponse } from '../types/page'
+import {
+  IPageResponse,
+  IPageData,
+  IPagesResponse,
+  IPageDetailResponse,
+} from '../types/page'
 
 class PageModules extends FetchFactory {
   private RESOURCE = '/v1/pages'
@@ -16,6 +21,22 @@ class PageModules extends FetchFactory {
       return this.call<IPagesResponse>(
         'GET',
         `${this.RESOURCE}/${id}`,
+        undefined, // body
+        fetchOptions,
+      )
+    }, options)
+  }
+
+  async getPageById(
+    idSetting: string,
+    idPage: string,
+    fetchOptions?: FetchOptions<'json'>,
+    options?: AsyncDataOptions<IPageDetailResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPageDetailResponse>(
+        'GET',
+        `${this.RESOURCE}/${idSetting}/${idPage}`,
         undefined, // body
         fetchOptions,
       )
