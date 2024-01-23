@@ -4,6 +4,7 @@ type IBuilderConfigStatus = 'DRAFT' | 'PUBLISHED'
 export const usePageStore = defineStore('page', {
   state: () => ({
     builderConfig: {
+      pageToken: '' as string,
       type: '' as string,
       templateId: '' as string,
       title: '' as string,
@@ -27,6 +28,9 @@ export const usePageStore = defineStore('page', {
     },
   },
   actions: {
+    setPageToken(value: string) {
+      this.builderConfig.pageToken = value
+    },
     setPageType(value: string) {
       this.builderConfig.type = value
     },

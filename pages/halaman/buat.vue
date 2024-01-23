@@ -167,10 +167,31 @@
 
 <script setup lang="ts">
   import { MODAL_STATE } from '~/common/constant/modal'
+  import aes from 'crypto-js/aes'
 
   definePageMeta({
     layout: 'full-bleed',
   })
+
+  onMounted(() => {
+    window.addEventListener('beforeunload', beforeUnloadHandler)
+    generatePageToken()
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', beforeUnloadHandler)
+  })
+
+  function generatePageToken() {
+    if (!pageStore.builderConfig.pageToken) {
+      const pageToken = aes.encrypt(new Date().toString(), 'staging').toString()
+      pageStore.setPageToken(pageToken)
+    }
+  }
+
+  function beforeUnloadHandler(event: Event) {
+    event.preventDefault()
+  }
 
   const modal = reactive({
     status: '',
