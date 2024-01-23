@@ -67,7 +67,7 @@
             <button>Pratinjau</button>
           </li>
           <li v-if="item.status !== statusPage[2].status">
-            <button>Ubah</button>
+            <NuxtLink :to="`/halaman/ubah/${item.id}`"> Ubah </NuxtLink>
           </li>
           <li v-if="item.status === statusPage[0].status">
             <button @click="onArchivePage(item.id)">Arsipkan</button>

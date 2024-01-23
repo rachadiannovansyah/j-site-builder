@@ -6,6 +6,7 @@ import {
   IPageResponse,
   IPageData,
   IPagesResponse,
+  IPageDetailResponse,
   IPagePreviewResponse,
 } from '../types/page'
 
@@ -23,6 +24,20 @@ class PageModules extends FetchFactory {
         `${this.RESOURCE}/${id}`,
         undefined, // body
         fetchOptions,
+      )
+    }, options)
+  }
+
+  async getPageById(
+    idSetting: string,
+    idPage: string,
+    options?: AsyncDataOptions<IPageDetailResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPageDetailResponse>(
+        'GET',
+        `${this.RESOURCE}/${idSetting}/${idPage}`,
+        undefined, // body
       )
     }, options)
   }

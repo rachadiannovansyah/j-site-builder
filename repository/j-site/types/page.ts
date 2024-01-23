@@ -37,6 +37,11 @@ export interface IPagesResponse {
   meta?: IMetaData
 }
 
+export interface IPageDetailResponse {
+  data?: IPageDataExtended
+  meta?: IMetaData
+}
+
 export interface IPagePreviewResponse {
   preview_link: string
   data: {

@@ -43,6 +43,12 @@ export const usePageStore = defineStore('page', {
     setPageTitle(value: string) {
       this.builderConfig.title = value
     },
+    setPageStatus(value: IBuilderConfigStatus) {
+      this.builderConfig.status = value
+    },
+    setPageLastUpdate(value: string) {
+      this.builderConfig.lastUpdate = value
+    },
     setPageDomain(value: string) {
       this.builderConfig.domain = value
     },
