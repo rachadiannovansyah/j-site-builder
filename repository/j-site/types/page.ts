@@ -1,7 +1,9 @@
+import { ITemplateSection } from '~/repository/j-site/types/template'
+
 export interface IPageData {
   title: string
   status: string
-  sections: unknown[]
+  sections: ITemplateSection[]
   category: string
   page_token?: string
 }
@@ -15,7 +17,7 @@ export interface IPageDataExtended {
   _id: string
   created_by: string
   title: string
-  sections: unknown[]
+  sections: ITemplateSection[]
   is_active: boolean
   status: string
   created_at: string
@@ -49,7 +51,7 @@ export interface IPagePreviewResponse {
     page_token: string
     created_at: string
     expired: string
-    sections: unknown[]
+    sections: ITemplateSection[]
     setting_id: string
     status: string
     title: string

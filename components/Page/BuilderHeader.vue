@@ -113,7 +113,7 @@
               aria-hidden="true"
             />
           </template>
-          Perbaharui
+          Perbarui
         </UButton>
         <UButton
           variant="ghost"

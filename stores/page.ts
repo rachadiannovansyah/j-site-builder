@@ -8,7 +8,7 @@ export const usePageStore = defineStore('page', {
       type: '' as string,
       templateId: '' as string,
       title: '' as string,
-      status: null as null | IBuilderConfigStatus,
+      status: '' as string | IBuilderConfigStatus,
       domain: '' as string,
       lastUpdate: '' as string,
       sections: [] as ITemplateSection[],
@@ -43,7 +43,7 @@ export const usePageStore = defineStore('page', {
     setPageTitle(value: string) {
       this.builderConfig.title = value
     },
-    setPageStatus(value: IBuilderConfigStatus) {
+    setPageStatus(value: string | IBuilderConfigStatus) {
       this.builderConfig.status = value
     },
     setPageLastUpdate(value: string) {

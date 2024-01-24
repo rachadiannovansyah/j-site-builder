@@ -48,13 +48,27 @@
 
     if (status.value === 'success') {
       const { data } = dataPage.value ?? {}
+      if (data) {
+        const { title, status, updated_at, sections } = data
 
-      pageStore.setPageTitle(data?.title ?? '')
-      pageStore.setPageStatus(data?.status || 'DRAFT')
-      pageStore.setPageLastUpdate(
-        data?.updated_at ? formatDate(data.updated_at) : '',
-      )
-      pageStore.setBuilderSections(data?.sections ?? [])
+        pageStore.setPageTitle(title ?? '')
+        pageStore.setPageStatus(status || '')
+        pageStore.setPageLastUpdate(updated_at ? formatDate(updated_at) : '')
+        pageStore.setBuilderSections(sections ?? [])
+        Array.isArray(
+          sections.map((dataSection, sectionIndex) => {
+            Array.isArray(
+              dataSection.widgets.map((dataWidget, widgetIndex) => {
+                pageStore.setWidgetPayload({
+                  sectionIndex: sectionIndex,
+                  widgetIndex: widgetIndex,
+                  payload: dataWidget?.payload || {},
+                })
+              }),
+            )
+          }),
+        )
+      }
     }
 
     if (status.value === 'error') {
@@ -66,17 +80,17 @@
 
   onMounted(() => {
     setInitialData()
-    // window.addEventListener('beforeunload', beforeUnloadHandler)
+    window.addEventListener('beforeunload', beforeUnloadHandler)
   })
 
-  // onBeforeUnmount(() => {
-  //   window.removeEventListener('beforeunload', beforeUnloadHandler)
-  //   pageStore.$reset()
-  // })
+  onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', beforeUnloadHandler)
+    pageStore.$reset()
+  })
 
-  // function beforeUnloadHandler(event: Event) {
-  //   event.preventDefault()
-  // }
+  function beforeUnloadHandler(event: Event) {
+    event.preventDefault()
+  }
 
   function formatDate(date: string) {
     return format(new Date(date), 'dd/MM/yyyy', { locale: ID })
