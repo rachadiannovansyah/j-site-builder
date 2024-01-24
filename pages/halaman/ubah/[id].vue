@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full bg-[#F3F4F8] pb-24">
-    <PageBuilderHeader :loading="fetchSettingLoading" />
+    <PageBuilderHeader :loading="fetchSettingLoading" :is-edit-mode="true" />
     <div class="flex h-full w-full justify-between gap-4 px-1 py-4">
       <PageBuilderContent :loading="fetchPageLoading" />
       <PageBuilderAside />
@@ -66,17 +66,17 @@
 
   onMounted(() => {
     setInitialData()
-    window.addEventListener('beforeunload', beforeUnloadHandler)
+    // window.addEventListener('beforeunload', beforeUnloadHandler)
   })
 
-  onBeforeUnmount(() => {
-    window.removeEventListener('beforeunload', beforeUnloadHandler)
-    pageStore.$reset()
-  })
+  // onBeforeUnmount(() => {
+  //   window.removeEventListener('beforeunload', beforeUnloadHandler)
+  //   pageStore.$reset()
+  // })
 
-  function beforeUnloadHandler(event: Event) {
-    event.preventDefault()
-  }
+  // function beforeUnloadHandler(event: Event) {
+  //   event.preventDefault()
+  // }
 
   function formatDate(date: string) {
     return format(new Date(date), 'dd/MM/yyyy', { locale: ID })
