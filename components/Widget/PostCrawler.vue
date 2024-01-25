@@ -294,6 +294,10 @@
     emit('close')
   }
 
+  const isEditPage = computed(() => {
+    return pageStore.isEdit
+  })
+
   const currentStorePayload = computed(() => {
     return pageStore.getWidgetPayload({
       sectionIndex: props.sectionIndex,
@@ -326,7 +330,7 @@
   })
 
   watch(isOpen, function (open) {
-    if (!open) {
+    if (!open || isEditPage) {
       // wait for modal transition to finish
       setTimeout(() => {
         syncFormData()

@@ -3,6 +3,8 @@ type IBuilderConfigStatus = 'DRAFT' | 'PUBLISHED'
 
 export const usePageStore = defineStore('page', {
   state: () => ({
+    isEdit: false as boolean,
+    isDataInitialized: false as boolean,
     builderConfig: {
       pageToken: '' as string,
       type: '' as string,
@@ -28,6 +30,12 @@ export const usePageStore = defineStore('page', {
     },
   },
   actions: {
+    setPageisEdit(value: boolean) {
+      this.isEdit = value
+    },
+    initializeBuilderData() {
+      this.isDataInitialized = true
+    },
     setPageToken(value: string) {
       this.builderConfig.pageToken = value
     },
