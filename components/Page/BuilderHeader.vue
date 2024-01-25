@@ -104,7 +104,7 @@
           v-if="statusPage === 'PUBLISHED'"
           color="primary"
           data-cy="page-builder-header__button-save-draft"
-          @click="$emit('publish')"
+          @click="$emit('update-published')"
         >
           <template #leading>
             <NuxtIcon
@@ -162,5 +162,5 @@
     isOpen.value = !isOpen.value
   }
 
-  defineEmits(['back', 'draft', 'preview', 'publish'])
+  defineEmits(['back', 'draft', 'preview', 'publish', 'update-published'])
 </script>

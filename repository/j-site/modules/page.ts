@@ -52,6 +52,21 @@ class PageModules extends FetchFactory {
     }, options)
   }
 
+  async updatePage(
+    idSetting: string,
+    idPage: string,
+    body?: IPageData,
+    options?: AsyncDataOptions<IPageResponse>,
+  ) {
+    return useAsyncData(() => {
+      return this.call<IPageResponse>(
+        'PUT',
+        `${this.RESOURCE}/${idSetting}/${idPage}`,
+        body,
+      )
+    }, options)
+  }
+
   async storePreview(
     idSetting: string,
     body?: IPageData,

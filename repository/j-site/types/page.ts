@@ -16,6 +16,7 @@ export interface IPageResponse {
 export interface IPageDataExtended {
   _id: string
   created_by: string
+  category: string
   title: string
   sections: ITemplateSection[]
   is_active: boolean
