@@ -372,7 +372,7 @@
     } else if (status.value === 'error') {
       modal.status = MODAL_STATE.ERROR
       modal.title = 'Gagal!'
-      modal.message = 'Halaman yang Anda buat gagal disimpan ke draft.'
+      modal.message = 'Halaman yang Anda buat gagal diterbitkan.'
     }
   }
 </script>
