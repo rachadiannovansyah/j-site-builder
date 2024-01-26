@@ -1,14 +1,16 @@
 import { ITemplateSection } from '~/repository/j-site/types/template'
-type IBuilderConfigStatus = 'DRAFT' | 'PUBLISHED'
+import { IPageStatus } from '~/repository/j-site/types/page'
 
 export const usePageStore = defineStore('page', {
   state: () => ({
+    isEdit: false as boolean,
+    isDataInitialized: false as boolean,
     builderConfig: {
       pageToken: '' as string,
       type: '' as string,
       templateId: '' as string,
       title: '' as string,
-      status: null as null | IBuilderConfigStatus,
+      status: null as null | IPageStatus,
       domain: '' as string,
       lastUpdate: '' as string,
       sections: [] as ITemplateSection[],
@@ -28,6 +30,12 @@ export const usePageStore = defineStore('page', {
     },
   },
   actions: {
+    setPageisEdit(value: boolean) {
+      this.isEdit = value
+    },
+    initializeBuilderData() {
+      this.isDataInitialized = true
+    },
     setPageToken(value: string) {
       this.builderConfig.pageToken = value
     },
@@ -43,7 +51,7 @@ export const usePageStore = defineStore('page', {
     setPageTitle(value: string) {
       this.builderConfig.title = value
     },
-    setPageStatus(value: IBuilderConfigStatus) {
+    setPageStatus(value: IPageStatus) {
       this.builderConfig.status = value
     },
     setPageLastUpdate(value: string) {
@@ -96,7 +104,7 @@ export const usePageStore = defineStore('page', {
     }) {
       this.builderConfig.sections[sectionIndex].description = description
     },
-    generatePageData({ status }: { status: IBuilderConfigStatus }) {
+    generatePageData({ status }: { status: IPageStatus }) {
       return {
         title: this.builderConfig.title,
         status: status,

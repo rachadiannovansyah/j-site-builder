@@ -325,8 +325,12 @@
     return props.open
   })
 
+  const isEditPage = computed(() => {
+    return pageStore.isEdit
+  })
+
   watch(isOpen, function (open) {
-    if (!open) {
+    if (!open || isEditPage) {
       // wait for modal transition to finish
       setTimeout(() => {
         syncFormData()

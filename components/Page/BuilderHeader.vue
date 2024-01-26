@@ -72,6 +72,7 @@
           Kembali ke Halaman
         </UButton>
         <UButton
+          v-if="statusPage !== 'PUBLISHED'"
           variant="ghost"
           color="primary"
           data-cy="page-builder-header__button-save-draft"
@@ -90,6 +91,7 @@
           </template>
         </UButton>
         <UButton
+          v-if="statusPage !== 'PUBLISHED'"
           data-cy="page-builder-header__button-save-publish"
           @click="$emit('publish')"
         >
@@ -97,6 +99,21 @@
             <NuxtIcon name="common/plane" class="text-xl" aria-hidden="true" />
           </template>
           Terbitkan
+        </UButton>
+        <UButton
+          v-if="statusPage === 'PUBLISHED'"
+          color="primary"
+          data-cy="page-builder-header__button-save-draft"
+          @click="$emit('update-published')"
+        >
+          <template #leading>
+            <NuxtIcon
+              name="navigation/posting-menu-icon"
+              class="text-xl"
+              aria-hidden="true"
+            />
+          </template>
+          Perbarui
         </UButton>
         <UButton
           variant="ghost"
@@ -123,6 +140,10 @@
       type: Boolean,
       default: true,
     },
+    isEditMode: {
+      type: Boolean,
+      default: false,
+    },
   })
 
   const pageStore = usePageStore()
@@ -131,11 +152,15 @@
     return pageStore.builderConfig.domain
   })
 
+  const statusPage = computed(() => {
+    return pageStore.builderConfig.status?.toString()
+  })
+
   const isOpen = ref(true)
 
   function toggleOpenHeader() {
     isOpen.value = !isOpen.value
   }
 
-  defineEmits(['back', 'draft', 'preview', 'publish'])
+  defineEmits(['back', 'draft', 'preview', 'publish', 'update-published'])
 </script>
