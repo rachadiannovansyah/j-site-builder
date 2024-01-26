@@ -280,12 +280,7 @@
 
     const { status } = await $jSiteApi.page.storePage(
       siteStore?.siteId ?? '',
-      {
-        title: pageStore.builderConfig?.title ?? '',
-        status: 'DRAFT',
-        sections: toRaw(pageStore.builderConfig?.sections),
-        category: pageStore.builderConfig?.category ?? '',
-      },
+      pageStore.generatePageData({ status: 'DRAFT' }),
       { server: false },
     )
 
@@ -307,8 +302,31 @@
   }
 
   const actionPublishPage = async () => {
-    // TODO: update publish page function
-    modal.status = MODAL_STATE.NONE
+    modal.status = MODAL_STATE.LOADING
+    modal.title = 'Menerbitkan Halaman'
+    modal.message = 'Mohon tunggu, penerbitan Halaman sedang diproses.'
+
+    const { status } = await $jSiteApi.page.storePage(
+      siteStore?.siteId ?? '',
+      pageStore.generatePageData({ status: 'PUBLISHED' }),
+      { server: false },
+    )
+
+    if (status.value === 'success') {
+      setLoadingProgress(25)
+      setTimeout(() => {
+        setLoadingProgress(100)
+        setTimeout(() => {
+          modal.status = MODAL_STATE.SUCCESS
+          modal.title = 'Berhasil!'
+          modal.message = 'Halaman yang Anda buat berhasil diterbitkan.'
+        }, 250)
+      }, 250)
+    } else if (status.value === 'error') {
+      modal.status = MODAL_STATE.ERROR
+      modal.title = 'Gagal!'
+      modal.message = 'Halaman yang Anda buat gagal diterbitkan.'
+    }
   }
 
   async function handlePreview() {
