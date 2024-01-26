@@ -177,7 +177,6 @@
 
 <script setup lang="ts">
   import { MODAL_STATE } from '~/common/constant/modal'
-  import aes from 'crypto-js/aes'
   import { format } from 'date-fns'
   import ID from 'date-fns/locale/id'
 
@@ -185,7 +184,6 @@
     layout: 'full-bleed',
   })
 
-  const config = useRuntimeConfig()
   const pageStore = usePageStore()
   const siteStore = useSiteStore()
   const { $jSiteApi } = useNuxtApp()
@@ -227,7 +225,8 @@
     if (status.value === 'success') {
       const { data } = dataPage.value ?? {}
       if (data) {
-        const { category, title, status, updated_at, sections } = data || {}
+        const { category, title, status, updated_at, sections, page_token } =
+          data || {}
 
         pageStore.setPageisEdit(true)
         pageStore.setPageCategory(category)
@@ -235,6 +234,7 @@
         pageStore.setPageStatus(status)
         pageStore.setPageLastUpdate(updated_at ? formatDate(updated_at) : '')
         pageStore.setBuilderSections(sections ?? [])
+        pageStore.setPageToken(page_token)
         pageStore.initializeBuilderData()
       }
     }
@@ -246,19 +246,8 @@
     fetchPageLoading.value = pending.value
   }
 
-  function generatePageToken() {
-    if (!pageStore.builderConfig.pageToken) {
-      const pageToken = aes
-        .encrypt(new Date().toString(), config.public.pageTokenSecret)
-        .toString()
-
-      pageStore.setPageToken(pageToken)
-    }
-  }
-
   onMounted(() => {
     setInitialData()
-    generatePageToken()
     window.addEventListener('beforeunload', beforeUnloadHandler)
   })
 

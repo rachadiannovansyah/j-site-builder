@@ -27,6 +27,7 @@ export interface IPageDataExtended {
   created_at: string
   updated_at: string
   slug: string
+  page_token: string
 }
 
 export interface IMetaData {
