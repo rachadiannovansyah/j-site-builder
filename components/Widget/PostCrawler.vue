@@ -294,10 +294,6 @@
     emit('close')
   }
 
-  const isEditPage = computed(() => {
-    return pageStore.isEdit
-  })
-
   const currentStorePayload = computed(() => {
     return pageStore.getWidgetPayload({
       sectionIndex: props.sectionIndex,
@@ -327,6 +323,10 @@
 
   const isOpen = computed(() => {
     return props.open
+  })
+
+  const isEditPage = computed(() => {
+    return pageStore.isEdit
   })
 
   watch(isOpen, function (open) {
