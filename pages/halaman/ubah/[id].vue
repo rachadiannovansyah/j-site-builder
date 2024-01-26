@@ -232,7 +232,7 @@
         pageStore.setPageisEdit(true)
         pageStore.setPageCategory(category)
         pageStore.setPageTitle(title ?? '')
-        pageStore.setPageStatus(status ?? '')
+        pageStore.setPageStatus(status)
         pageStore.setPageLastUpdate(updated_at ? formatDate(updated_at) : '')
         pageStore.setBuilderSections(sections ?? [])
         pageStore.initializeBuilderData()

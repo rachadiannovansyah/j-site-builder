@@ -13,6 +13,9 @@ export interface IPageResponse {
   status?: object
   error?: object
 }
+
+export type IPageStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
+
 export interface IPageDataExtended {
   _id: string
   created_by: string
@@ -20,7 +23,7 @@ export interface IPageDataExtended {
   title: string
   sections: ITemplateSection[]
   is_active: boolean
-  status: string
+  status: IPageStatus
   created_at: string
   updated_at: string
   slug: string
