@@ -309,6 +309,7 @@
 <script setup lang="ts">
   import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
+
   const MEDIA_UPLOAD_STATUS = {
     NONE: 'NONE',
     UPLOADING: 'UPLOADING',
@@ -317,6 +318,7 @@
     ERROR: 'ERROR',
     VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
+
   const MAX_UPLOADED_IMAGES = 6
 
   const props = defineProps({
@@ -334,20 +336,50 @@
     },
   })
 
+  const emit = defineEmits(['close', 'set-active-content'])
+
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
   const pageStore = usePageStore()
 
+  onMounted(() => {
+    if (pageStore.isEdit) {
+      return setInitialStateFromStore()
+    }
+    syncStorePayload()
+  })
+
+  /* ---------------------- Sync States ---------------------- */
+
+  function syncStorePayload() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        images: uploadedImages,
+      },
+    })
+  }
+
+  function setInitialStateFromStore() {
+    const initialPayload = pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+
+    if (initialPayload?.images) {
+      initialPayload.images.map((image: { id: string; uri: string }) => {
+        uploadedImages.push(image)
+      })
+    }
+  }
+
+  /* ------------------------- Image Upload and Delete ------------------------ */
+
   const imageUploader = ref<HTMLInputElement | null>(null)
   const uploadedImages = reactive<{ id: string; uri: string }[]>([])
-  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
   const imageUploadProgress = ref(0)
-  const confirmation = reactive({
-    title: '',
-    body: '',
-    icon: '',
-    imageId: '', // for delete purposes
-  })
+
   const exceedMaximumFiles = computed<boolean>(() => {
     return uploadedImages.length >= MAX_UPLOADED_IMAGES
   })
@@ -383,12 +415,8 @@
     }
   }
 
-  function showValidationError() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
-    setConfirmation({
-      title: 'Oops! Gambar nggak cocok nih.',
-      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
-    })
+  function setUploadProgress(value: number) {
+    imageUploadProgress.value = value
   }
 
   /**
@@ -451,13 +479,6 @@
     }
   }
 
-  function pushUploadedImage({ id, file }: IMediaResponseData) {
-    uploadedImages.push({
-      id: id,
-      uri: file.uri,
-    })
-  }
-
   async function deleteUploadedImage(id: string) {
     const { status } = await $jSiteApi.media.deleteMedia(id, undefined, {
       server: false,
@@ -483,6 +504,13 @@
     }
   }
 
+  function pushUploadedImage({ id, file }: IMediaResponseData) {
+    uploadedImages.push({
+      id: id,
+      uri: file.uri,
+    })
+  }
+
   /**
    * Remove image by id from `uploadedImage` state
    * @param id - id of images stored on `uploadedImages`
@@ -492,20 +520,42 @@
     uploadedImages.splice(imageIndex, 1)
   }
 
-  function showDeleteConfirmation(imageId: string) {
-    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
-    setConfirmation({
-      title: 'Menghapus Gambar',
-      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
-      imageId,
-    })
-  }
+  /**
+   * Mutate `page` store evey time `uploadedImages` changes
+   */
+  watch(uploadedImages, async () => {
+    await nextTick()
+    syncStorePayload()
+  })
+
+  watch(
+    uploadedImages,
+    (value) => {
+      emit('set-active-content', value.length)
+    },
+    { immediate: true },
+  )
+
+  /* ---------------------------------- Modals --------------------------------- */
 
   interface ISetConfirmation {
     title: string
     body: string
     icon?: string
     imageId?: string
+  }
+
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    icon: '',
+    imageId: '', // for delete purposes
+  })
+
+  function setModalStatus(value: string) {
+    imageUploadStatus.value = value
   }
 
   function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
@@ -532,12 +582,21 @@
     imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
   }
 
-  function setModalStatus(value: string) {
-    imageUploadStatus.value = value
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
   }
 
-  function setUploadProgress(value: number) {
-    imageUploadProgress.value = value
+  function showDeleteConfirmation(imageId: string) {
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
+      imageId,
+    })
   }
 
   /**
@@ -553,28 +612,4 @@
       }, 300)
     }
   })
-
-  /**
-   * Mutate `page` store evey time `uploadedImages` changes
-   */
-  watch(
-    uploadedImages,
-    async () => {
-      await nextTick()
-      pageStore.setWidgetPayload({
-        sectionIndex: props.sectionIndex,
-        widgetIndex: props.widgetIndex,
-        payload: {
-          images: uploadedImages,
-        },
-      })
-    },
-    { immediate: true },
-  )
-
-  watch(uploadedImages, (value) => {
-    emit('set-active-content', value.length)
-  })
-
-  const emit = defineEmits(['close', 'set-active-content'])
 </script>
