@@ -520,6 +520,22 @@
     uploadedImages.splice(imageIndex, 1)
   }
 
+  /**
+   * Mutate `page` store evey time `uploadedImages` changes
+   */
+  watch(uploadedImages, async () => {
+    await nextTick()
+    syncStorePayload()
+  })
+
+  watch(
+    uploadedImages,
+    (value) => {
+      emit('set-active-content', value.length)
+    },
+    { immediate: true },
+  )
+
   /* ---------------------------------- Modals --------------------------------- */
 
   interface ISetConfirmation {
@@ -583,8 +599,6 @@
     })
   }
 
-  /* -------------------------------- Watchers -------------------------------- */
-
   /**
    * Reset confirmation data and upload progress
    * when confirmation modal is closed
@@ -598,20 +612,4 @@
       }, 300)
     }
   })
-
-  /**
-   * Mutate `page` store evey time `uploadedImages` changes
-   */
-  watch(uploadedImages, async () => {
-    await nextTick()
-    syncStorePayload()
-  })
-
-  watch(
-    uploadedImages,
-    (value) => {
-      emit('set-active-content', value.length)
-    },
-    { immediate: true },
-  )
 </script>
