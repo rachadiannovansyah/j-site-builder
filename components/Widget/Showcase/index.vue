@@ -282,7 +282,7 @@
 
   onMounted(() => {
     const { items, display } = currentStorePayload.value || {}
-    showcaseLayout.value = display ?? ''
+    showcaseLayout.value = display ?? 'grid'
     if (pageStore.isEdit) {
       if (items && items.length > 0) {
         dataShowcase.push(...items)
