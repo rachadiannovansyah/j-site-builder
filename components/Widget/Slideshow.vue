@@ -342,67 +342,36 @@
   const siteStore = useSiteStore()
   const pageStore = usePageStore()
 
-  /* ---------------------------------- Modals --------------------------------- */
-
-  interface ISetConfirmation {
-    title: string
-    body: string
-    icon?: string
-    imageId?: string
-  }
-
-  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
-
-  const confirmation = reactive({
-    title: '',
-    body: '',
-    icon: '',
-    imageId: '', // for delete purposes
+  onMounted(() => {
+    if (pageStore.isEdit) {
+      return setInitialStateFromStore()
+    }
+    syncStorePayload()
   })
 
-  function setModalStatus(value: string) {
-    imageUploadStatus.value = value
-  }
+  /* ---------------------- Sync States ---------------------- */
 
-  function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
-    confirmation.title = title
-    confirmation.body = body
-
-    if (icon) {
-      confirmation.icon = icon
-    }
-
-    if (imageId) {
-      confirmation.imageId = imageId
-    }
-  }
-
-  function resetConfirmation() {
-    confirmation.title = ''
-    confirmation.body = ''
-    confirmation.icon = ''
-    confirmation.imageId = ''
-  }
-
-  function closeConfirmationModal() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
-  }
-
-  function showValidationError() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
-    setConfirmation({
-      title: 'Oops! Gambar nggak cocok nih.',
-      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+  function syncStorePayload() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        images: uploadedImages,
+      },
     })
   }
 
-  function showDeleteConfirmation(imageId: string) {
-    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
-    setConfirmation({
-      title: 'Menghapus Gambar',
-      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
-      imageId,
+  function setInitialStateFromStore() {
+    const initialPayload = pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
     })
+
+    if (initialPayload?.images) {
+      initialPayload.images.map((image: { id: string; uri: string }) => {
+        uploadedImages.push(image)
+      })
+    }
   }
 
   /* ------------------------- Image Upload and Delete ------------------------ */
@@ -551,6 +520,69 @@
     uploadedImages.splice(imageIndex, 1)
   }
 
+  /* ---------------------------------- Modals --------------------------------- */
+
+  interface ISetConfirmation {
+    title: string
+    body: string
+    icon?: string
+    imageId?: string
+  }
+
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+
+  const confirmation = reactive({
+    title: '',
+    body: '',
+    icon: '',
+    imageId: '', // for delete purposes
+  })
+
+  function setModalStatus(value: string) {
+    imageUploadStatus.value = value
+  }
+
+  function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
+    confirmation.title = title
+    confirmation.body = body
+
+    if (icon) {
+      confirmation.icon = icon
+    }
+
+    if (imageId) {
+      confirmation.imageId = imageId
+    }
+  }
+
+  function resetConfirmation() {
+    confirmation.title = ''
+    confirmation.body = ''
+    confirmation.icon = ''
+    confirmation.imageId = ''
+  }
+
+  function closeConfirmationModal() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
+  }
+
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
+  }
+
+  function showDeleteConfirmation(imageId: string) {
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar slideshow?',
+      imageId,
+    })
+  }
+
   /* -------------------------------- Watchers -------------------------------- */
 
   /**
@@ -570,22 +602,16 @@
   /**
    * Mutate `page` store evey time `uploadedImages` changes
    */
+  watch(uploadedImages, async () => {
+    await nextTick()
+    syncStorePayload()
+  })
+
   watch(
     uploadedImages,
-    async () => {
-      await nextTick()
-      pageStore.setWidgetPayload({
-        sectionIndex: props.sectionIndex,
-        widgetIndex: props.widgetIndex,
-        payload: {
-          images: uploadedImages,
-        },
-      })
+    (value) => {
+      emit('set-active-content', value.length)
     },
     { immediate: true },
   )
-
-  watch(uploadedImages, (value) => {
-    emit('set-active-content', value.length)
-  })
 </script>
