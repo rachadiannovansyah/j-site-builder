@@ -148,6 +148,19 @@
     },
   })
 
+  const emit = defineEmits(['close'])
+
+  const pageStore = usePageStore()
+
+  onMounted(() => {
+    if (pageStore.isEdit) {
+      return setStateFromStore()
+    }
+    setInitialPayload()
+  })
+
+  /* ----------------------- Validation and Submit Form ----------------------- */
+
   const form = reactive({
     title: '',
     description: '',
@@ -168,8 +181,6 @@
 
   type Schema = z.output<typeof formSchema>
 
-  const pageStore = usePageStore()
-
   function onSave(event: FormSubmitEvent<Schema>) {
     const { title, description, isActive } = event.data
 
@@ -186,40 +197,6 @@
     emit('close')
   }
 
-  const currentStorePayload = computed(() => {
-    return pageStore.getWidgetPayload({
-      sectionIndex: props.sectionIndex,
-      widgetIndex: props.widgetIndex,
-    })
-  })
-
-  /**
-   * Sync local state `form` with `pageStore` payload.
-   * This is to avoid unmatch data between local state and pageStore state.
-   */
-  function syncFormData() {
-    form.title = currentStorePayload.value?.title.toString() ?? ''
-    form.description = currentStorePayload.value?.description.toString() ?? ''
-    form.isActive = !!currentStorePayload.value?.is_active
-  }
-
-  const isOpen = computed(() => {
-    return props.open
-  })
-
-  const isEditPage = computed(() => {
-    return pageStore.isEdit
-  })
-
-  watch(isOpen, function (open) {
-    if (!open || isEditPage) {
-      // wait for modal transition to finish
-      setTimeout(() => {
-        syncFormData()
-      }, 300)
-    }
-  })
-
   const titleLengthRemaining = computed(() => {
     return MAX_TITLE_LENGTH - form.title.length
   })
@@ -228,5 +205,45 @@
     return MAX_DESCRIPTION_LENGTH - form.description.length
   })
 
-  const emit = defineEmits(['close'])
+  /* ------------------------------- Sync State ------------------------------- */
+
+  function setInitialPayload() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        title: form.title,
+        description: form.description,
+        is_active: form.isActive,
+      },
+    })
+  }
+
+  const currentStorePayload = computed(() => {
+    return pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+  })
+
+  function setStateFromStore() {
+    form.title = currentStorePayload.value?.title.toString() ?? ''
+    form.description = currentStorePayload.value?.description.toString() ?? ''
+    form.isActive = !!currentStorePayload.value?.is_active
+  }
+
+  /**
+   * sync local state with page store when modal is closed
+   */
+  watch(
+    () => props.open,
+    function (open) {
+      if (!open) {
+        // wait for modal transition to finish
+        setTimeout(() => {
+          setStateFromStore()
+        }, 300)
+      }
+    },
+  )
 </script>
