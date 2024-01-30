@@ -197,6 +197,7 @@
   const isEditShowcase = ref(false)
   const isOpenAddEditShowcase = ref(false)
   const dataShowcase = reactive<ILogosData[]>([])
+  const showcaseLayout = ref('')
   const itemShowcase = ref({})
   const indexItemActive = ref(0 as number)
   const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
@@ -261,27 +262,51 @@
     indexItemActive.value = index
   }
 
+  function setWidgetPayload() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        display: showcaseLayout,
+        items: toRaw(dataShowcase),
+      },
+    })
+  }
+
+  const currentStorePayload = computed(() => {
+    return pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+  })
+
+  onMounted(() => {
+    const { items, display } = currentStorePayload.value || {}
+    showcaseLayout.value = display ?? ''
+    if (pageStore.isEdit) {
+      if (items && items.length > 0) {
+        dataShowcase.push(...items)
+      }
+    } else {
+      setWidgetPayload()
+    }
+  })
+
   /**
    * Mutate `page` store evey time `uploadedImages` changes
    */
+  watch(dataShowcase, async () => {
+    await nextTick()
+    setWidgetPayload()
+  })
+
   watch(
     dataShowcase,
-    async () => {
-      await nextTick()
-      pageStore.setWidgetPayload({
-        sectionIndex: props.sectionIndex,
-        widgetIndex: props.widgetIndex,
-        payload: {
-          items: toRaw(dataShowcase),
-        },
-      })
+    (value) => {
+      emit('set-active-content', value.length)
     },
     { immediate: true },
   )
-
-  watch(dataShowcase, (value) => {
-    emit('set-active-content', value.length)
-  })
 
   /**
    * Reset confirmation data and upload progress
