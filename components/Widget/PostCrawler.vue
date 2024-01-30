@@ -281,7 +281,7 @@
     form.isPinnedPost = !form.isPinnedPost
   }
 
-  function onSave() {
+  function setWidgetPayload() {
     pageStore.setWidgetPayload({
       sectionIndex: props.sectionIndex,
       widgetIndex: props.widgetIndex,
@@ -291,6 +291,10 @@
         sort_with_pinned: form.isPinnedPost,
       },
     })
+  }
+
+  function onSave() {
+    setWidgetPayload()
     emit('close')
   }
 
@@ -335,6 +339,12 @@
       setTimeout(() => {
         syncFormData()
       }, 300)
+    }
+  })
+
+  onMounted(() => {
+    if (!currentStorePayload.value) {
+      setWidgetPayload()
     }
   })
 </script>
