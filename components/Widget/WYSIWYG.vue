@@ -102,7 +102,7 @@
     },
   })
 
-  const editorContent = ref(null)
+  const editorContent = ref('')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onImageUpload(blobInfo: any) {
