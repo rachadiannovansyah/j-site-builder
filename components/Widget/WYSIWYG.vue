@@ -175,4 +175,49 @@
   }
 
   const emit = defineEmits(['close'])
+
+  onMounted(() => {
+    if (pageStore.isEdit) {
+      return setStateFromStore()
+    }
+    setInitialPayload()
+  })
+
+  /* ------------------------------- Sync State ------------------------------- */
+
+  function setInitialPayload() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        content: editorContent.value,
+      },
+    })
+  }
+
+  const currentStorePayload = computed(() => {
+    return pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+  })
+
+  function setStateFromStore() {
+    editorContent.value = currentStorePayload.value?.content.toString() ?? ''
+  }
+
+  /**
+   * sync local state with page store when modal is closed
+   */
+  watch(
+    () => props.open,
+    function (open) {
+      if (!open) {
+        // wait for modal transition to finish
+        setTimeout(() => {
+          setStateFromStore()
+        }, 300)
+      }
+    },
+  )
 </script>
