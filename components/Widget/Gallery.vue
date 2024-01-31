@@ -323,6 +323,7 @@
 <script setup lang="ts">
   import { validateImage } from '~/common/helpers/validation'
   import { IMediaResponseData } from '~/repository/j-site/types/media'
+
   const MEDIA_UPLOAD_STATUS = {
     NONE: 'NONE',
     UPLOADING: 'UPLOADING',
@@ -331,6 +332,7 @@
     ERROR: 'ERROR',
     VALIDATION_ERROR: 'VALIDATION_ERROR',
   }
+
   const props = defineProps({
     open: {
       type: Boolean,
@@ -345,21 +347,12 @@
       default: null,
     },
   })
+
   const { $jSiteApi } = useNuxtApp()
   const siteStore = useSiteStore()
   const pageStore = usePageStore()
-
-  const imageUploader = ref<HTMLInputElement | null>(null)
-
-  function selectImage() {
-    imageUploader.value?.click()
-  }
-
-  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
   const isInputSearchFeature = ref(false)
   const isSelectedAllFeatureReady = ref(false)
-  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
-  const imageUploadProgress = ref(0)
   const confirmation = reactive({
     title: '',
     body: '',
@@ -367,11 +360,58 @@
     imageId: '', // for delete purposes
   })
 
-  function resetImageUploader() {
-    if (imageUploader.value) {
-      imageUploader.value.value = ''
+  const emit = defineEmits(['close', 'set-active-content'])
+
+  onMounted(() => {
+    if (pageStore.isEdit) {
+      return setInitialStateFromStore()
+    }
+    syncStorePayload()
+  })
+
+  /* ---------------------- Start: Sync States ---------------------- */
+  function syncStorePayload() {
+    pageStore.setWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+      payload: {
+        images: uploadedImages,
+      },
+    })
+  }
+
+  function setInitialStateFromStore() {
+    const initialPayload = pageStore.getWidgetPayload({
+      sectionIndex: props.sectionIndex,
+      widgetIndex: props.widgetIndex,
+    })
+
+    if (initialPayload?.images) {
+      initialPayload.images.map((image: { id: string; uri: string }) => {
+        uploadedImages.push(image)
+      })
     }
   }
+
+  /* ---------------------- End: Sync States ---------------------- */
+
+  /* ------------------------- Start: Image Upload and Delete ------------------------ */
+  const imageUploader = ref<HTMLInputElement | null>(null)
+  const uploadedImages = reactive<{ id: string; uri: string }[]>([])
+  const imageUploadProgress = ref(0)
+
+  watch(uploadedImages, async () => {
+    await nextTick()
+    syncStorePayload()
+  })
+
+  watch(
+    uploadedImages,
+    (value) => {
+      emit('set-active-content', value.length)
+    },
+    { immediate: true },
+  )
 
   async function handleImageChange(event: Event) {
     const image = (event.target as HTMLInputElement)?.files?.[0] ?? null
@@ -392,14 +432,6 @@
     } finally {
       resetImageUploader()
     }
-  }
-
-  function showValidationError() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
-    setConfirmation({
-      title: 'Oops! Gambar nggak cocok nih.',
-      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
-    })
   }
 
   /**
@@ -462,6 +494,16 @@
     }
   }
 
+  function selectImage() {
+    imageUploader.value?.click()
+  }
+
+  function resetImageUploader() {
+    if (imageUploader.value) {
+      imageUploader.value.value = ''
+    }
+  }
+
   function pushUploadedImage({ id, file }: IMediaResponseData) {
     uploadedImages.push({
       id: id,
@@ -472,15 +514,6 @@
   function removeUploadedImage(id: string) {
     const imageIndex = uploadedImages.findIndex((image) => image.id === id)
     uploadedImages.splice(imageIndex, 1)
-  }
-
-  function showDeleteConfirmation(imageId: string) {
-    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
-    setConfirmation({
-      title: 'Menghapus Gambar',
-      body: 'Apakah anda yakin ingin menghapus gambar dari daftar gallery?',
-      imageId,
-    })
   }
 
   async function deleteUploadedImage(id: string) {
@@ -507,11 +540,53 @@
     }
   }
 
+  /* ------------------------- End: Image Upload and Delete ------------------------ */
+
+  /* ---------------------------------- Start: Modals --------------------------------- */
+
+  const imageUploadStatus = ref(MEDIA_UPLOAD_STATUS.NONE)
+
   interface ISetConfirmation {
     title: string
     body: string
     icon?: string
     imageId?: string
+  }
+
+  /**
+   * Reset confirmation data and upload progress
+   * when confirmation modal is closed
+   */
+
+  watch(imageUploadStatus, (newValue) => {
+    if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
+      // wait modal to closed all the way before reset confirmation
+      setTimeout(() => {
+        setUploadProgress(0)
+        resetConfirmation()
+      }, 300)
+    }
+  })
+
+  function showValidationError() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.VALIDATION_ERROR
+    setConfirmation({
+      title: 'Oops! Gambar nggak cocok nih.',
+      body: 'Maaf, gambar yang kamu unggah kayaknya nggak sesuai deh. Cek lagi format dan ukurannya ya.',
+    })
+  }
+
+  function closeConfirmationModal() {
+    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
+  }
+
+  function showDeleteConfirmation(imageId: string) {
+    setModalStatus(MEDIA_UPLOAD_STATUS.DELETING)
+    setConfirmation({
+      title: 'Menghapus Gambar',
+      body: 'Apakah anda yakin ingin menghapus gambar dari daftar gallery?',
+      imageId,
+    })
   }
 
   function setConfirmation({ title, body, icon, imageId }: ISetConfirmation) {
@@ -542,47 +617,7 @@
     imageUploadProgress.value = value
   }
 
-  function closeConfirmationModal() {
-    imageUploadStatus.value = MEDIA_UPLOAD_STATUS.NONE
-  }
-
-  /**
-   * Reset confirmation data and upload progress
-   * when confirmation modal is closed
-   */
-  watch(imageUploadStatus, (newValue) => {
-    if (newValue === MEDIA_UPLOAD_STATUS.NONE) {
-      // wait modal to closed all the way before reset confirmation
-      setTimeout(() => {
-        setUploadProgress(0)
-        resetConfirmation()
-      }, 300)
-    }
-  })
-
-  /**
-   * Mutate `page` store evey time `uploadedImages` changes
-   */
-  watch(
-    uploadedImages,
-    async () => {
-      await nextTick()
-      pageStore.setWidgetPayload({
-        sectionIndex: props.sectionIndex,
-        widgetIndex: props.widgetIndex,
-        payload: {
-          images: uploadedImages,
-        },
-      })
-    },
-    { immediate: true },
-  )
-
-  watch(uploadedImages, (value) => {
-    emit('set-active-content', value.length)
-  })
-
-  const emit = defineEmits(['close', 'set-active-content'])
+  /* ---------------------------------- End: Modals --------------------------------- */
 </script>
 
 <style scoped>
